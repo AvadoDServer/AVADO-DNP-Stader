@@ -15,6 +15,9 @@ import { server_config } from '../server_config';
 import { ValidatorInfo, useValidators } from '../hooks/useValidators';
 import Spinner from '../components/Spinner';
 import NetworkBanner from '../components/NetworkBanner';
+import SyncStatusTag from '../components/SyncStatusTag';
+import JSONbig from "json-bigint";
+import { nodeSyncProgressResponseType } from '../types';
 
 const Home: NextPage = () => {
 
@@ -41,6 +44,27 @@ const Home: NextPage = () => {
             });
     }, []);
 
+    const [nodeSyncStatus, setNodeSyncStatus] = useState<nodeSyncProgressResponseType>();
+    const updateNodeSyncStatus = () => rpdDaemon("node sync", (data) => setNodeSyncStatus(data));
+
+    const rpdDaemon = async (command: string, callback: (data: any) => void, error?: (error: any) => void) => {
+        await axios.post(`${server_config.monitor_url}/rpd`, { command: command }, { timeout: 5 * 60 * 1000 }).then((res) => {
+            const data = JSONbig.parse(res.data);
+            console.log(`rocketpoold api ${command}: ` + res.data);
+            callback(data);
+        }).catch(e => { if (error) error(e) })
+    }
+
+    useEffect(() => {
+        updateNodeSyncStatus();
+    }, []); // eslint-disable-line
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            updateNodeSyncStatus();
+        }, 60 * 1000); // 60 seconds refresh
+        return () => clearInterval(interval);
+    }, []);
     return (
         <div className="py-10 bg-white">
             <header>
@@ -145,10 +169,18 @@ const Home: NextPage = () => {
                 </div>
             </header>
             <main className="bg-white">
-                TODO
+                
+                {nodeSyncStatus && (
+                    <>
+                        <SyncStatusTag progress={nodeSyncStatus.ecStatus.primaryEcStatus.syncProgress} label="ETH1" />&nbsp;
+                        <SyncStatusTag progress={nodeSyncStatus.bcStatus.primaryEcStatus.syncProgress} label="Beacon chain" />
+                    </>
+
+                )}
+
             </main>
             <footer className="bg-white">
-                <div className="mx-auto max-w-7xl overflow-hidden px-6 py-20 sm:py-24 lg:px-8">                    
+                <div className="mx-auto max-w-7xl overflow-hidden px-6 py-20 sm:py-24 lg:px-8">
                     <p className="mt-10 text-center text-xs leading-5 text-gray-500">
                         <a href="https://ava.do" target="_blank" rel="noopener noreferrer">
                             &copy; Made with ❤️ by your frens at Avado
