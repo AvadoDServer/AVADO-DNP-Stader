@@ -9,16 +9,14 @@ import {
     CheckIcon,
     ChevronDownIcon
 } from '@heroicons/react/20/solid'
-import { Disclosure, Menu, Transition } from '@headlessui/react'
+import { Menu, Transition } from '@headlessui/react'
 import axios from "axios";
 import { server_config } from '../server_config';
 import NetworkBanner from '../components/NetworkBanner';
 import SyncStatusTag from '../components/SyncStatusTag';
-import JSONbig from "json-bigint";
-import { nodeSyncProgressResponseType } from '../types';
+import StaderCommandField from '../components/StaderCommandField'
 
 import { useStaderStatus } from "../lib/status"
-import { node } from 'prop-types';
 
 const Home: NextPage = () => {
 
@@ -28,8 +26,7 @@ const Home: NextPage = () => {
 
     const { nodeSyncProgressStatus, fetchNodeSyncProgressStatus, nodeStatus, fetchNodeStatus } = useStaderStatus()
 
-
-    const title = "Avado: Set withdrawal credentials (Shapella update)"
+    const title = "Avado Stader"
 
     useEffect(() => {
         axios.get(`${server_config.monitor_url}/clients`)
@@ -51,7 +48,7 @@ const Home: NextPage = () => {
         fetchNodeStatus();
 
         const interval = setInterval(() => {
-            fetchNodeSyncProgressStatus();            
+            fetchNodeSyncProgressStatus();
         }, 60 * 1000); // 60 seconds refresh
         return () => clearInterval(interval);
     }, []);
@@ -80,86 +77,26 @@ const Home: NextPage = () => {
                                 </div>
                             </div>
                         </div>
-                        <div className="mt-5 flex lg:ml-4 lg:mt-0">
+                        <div className="mt-5 flex">
                             <span className="hidden sm:block">
-                                <button
-                                    type="button"
-                                    className="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-                                >
-                                    <PencilIcon className="-ml-0.5 mr-1.5 h-5 w-5 text-gray-400" aria-hidden="true" />
-                                    Edit
-                                </button>
+                                <SyncStatusTag progress={nodeSyncProgressStatus.ecStatus.primaryEcStatus.syncProgress} label={ecClient} />
                             </span>
 
                             <span className="ml-3 hidden sm:block">
-                                <button
-                                    type="button"
-                                    className="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-                                >
-                                    <LinkIcon className="-ml-0.5 mr-1.5 h-5 w-5 text-gray-400" aria-hidden="true" />
-                                    View
-                                </button>
+                                <SyncStatusTag progress={nodeSyncProgressStatus.bcStatus.primaryEcStatus.syncProgress} label={bcClient} />
                             </span>
-
-                            <span className="sm:ml-3">
-                                <button
-                                    type="button"
-                                    className="inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                                >
-                                    <CheckIcon className="-ml-0.5 mr-1.5 h-5 w-5" aria-hidden="true" />
-                                    Publish
-                                </button>
-                            </span>
-
-                            <Menu as="div" className="relative ml-3 sm:hidden">
-                                <Menu.Button className="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:ring-gray-400">
-                                    More
-                                    <ChevronDownIcon className="-mr-1 ml-1.5 h-5 w-5 text-gray-400" aria-hidden="true" />
-                                </Menu.Button>
-
-                                <Transition
-                                    as={Fragment}
-                                    enter="transition ease-out duration-200"
-                                    enterFrom="transform opacity-0 scale-95"
-                                    enterTo="transform opacity-100 scale-100"
-                                    leave="transition ease-in duration-75"
-                                    leaveFrom="transform opacity-100 scale-100"
-                                    leaveTo="transform opacity-0 scale-95"
-                                >
-                                    <Menu.Items className="absolute right-0 z-10 -mr-1 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                                        <Menu.Item>
-                                            {({ active }) => (
-                                                <a
-                                                    href="#"
-                                                    className={[active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700'].join(' ')}
-                                                >
-                                                    Edit
-                                                </a>
-                                            )}
-                                        </Menu.Item>
-                                        <Menu.Item>
-                                            {({ active }) => (
-                                                <a
-                                                    href="#"
-                                                    className={[active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700'].join(' ')}
-                                                >
-                                                    View
-                                                </a>
-                                            )}
-                                        </Menu.Item>
-                                    </Menu.Items>
-                                </Transition>
-                            </Menu>
                         </div>
                     </div>
                 </div>
             </header>
             <main className="bg-white">
                 <>
-                    <SyncStatusTag progress={nodeSyncProgressStatus.ecStatus.primaryEcStatus.syncProgress} label={ecClient} />
-                    <SyncStatusTag progress={nodeSyncProgressStatus.bcStatus.primaryEcStatus.syncProgress} label={bcClient} />
-                    
-                    Node status: {nodeStatus.accountAddress}
+                    <p>
+
+                        Node status: {nodeStatus.accountAddress}
+                    </p>
+
+                    <StaderCommandField />
                 </>
             </main>
             <footer className="bg-white">
