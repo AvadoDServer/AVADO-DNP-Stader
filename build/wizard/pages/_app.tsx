@@ -12,6 +12,7 @@ import { goerli } from 'wagmi/chains'
 import { server_config } from '../server_config'
 import axios from 'axios';
 import { useEffect, useState } from 'react';
+import Layout from '../components/Layout';
 
 function MyApp({ Component, pageProps }: AppProps) {
   const [wagmiClient, setWagmiClient] = useState<any>();
@@ -61,12 +62,15 @@ function MyApp({ Component, pageProps }: AppProps) {
   }, []);
 
   return <>
-  <link rel="stylesheet" href="https://rsms.me/inter/inter.css"></link>
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css"></link>
     {wagmiClient ? (
       <WagmiConfig client={wagmiClient}>
         <RainbowKitProvider chains={chains}>
-          <Component {...pageProps} />
+          <Layout>
+            <Component {...pageProps} />
+          </Layout>
         </RainbowKitProvider>
+
       </WagmiConfig>
     ) : (
       <>Connecting to Ethereum clients...</>

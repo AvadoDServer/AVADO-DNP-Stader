@@ -21,7 +21,12 @@ import NavBar from '../components/NavBar';
 
 const Home: NextPage = () => {
     return (
-        <StaderCommandField />
+        <>
+            <p>
+                List of validators
+            </p>
+            <button className="button">Add validator</button>
+        </>
     )
 }
 
