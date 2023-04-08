@@ -12,12 +12,13 @@ import {
 import { Disclosure, Menu, Transition } from '@headlessui/react'
 import axios from "axios";
 import { server_config } from '../server_config';
-import { ValidatorInfo, useValidators } from '../hooks/useValidators';
-import Spinner from '../components/Spinner';
 import NetworkBanner from '../components/NetworkBanner';
 import SyncStatusTag from '../components/SyncStatusTag';
 import JSONbig from "json-bigint";
 import { nodeSyncProgressResponseType } from '../types';
+
+import { useStaderStatus } from "../lib/status"
+import { node } from 'prop-types';
 
 const Home: NextPage = () => {
 
@@ -25,7 +26,8 @@ const Home: NextPage = () => {
     const [bcClient, setBcClient] = useState<string>();
     const [network, setNetwork] = useState<"goerli" | "mainnet" | "gnosis">();
 
-    const { validators, error: validators_error } = useValidators()
+    const { nodeSyncProgressStatus, fetchNodeSyncProgressStatus, nodeStatus, fetchNodeStatus } = useStaderStatus()
+
 
     const title = "Avado: Set withdrawal credentials (Shapella update)"
 
@@ -44,27 +46,16 @@ const Home: NextPage = () => {
             });
     }, []);
 
-    const [nodeSyncStatus, setNodeSyncStatus] = useState<nodeSyncProgressResponseType>();
-    const updateNodeSyncStatus = () => rpdDaemon("node sync", (data) => setNodeSyncStatus(data));
-
-    const rpdDaemon = async (command: string, callback: (data: any) => void, error?: (error: any) => void) => {
-        await axios.post(`${server_config.monitor_url}/rpd`, { command: command }, { timeout: 5 * 60 * 1000 }).then((res) => {
-            const data = JSONbig.parse(res.data);
-            console.log(`rocketpoold api ${command}: ` + res.data);
-            callback(data);
-        }).catch(e => { if (error) error(e) })
-    }
-
     useEffect(() => {
-        updateNodeSyncStatus();
-    }, []); // eslint-disable-line
+        fetchNodeSyncProgressStatus();
+        fetchNodeStatus();
 
-    useEffect(() => {
         const interval = setInterval(() => {
-            updateNodeSyncStatus();
+            fetchNodeSyncProgressStatus();            
         }, 60 * 1000); // 60 seconds refresh
         return () => clearInterval(interval);
     }, []);
+
     return (
         <div className="py-10 bg-white">
             <header>
@@ -81,11 +72,6 @@ const Home: NextPage = () => {
                                     <ServerIcon className="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
                                     {ecClient},{bcClient}
                                 </div>
-                                <div className="mt-2 flex items-center text-sm text-gray-500">
-                                    <PlayIcon className="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
-                                    {validators ? validators.length : "Loading..."} validators
-                                </div>
-
                                 <div className="mt-2 flex items-center text-sm text-gray-500">
                                     <AdjustmentsHorizontalIcon className="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
                                     <a href="http://my.ava.do/#/Packages/stader.avado.dnp.dappnode.eth/detail" className="text-sm leading-6 text-gray-600 hover:text-gray-900">
@@ -169,15 +155,12 @@ const Home: NextPage = () => {
                 </div>
             </header>
             <main className="bg-white">
-                
-                {nodeSyncStatus && (
-                    <>
-                        <SyncStatusTag progress={nodeSyncStatus.ecStatus.primaryEcStatus.syncProgress} label="ETH1" />&nbsp;
-                        <SyncStatusTag progress={nodeSyncStatus.bcStatus.primaryEcStatus.syncProgress} label="Beacon chain" />
-                    </>
-
-                )}
-
+                <>
+                    <SyncStatusTag progress={nodeSyncProgressStatus.ecStatus.primaryEcStatus.syncProgress} label={ecClient} />
+                    <SyncStatusTag progress={nodeSyncProgressStatus.bcStatus.primaryEcStatus.syncProgress} label={bcClient} />
+                    
+                    Node status: {nodeStatus.accountAddress}
+                </>
             </main>
             <footer className="bg-white">
                 <div className="mx-auto max-w-7xl overflow-hidden px-6 py-20 sm:py-24 lg:px-8">

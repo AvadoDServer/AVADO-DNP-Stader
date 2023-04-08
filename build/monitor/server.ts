@@ -187,7 +187,7 @@ const execute = (cmd: string) => {
 }
 
 const storeTxHash = (txHash: string) => {
-    const transactionsFile = "/.stader/data/transactions.json";
+    const transactionsFile = "/.stader/transactions.json";
     console.log(`Store hash ${txHash} to ${transactionsFile}`);
     try {
         const data = (fs.existsSync(transactionsFile)) ? jsonfile.readFileSync(transactionsFile) : { transactions: [] };
@@ -208,7 +208,7 @@ const rpd = (command: string) => {
         const data = JSON.parse(result);
         if (command.includes("wallet init") && "mnemonic" in data) {
             // store mnemonic to file
-            fs.writeFile("/.stader/data/mnemonic", data.mnemonic, (err:any) => console.log(err ? err : "Saved mnemoic"));
+            fs.writeFile("/.stader/mnemonic", data.mnemonic, (err:any) => console.log(err ? err : "Saved mnemoic"));
         }
         if ("txHash" in data) {
             storeTxHash(data.txHash);

@@ -116,18 +116,18 @@ export type ValidatorInfoType = {
 }
 
 // https://github.com/rocket-pool/smartnode/blob/master/shared/types/api/node.go#L278
-export type nodeSyncProgressResponseType = {
+export interface nodeSyncProgressResponseType {
   "status": "success" | "error",
   "error": string,
   "ecStatus": ClientManagerStatusType,
   "bcStatus": ClientManagerStatusType
 }
-export type ClientManagerStatusType = {
+export interface ClientManagerStatusType {
   "primaryEcStatus": ClientStatusType,
   "fallbackEnabled": boolean,
   "fallbackEcStatus": ClientStatusType
 }
-export type ClientStatusType = {
+export interface ClientStatusType {
   "isWorking": boolean
   "isSynced": boolean
   "syncProgress": number,

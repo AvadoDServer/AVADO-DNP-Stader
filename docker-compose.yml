@@ -7,7 +7,7 @@ services:
       args:
         RP_VERSION: v1.9.0
     volumes:
-      - 'data:/.stader/data'
+      - 'data:/.stader/'
     environment:
       - NETWORK=prater
       - EXECUTIONCLIENT=geth

@@ -98,8 +98,8 @@ native:
   ccHttpUrl: ${BCHTTPURL}
   consensusClient: ${CONSENSUSCLIENT}
   ecHttpUrl: ${ECHTTPURL}
-  validatorRestartCommand: ~/.stader/restart-vc.sh
-  validatorStopCommand: ~/.stader/stop-validator.sh
+  validatorRestartCommand: /stader/restart-vc.sh
+  validatorStopCommand: /stader/stop-validator.sh
 nethermind:
   additionalFlags: ""
   additionalModules: ""
@@ -151,9 +151,9 @@ root:
   version: v0.3.0-beta
 stadernode:
   archiveECUrl: ""
-  dataPath: ~/.stader/data
+  dataPath: /.stader/data
   manualMaxFee: "0"
-  network: prater
+  network: ${NETWORK}
   priorityFee: "2"
   projectName: stader
 teku:

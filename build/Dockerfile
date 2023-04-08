@@ -23,7 +23,7 @@ ARG RP_VERSION
 COPY --from=stader /go/bin/stader /go/bin/stader
 RUN wget https://dub.sh/linuxamd64 -O /go/bin/stader-cli; chmod u+x /go/bin/stader-cli
 
-RUN mkdir -p /.stader
+RUN mkdir -p /stader
 
 RUN apt-get -y update && apt-get -y upgrade && apt-get -y install \
     gettext\
@@ -45,13 +45,13 @@ RUN curl https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash 
 COPY --from=builder /usr/src/app/wizard/out /usr/local/wizard
 COPY --from=builder /usr/src/monitor/ /usr/local/monitor
 
-COPY startRpNode.sh /.stader
+COPY startStaderNode.sh /stader
 
-COPY user-settings.template /.stader
-COPY restart-validator.sh /.stader/scripts/restart-vc.sh
-RUN chmod a+x /.stader/startRpNode.sh /.stader/scripts/restart-vc.sh
-RUN ln -sf /.stader/scripts/restart-vc.sh /.stader/scripts/stop-vc.sh
-RUN ln -sf /.stader/scripts/restart-vc.sh /.stader/scripts/stop-validator.sh
+COPY user-settings.template /stader
+COPY restart-validator.sh /stader/scripts/restart-vc.sh
+RUN chmod a+x /stader/startStaderNode.sh /stader/scripts/restart-vc.sh
+RUN ln -sf /stader/scripts/restart-vc.sh /stader/scripts/stop-vc.sh
+RUN ln -sf /stader/scripts/restart-vc.sh /stader/scripts/stop-validator.sh
 
 RUN curl "https://iso.ava.do/my.ava.do.crt" --output /etc/nginx/my.ava.do.crt --silent
 RUN curl "https://iso.ava.do/my.ava.do.key" --output /etc/nginx/my.ava.do.key --silent

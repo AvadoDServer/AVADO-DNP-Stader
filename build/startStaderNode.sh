@@ -11,6 +11,7 @@ case ${NETWORK} in
     exit -1
     ;;
 esac
+
 case ${CONSENSUSCLIENT} in
 "teku" | "prysm") ;;
 
@@ -49,19 +50,21 @@ else
     BCJSONRPCURL="http://prysm-beacon-chain-${NETWORK}.my.ava.do:4000"
 fi
 
+# Make sure the data folder exists
+mkdir -p /.stader
+
 NETWORK="${NETWORK}" \
     CONSENSUSCLIENT="${CONSENSUSCLIENT}" \
     ECHTTPURL="${ECHTTPURL}" \
     ECWSURL="${ECWSURL}" \
     BCHTTPURL="${BCHTTPURL}" \
+    NETWORK="${NETWORK}" \
     BCJSONRPCURL="${BCJSONRPCURL}" \
-    envsubst < /.stader/user-settings.template >/.stader/user-settings.yml
+    envsubst < /stader/user-settings.template > /.stader/user-settings.yml
 
-# Make sure the data folder exists
-mkdir -p /.stader/data
 
 # Create folder for rewards trees
-mkdir -p /.stader/rewards-trees/
+# mkdir -p /.stader/rewards-trees/
 
 # Start stader node daemon
-exec /go/bin/stader -m 0.0.0.0 -r 9102 node
+exec /go/bin/stader node

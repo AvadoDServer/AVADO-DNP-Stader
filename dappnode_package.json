@@ -9,7 +9,7 @@
   "autoupdate": true,
   "image": {
     "volumes": [
-      "data:/.stader/data"
+      "data:/.stader"
     ],
     "environment": [
       "NETWORK=prater",

@@ -2,8 +2,14 @@ import { readFileSync } from "fs";
 
 const localdev = false;
 
+const network = () => {
+    var env_network = process.env.NETWORK ?? "goerli" // use goerli by default
+    if (env_network === "prater") env_network = "goerli" // use goerli if env variable is set to prater
+    return env_network
+}
+
 export const server_config = {
-    network: localdev ? "goerli" : process.env.NETWORK ?? "goerli", // either "goerli" or "mainnet"
+    network:  network(),
     name: "stader",
     https_options: localdev ? {} : {
         key: readFileSync('/etc/nginx/my.ava.do.key'),
