@@ -135,15 +135,6 @@ export interface ClientStatusType {
   "error": string
 }
 
-//https://github.com/rocket-pool/smartnode/blob/master/shared/types/api/wallet.go
-export type walletStatusType = {
-  "status": "success" | "error",
-  "error": string,
-  "passwordSet": boolean,
-  "walletInitialized": boolean,
-  "accountAddress": string
-}
-
 // https://github.com/rocket-pool/smartnode/blob/master/shared/types/api/network.go#L18
 export type rplPriceDataType = {
   "status": string,
@@ -164,4 +155,13 @@ export type nodeFeeType = {
   "minNodeFee": number
   "targetNodeFee": number
   "maxNodeFee": number
+}
+
+// https://github.com/stader-labs/stader-node-v1.1/blob/beta/shared/types/api/wallet.go
+export interface walletStatusType {
+  status: "success" | "error",
+  error: string,
+  passwordSet: boolean,
+	walletInitialized: boolean,
+	accountAddress: string
 }

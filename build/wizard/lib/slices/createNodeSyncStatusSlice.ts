@@ -1,6 +1,6 @@
 import { StateCreator } from "zustand";
 import { nodeSyncProgressResponseType } from "../../types";
-import { server_config } from "../../server_config";
+import { staderCommand } from "../staderDaemon"
 
 export interface NodeSyncProgressSlice {
     nodeSyncProgressStatus: nodeSyncProgressResponseType;
@@ -49,21 +49,5 @@ export const createNodeSyncProgressSlice: StateCreator<NodeSyncProgressSlice> = 
         }
     },
 
-    fetchNodeSyncProgressStatus: async () => {
-        const response = await window.fetch(`${server_config.monitor_url}/rpd`, {
-            method: 'POST',
-            headers: {
-                'content-type': 'application/json;charset=UTF-8',
-            },
-            body: JSON.stringify({
-                command: "node sync"
-            }),
-        })
-
-        const result = await response.json()
-        console.log("result", result)
-
-        set({ nodeSyncProgressStatus: JSON.parse(result) })
-
-    },
+    fetchNodeSyncProgressStatus: async () => set({ nodeSyncProgressStatus: await staderCommand("node sync") })
 })

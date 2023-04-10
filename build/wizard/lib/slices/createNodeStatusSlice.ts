@@ -1,7 +1,6 @@
 import { StateCreator } from "zustand";
 import { nodeStatusType } from "../../types";
-import { server_config } from "../../server_config";
-
+import { staderCommand } from "../staderDaemon"
 export interface NodeStatusSlice {
     nodeStatus: nodeStatusType;
     fetchNodeStatus: () => void;
@@ -27,21 +26,6 @@ export const createNodeStatusSlice: StateCreator<NodeStatusSlice> = (set) => ({
             "ethx": BigInt(0)
         },
         "validatorInfos": [],
-    }
-    ,
-    fetchNodeStatus: async () => {
-        console.log("Fetching node status")
-        const response = await window.fetch(`${server_config.monitor_url}/rpd`, {
-            method: 'POST',
-            headers: {
-                'content-type': 'application/json;charset=UTF-8',
-            },
-            body: JSON.stringify({
-                command: "node status"
-            }),
-        })
-        const result = await response.json()
-
-        set({ nodeStatus: JSON.parse(result) })
     },
+    fetchNodeStatus: async () => set({ nodeStatus: await staderCommand("node status") })
 })

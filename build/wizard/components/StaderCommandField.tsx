@@ -1,5 +1,5 @@
 import React from "react";
-import { server_config } from "../server_config";
+import { staderCommandRaw } from "../lib/staderDaemon"
 
 const StaderCommandField = () => {
 
@@ -11,16 +11,7 @@ const StaderCommandField = () => {
         if (command) {
             setRunButtonEnabled(false)
 
-            const response = await window.fetch(`${server_config.monitor_url}/rpd`, {
-                method: 'POST',
-                headers: {
-                    'content-type': 'application/json;charset=UTF-8',
-                },
-                body: JSON.stringify({ command }),
-            })
-            const result = await response.json()
-            console.log(result)
-
+            const result = await staderCommandRaw(command)
             try {
                 setResult(JSON.stringify(JSON.parse(result), null, 2))
             } catch {
