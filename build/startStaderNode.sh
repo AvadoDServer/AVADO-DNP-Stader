@@ -43,7 +43,11 @@ else
 fi
 
 if [ "${CONSENSUSCLIENT}" = "teku" ]; then
-    BCHTTPURL="http://teku.my.ava.do:5051"
+    if [ "${NETWORK}" = "prater" ]; then
+        BCHTTPURL="http://teku-prater.my.ava.do:5051"
+    else
+        BCHTTPURL="http://teku.my.ava.do:5051"
+    fi
     BCJSONRPCURL=""
 else
     BCHTTPURL="http://prysm-beacon-chain-${NETWORK}.my.ava.do:3500"
