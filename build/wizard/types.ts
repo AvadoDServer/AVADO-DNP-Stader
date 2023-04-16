@@ -76,14 +76,14 @@ export type nodeStatusType = {
   "operatorId": number,
   "operatorName": string,
   "operatorRewardAddress": string,
-  "operatorRewardInETH": BigInt,
-  "depositedSdCollateral": BigInt,
-  "sdCollateralWorthValidators": BigInt,
+  "operatorRewardInETH": bigint,
+  "depositedSdCollateral": bigint,
+  "sdCollateralWorthValidators": bigint,
   "registered": boolean,
   "accountBalances": {
-    "eth": BigInt,
-    "sd": BigInt,
-    "ethx": BigInt
+    "eth": bigint,
+    "sd": bigint,
+    "ethx": bigint
   },
   "validatorInfos": ValidatorInfoType[],
 }
@@ -109,10 +109,10 @@ export type ValidatorInfoType = {
   "PreDepositSignature": string,
   "DepositSignature": string,
   "WithdrawVaultAddress": string,
-  "OperatorId": BigInt,
-  "InitialBondEth": BigInt,
-  "DepositTime": BigInt,
-  "WithdrawnTime": BigInt
+  "OperatorId": bigint,
+  "InitialBondEth": bigint,
+  "DepositTime": bigint,
+  "WithdrawnTime": bigint
 }
 
 // https://github.com/rocket-pool/smartnode/blob/master/shared/types/api/node.go#L278

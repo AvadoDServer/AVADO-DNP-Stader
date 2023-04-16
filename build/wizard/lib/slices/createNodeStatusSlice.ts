@@ -16,14 +16,14 @@ export const createNodeStatusSlice: StateCreator<NodeStatusSlice> = (set) => ({
         "operatorId": 0,
         "operatorName": "",
         "operatorRewardAddress": "",
-        "operatorRewardInETH": BigInt(0),
-        "depositedSdCollateral": BigInt(0),
-        "sdCollateralWorthValidators": BigInt(0),
+        "operatorRewardInETH": 0n,
+        "depositedSdCollateral": 0n,
+        "sdCollateralWorthValidators": 0n,
         "registered": false,
         "accountBalances": {
-            "eth": BigInt(0),
-            "sd": BigInt(0),
-            "ethx": BigInt(0)
+            "eth": 0n,
+            "sd": 0n,
+            "ethx": 0n
         },
         "validatorInfos": [],
     },

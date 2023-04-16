@@ -85,7 +85,6 @@ const InitWallet = ({ onFinished }: Props) => {
             <h1 className="text-base font-semibold leading-7 text-gray-900">Init wallet</h1>
             {initialWalletStatus && !initialWalletStatus.walletInitialized && (
                 <div className="space-y-12">
-                    {/* <>{walletStatus.accountAddress}</> */}
                     <div className="border-b border-gray-900/10 pb-12">
 
                         {(!walletStatus.accountAddress || walletStatus.accountAddress === "0x0000000000000000000000000000000000000000") ? (
