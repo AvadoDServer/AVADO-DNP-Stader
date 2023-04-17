@@ -10,5 +10,6 @@ const get = (api_url: string) => {
 export function useNetwork() {
     const api_url: string = `${server_config.monitor_url}/network`;
     const { data, error } = get(api_url)
-    return { network: data as networkType, error: error };
+    const network: networkType = data?.replace("goerli","prater") ?? "mainnet"
+    return { network, error };
 }

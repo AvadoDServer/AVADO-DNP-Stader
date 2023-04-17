@@ -25,27 +25,9 @@ import { networkType } from '../types';
 
 //     
 
-//     etherscanTransactionUrl(txHash: string, text: string) {
-//         return <a target="_blank" rel="noopener noreferrer" href={this.etherscanBaseUrl + "/tx/" + txHash}>{text ? text : txHash}</a>;
-//     }
-
-//     rocketscanUrl(path:string, child: React.ReactNode) {
-//         const praterPrefix = (this.network === "prater") ? "prater." : ""
-//         return <a target="_blank" rel="noopener noreferrer" href={"https://" + praterPrefix + "rocketscan.io" + path} >{child}</a>
-//     }
-
-
-
-//     wsProvider() {
-//         return ({
-//             "prater": 'ws://goerli-geth.my.ava.do:8546',
-//             "mainnet": 'ws://ethchain-geth.my.ava.do:8546',
-//         })[this.network] || 'ws://ethchain-geth.my.ava.do:8546'
-//     }
-// }
-
-// export default Utils
-
+export function etherscanTransactionUrl(network: networkType, txHash: string, text: string) {
+    return <a target="_blank" rel="noopener noreferrer" href={etherscanBaseUrl(network) + "/tx/" + txHash}>{text ? text : txHash}</a>;
+}
 
 export function displayAsETH(number: string, fractionDigits?: number) {
     if (!number)
@@ -66,6 +48,13 @@ export const etherscanBaseUrl = (network: networkType) => ({
     "prater": "https://goerli.etherscan.io",
     "mainnet": "https://etherscan.io",
 })[network];
+
+export function wsProvider(network: networkType) {
+    return ({
+        "prater": 'ws://goerli-geth.my.ava.do:8546',
+        "mainnet": 'ws://ethchain-geth.my.ava.do:8546',
+    })[network]
+}
 
 export function etherscanAddressUrl(network: networkType, address: string, text?: string) {
     return <a target="_blank" rel="noopener noreferrer" href={etherscanBaseUrl(network) + "/address/" + address}>{text ? text : address}</a>;

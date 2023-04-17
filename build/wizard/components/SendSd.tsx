@@ -22,6 +22,7 @@ const SendSD = ({ }: Props) => {
 
     const amount = 640
 
+    // https://goerli.etherscan.io/address/0x0406f539f24be69baa8b88ed6eabedb7b3cfdc60#code
     const SD_TOKEN_CONTRACT = '0x0406f539f24be69baa8b88ed6eabedb7b3cfdc60';
 
     const {

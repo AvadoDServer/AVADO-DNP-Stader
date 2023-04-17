@@ -24,10 +24,16 @@ const FundWallet = ({ onFinished }: Props) => {
     const ethBalance = BigInt(nodeStatus.accountBalances.eth)
     const sdBalance = BigInt(nodeStatus.accountBalances.sd)
 
+    const minEthtakeWei: bigint = BigInt("4000000000000000000")
     const minSDStakeWei: bigint = BigInt("640000000000000000000")
     const maxSDStakeWei: bigint = minSDStakeWei
     const minSDStake = 640
     const maxSDStake = 640
+
+    useEffect(() => {
+        if (nodeStatus && ethBalance >= minEthtakeWei && sdBalance >= minSDStakeWei)
+            onFinished()
+    }, [nodeStatus]);
 
     return (
         <>

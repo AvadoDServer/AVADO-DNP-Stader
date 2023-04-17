@@ -11,6 +11,8 @@ import {
 } from '@heroicons/react/20/solid'
 import InitWallet from '../components/InitWallet';
 import FundWallet from '../components/FundWallet';
+import RegisterNode from '../components/RegisterNode';
+import { useStaderStatus } from '../lib/status';
 
 
 const Node: NextPage = () => {
@@ -29,6 +31,7 @@ const Node: NextPage = () => {
   const INIT = steps[0]
   const FUND = steps[1]
   const REGISTER = steps[2]
+  const FINISHED = { id: 4, name: 'Finished' }
 
   const [currentStep, setCurrentStep] = useState<step>(INIT);
 
@@ -39,6 +42,13 @@ const Node: NextPage = () => {
       return "upcoming"
     return "complete"
   }
+
+  const { nodeStatus, walletStatus, fetchWalletStatus, fetchNodeStatus } = useStaderStatus()
+
+  useEffect(() => {
+    if (nodeStatus && nodeStatus.registered)
+      setCurrentStep(FINISHED)
+  }, [nodeStatus]);
 
   return (
     <>
@@ -97,14 +107,42 @@ const Node: NextPage = () => {
           ))}
         </ol>
       </nav>
-      <div>
-        {currentStep.id === INIT.id && (
-          <InitWallet onFinished={() => setCurrentStep(FUND)} />
-        )}
-        {currentStep.id === FUND.id && (
-          <FundWallet onFinished={() => setCurrentStep(REGISTER)} />
-        )}
-      </div>
+      {currentStep.id !== FINISHED.id && (
+        <div>
+          {currentStep.id === INIT.id && (
+            <InitWallet onFinished={() => setCurrentStep(FUND)} />
+          )}
+          {currentStep.id === FUND.id && (
+            <FundWallet onFinished={() => setCurrentStep(REGISTER)} />
+          )}
+          {currentStep.id === REGISTER.id && (
+            <RegisterNode onFinished={() => setCurrentStep(FINISHED)} />
+          )}
+        </div>
+      )}
+      {currentStep.id === FINISHED.id && (
+        <div>
+          <ul>
+            <li>
+              Node name: {nodeStatus.operatorName}
+            </li>
+            <li>
+              Node address: {nodeStatus.accountAddressFormatted}
+            </li>
+            <li>
+              Node id: {nodeStatus.operatorId}
+            </li>
+            <li>
+              Node reward address: {nodeStatus.operatorRewardAddress}
+            </li>
+            <li>
+              Node status: {nodeStatus.status}
+            </li>
+          </ul>
+        </div>
+
+      )}
+
     </>
   )
 }
