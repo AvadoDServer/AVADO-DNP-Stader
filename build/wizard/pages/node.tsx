@@ -13,6 +13,7 @@ import InitWallet from '../components/InitWallet';
 import FundWallet from '../components/FundWallet';
 import RegisterNode from '../components/RegisterNode';
 import { useStaderStatus } from '../lib/status';
+import { displayAsETH } from '../utils/utils';
 
 
 const Node: NextPage = () => {
@@ -136,7 +137,10 @@ const Node: NextPage = () => {
               Node reward address: {nodeStatus.operatorRewardAddress}
             </li>
             <li>
-              Node status: {nodeStatus.status}
+              Wallet: {displayAsETH(nodeStatus.accountBalances.eth.toString(),4)} ETH
+            </li>
+            <li>
+              Validators: {nodeStatus.numberOfValidatorsRegistered || 0}  / {nodeStatus.sdCollateralWorthValidators.toString()}
             </li>
           </ul>
         </div>

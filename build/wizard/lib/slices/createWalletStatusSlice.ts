@@ -1,6 +1,6 @@
 import { StateCreator } from "zustand";
 import { walletStatusType } from "../../types";
-import { staderCommandRaw, staderCommand } from "../staderDaemon"
+import { staderCommand } from "../staderDaemon"
 
 export interface WalletStatusSlice {
     walletStatus: walletStatusType;

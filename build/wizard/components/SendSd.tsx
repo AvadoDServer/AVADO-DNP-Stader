@@ -17,13 +17,14 @@ interface Props {
 
 const SendSD = ({ }: Props) => {
 
-    const { walletStatus, fetchNodeStatus } = useStaderStatus()
+    const { walletStatus, contractInfo } = useStaderStatus()
     const { network } = useNetwork()
 
     const amount = 640
 
+
     // https://goerli.etherscan.io/address/0x0406f539f24be69baa8b88ed6eabedb7b3cfdc60#code
-    const SD_TOKEN_CONTRACT = '0x0406f539f24be69baa8b88ed6eabedb7b3cfdc60';
+    const SD_TOKEN_CONTRACT = contractInfo.sdToken;
 
     const {
         config,
@@ -45,10 +46,10 @@ const SendSD = ({ }: Props) => {
 
     return (
         <div>
-            <button 
-                            className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+            <button
+                className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
 
-            disabled={!write || isLoading} onClick={() => write!()}>
+                disabled={!write || isLoading} onClick={() => write!()}>
                 {isLoading ? 'Sending...' : `Send ${amount} SD`}
             </button>
             {isSuccess && (

@@ -1,3 +1,5 @@
+import { Address } from "wagmi"
+
 export type networkType = "prater" | "mainnet"
 
 export type consusClientType = "teku" | "prysm"
@@ -162,6 +164,19 @@ export interface walletStatusType {
   status: "success" | "error",
   error: string,
   passwordSet: boolean,
-	walletInitialized: boolean,
-	accountAddress: string
+  walletInitialized: boolean,
+  accountAddress: string
+}
+
+export interface contractsInfoType {
+  status: "success" | "error",
+  error: string,
+  network: number,
+  beaconDepositContract: Address,
+  beaconNetwork: number,
+  permissionlessNodeRegistry: Address,
+  vaultFactory: Address,
+  ethxToken: Address,
+  sdToken: Address,
+  sdCollateralContract: Address
 }

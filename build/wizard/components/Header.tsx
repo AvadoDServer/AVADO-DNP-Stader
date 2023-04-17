@@ -25,7 +25,7 @@ const Header = () => {
     const [bcClient, setBcClient] = useState<string>();
     const [network, setNetwork] = useState<"goerli" | "mainnet" | "gnosis">();
 
-    const { nodeSyncProgressStatus, fetchNodeSyncProgressStatus, nodeStatus, fetchNodeStatus } = useStaderStatus()
+    const { nodeSyncProgressStatus, fetchNodeSyncProgressStatus, fetchContractsInfo, fetchNodeStatus } = useStaderStatus()
 
     const title = "Avado Stader"
 
@@ -45,9 +45,10 @@ const Header = () => {
     }, []);
 
     useEffect(() => {
-        fetchNodeSyncProgressStatus();
-        fetchNodeStatus();
-
+        fetchNodeSyncProgressStatus()
+        fetchNodeStatus()
+        fetchContractsInfo()
+    
         const interval = setInterval(() => {
             fetchNodeSyncProgressStatus();
         }, 60 * 1000); // 60 seconds refresh

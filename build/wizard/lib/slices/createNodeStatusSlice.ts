@@ -1,6 +1,7 @@
 import { StateCreator } from "zustand";
 import { nodeStatusType } from "../../types";
 import { staderCommand } from "../staderDaemon"
+
 export interface NodeStatusSlice {
     nodeStatus: nodeStatusType;
     fetchNodeStatus: () => void;
@@ -16,14 +17,14 @@ export const createNodeStatusSlice: StateCreator<NodeStatusSlice> = (set) => ({
         "operatorId": 0,
         "operatorName": "",
         "operatorRewardAddress": "",
-        "operatorRewardInETH": 0n,
-        "depositedSdCollateral": 0n,
-        "sdCollateralWorthValidators": 0n,
+        "operatorRewardInETH": BigInt(0),
+        "depositedSdCollateral": BigInt(0),
+        "sdCollateralWorthValidators": BigInt(0),
         "registered": false,
         "accountBalances": {
-            "eth": 0n,
-            "sd": 0n,
-            "ethx": 0n
+            "eth": BigInt(0),
+            "sd": BigInt(0),
+            "ethx": BigInt(0)
         },
         "validatorInfos": [],
     },
