@@ -67,12 +67,22 @@ const RegisterNode = ({ onFinished }: Props) => {
     }, [waitingForTx]);
 
     const registerNode = () => {
-        staderCommand(`node register ${name} ${accountAddress} true}`).then((data: any) => {
+        staderCommand(`node register "${name}" "${accountAddress}" true}`).then((data: any) => {
             // "data": "{\"status\":\"success\",\"error\":\"\",\"txHash\":\"0x0691e410226264f411ee7a66285a78ec5c5776352cd038f66fb651ba10365381\"}\n",
-            fetchNodeStatus();
-            setTxHash(data.txHash);
-            setWaitingForTx(true);
-            setButtonDisabled(true);
+            if (data.status === "error") {
+                setError(data.error)
+                setTxHash("");
+                setWaitingForTx(false);
+                setButtonDisabled(false);
+            } else {
+                setError("")
+                fetchNodeStatus();
+                setTxHash(data.txHash);
+                setWaitingForTx(true);
+                setButtonDisabled(true);
+            }
+        }).catch(e => {
+            console.log(e)
         })
 
     }

@@ -128,7 +128,7 @@ const Node: NextPage = () => {
               Node name: {nodeStatus.operatorName}
             </li>
             <li>
-              Node address: {nodeStatus.accountAddressFormatted}
+              Node address: {nodeStatus.accountAddressFormatted || nodeStatus.accountAddress }
             </li>
             <li>
               Node id: {nodeStatus.operatorId}

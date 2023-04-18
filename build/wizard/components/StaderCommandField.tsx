@@ -30,7 +30,7 @@ const StaderCommandField = () => {
 
     return (
         <>
-            <h2 className="title is-3 has-text-white">Run a manual RPD command</h2>
+            <h2 className="title is-3 has-text-white">Run a manual Stader API command</h2>
             <div className="w-full max-w-sm">
                 <div className="flex items-center py-2">
                     <label className="label">Stader API command:</label>

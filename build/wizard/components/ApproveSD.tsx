@@ -73,7 +73,7 @@ const ApproveSD = ({ }: Props) => {
 
     return (
         <div className="">
-            <h4 className="title is-4 has-text-white">1. Approve RPL</h4>
+            <h4 className="title is-4 has-text-white">1. Approve SD</h4>
             {!rplAllowanceOK && (
                 <>
                     <p>Approve the staking contract to use the SD in your hot-wallet.</p>

@@ -1,38 +1,15 @@
 import React from 'react';
 import web3 from "web3";
 import { networkType } from '../types';
-// class Utils {
-//     network: "prater" | "mainnet";
-//     beaconChainBaseUrl : string;
-//     etherscanBaseUrl: string;
-
-//     constructor(network: "prater" | "mainnet") {
-//         this.network = network;
-//         this.beaconChainBaseUrl = ({
-//             "prater": "https://prater.beaconcha.in",
-//             "mainnet": "https://beaconcha.in",
-//         })[this.network];
-
-//         this.etherscanBaseUrl = ({
-//             "prater": "https://goerli.etherscan.io",
-//             "mainnet": "https://etherscan.io",
-//         })[this.network];
-//     }
-
-//     beaconchainUrl(validatorPubkey:string, text:string) {
-//         return <a target="_blank" rel="noopener noreferrer" href={this.beaconChainBaseUrl + "/validator/" + validatorPubkey + "#rocketpool"}>{text ? text : validatorPubkey}</a>;
-//     }
-
-//     
 
 export function etherscanTransactionUrl(network: networkType, txHash: string, text: string) {
     return <a target="_blank" rel="noopener noreferrer" href={etherscanBaseUrl(network) + "/tx/" + txHash}>{text ? text : txHash}</a>;
 }
 
-export function displayAsETH(number: string, fractionDigits?: number) {
-    if (!number)
+export function displayAsETH(num: string | bigint, fractionDigits?: number) {
+    if (!num)
         return 0;
-    const result = web3.utils.fromWei(number, 'ether');
+    const result = web3.utils.fromWei(num.toString(), 'ether');
     if (fractionDigits)
         return parseFloat(result).toFixed(fractionDigits)
     return result
@@ -47,6 +24,16 @@ export function displayAsPercentage(number: string) {
 export const etherscanBaseUrl = (network: networkType) => ({
     "prater": "https://goerli.etherscan.io",
     "mainnet": "https://etherscan.io",
+})[network];
+
+
+export const beaconchainUrl = (network: networkType, validatorPubkey: string, text?: string) => {
+    return <a target="_blank" rel="noopener noreferrer" href={beaconChainBaseUrl(network) + "/validator/" + validatorPubkey + "#rocketpool"}>{text ? text : validatorPubkey}</a>;
+}
+
+const beaconChainBaseUrl = (network: networkType) => ({
+    "prater": "https://prater.beaconcha.in",
+    "mainnet": "https://beaconcha.in",
 })[network];
 
 export function wsProvider(network: networkType) {

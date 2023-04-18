@@ -1,6 +1,10 @@
 import { server_config } from "../server_config";
 
-const DownloadBackup = ({ description }) => {
+interface Props {
+    description ?: string
+}
+
+const DownloadBackup = ({ description } : Props) => {
 
     const downloadBackup = () => {
         window.location.href = `${server_config.monitor_url}/rocket-pool-backup.zip`;

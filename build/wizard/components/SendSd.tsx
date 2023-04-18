@@ -17,7 +17,7 @@ interface Props {
 
 const SendSD = ({ }: Props) => {
 
-    const { walletStatus, contractInfo } = useStaderStatus()
+    const { walletStatus, contractInfo, fetchNodeStatus } = useStaderStatus()
     const { network } = useNetwork()
 
     const amount = 640
@@ -43,6 +43,11 @@ const SendSD = ({ }: Props) => {
     const { isLoading, isSuccess } = useWaitForTransaction({
         hash: data?.hash,
     })
+
+    // refresh node after deposit
+    useEffect(() => {
+        fetchNodeStatus()
+    }, [isSuccess]);
 
     return (
         <div>
