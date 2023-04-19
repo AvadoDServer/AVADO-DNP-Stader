@@ -5,7 +5,7 @@ services:
     build:
       context: ./build
       args:
-        RP_VERSION: v1.9.0
+        STADER_VERSION: v1.9.0
     volumes:
       - 'data:/.stader/'
     environment:

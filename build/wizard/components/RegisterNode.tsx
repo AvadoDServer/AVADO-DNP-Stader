@@ -1,19 +1,11 @@
 import web3 from "web3";
 
 import Spinner from "./Spinner";
-import ClickToCopy from "./ClickToCopy";
-import { rplPriceDataType, nodeStatusType } from "../types"
 import { useEffect, useState } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
-import { walletStatusType } from "../types";
 import { useStaderStatus } from "../lib/status";
 import { staderCommand } from "../lib/staderDaemon"
-import { displayAsETH, etherscanAddressUrl, etherscanTransactionUrl, wsProvider } from "../utils/utils"
+import { etherscanTransactionUrl, wsProvider } from "../utils/utils"
 import { useNetwork } from "../hooks/useNetwork";
-import { ConnectButton } from '@rainbow-me/rainbowkit';
-import Send4Eth from "./Send4Eth";
-import SendSD from "./SendSd";
 import { useAccount } from "wagmi";
 
 interface Props {

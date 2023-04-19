@@ -28,7 +28,7 @@ const StakeSD = ({ }: Props) => {
     const { network } = useNetwork()
 
 
-    const [rplStakeButtonDisabled, setRplStakeButtonDisabled] = React.useState(true);
+    const [sdStakeButtonDisabled, setSdStakeButtonDisabled] = React.useState(true);
     const [feedback, setFeedback] = React.useState("");
     const [txHash, setTxHash] = React.useState();
     const [waitingForTx, setWaitingForTx] = React.useState(false);
@@ -42,7 +42,7 @@ const StakeSD = ({ }: Props) => {
 
     React.useEffect(() => {
 
-        setRplStakeButtonDisabled(true); //set default
+        setSdStakeButtonDisabled(true); //set default
 
         if (waitingForTx)
             return;
@@ -57,15 +57,14 @@ const StakeSD = ({ }: Props) => {
                 if (sdBalanceInWallet > 0n) {
                     console.log(`node can-node-deposit-sd ${sdBalanceInWallet.toString()}`);
                     staderCommand(`node can-node-deposit-sd ${sdBalanceInWallet.toString()}`).then((data: any) => {
-                        //{"status":"error","error":"Error getting transaction gas info: could not estimate gas limit: Could not estimate gas needed: execution reverted: Minipool count after deposit exceeds limit based on node RPL stake","canDeposit":false,"insufficientBalance":false,"insufficientRplStake":false,"invalidAmount":false,"unbondedMinipoolsAtMax":false,"depositDisabled":false,"inConsensus":false,"minipoolAddress":"0x0000000000000000000000000000000000000000","gasInfo":{"estGasLimit":0,"safeGasLimit":0}}
                         if (data.status === "error") {
                             if (sdBalanceInWallet > 0n) {
                                 setFeedback(data.error);
                             }
                         } else {
-                            // rpd says that I can stake - if I have enough in my wallet, enable button
+                            // stader says that I can stake - if I have enough in my wallet, enable button
                             setFeedback("");
-                            setRplStakeButtonDisabled(false);
+                            setSdStakeButtonDisabled(false);
                         }
                     });
                 }
@@ -116,7 +115,7 @@ const StakeSD = ({ }: Props) => {
                     <button
                         className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                         onClick={stakeSD}
-                        disabled={rplStakeButtonDisabled}>
+                        disabled={sdStakeButtonDisabled}>
                         Stake {sdBalanceInWallet ? displayAsETH(sdBalanceInWallet) + " " : ""} SD {waitingForTx ? <Spinner /> : ""}
                     </button>
                     <br />

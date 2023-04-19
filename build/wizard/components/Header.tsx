@@ -21,8 +21,8 @@ import NavBar from '../components/NavBar';
 
 const Header = () => {
 
-    const [ecClient, setEcClient] = useState<string>();
-    const [bcClient, setBcClient] = useState<string>();
+    const [ecClient, setEcClient] = useState<{name:string, url: string}>();
+    const [bcClient, setBcClient] = useState<{name:string, url: string}>();
     const [network, setNetwork] = useState<"goerli" | "mainnet" | "gnosis">();
 
     const { nodeSyncProgressStatus, fetchNodeSyncProgressStatus, fetchContractsInfo, fetchNodeStatus } = useStaderStatus()
@@ -30,13 +30,13 @@ const Header = () => {
     const title = "Avado Stader"
 
     useEffect(() => {
-        axios.get(`${server_config.monitor_url}/clients`)
+        axios.get(`${server_config.monitor_url}/bc-clients`)
             .then((res) => {
                 setBcClient(res.data[0])
             });
-        axios.get(`${server_config.monitor_url}/executionclients`)
+        axios.get(`${server_config.monitor_url}/ec-clients`)
             .then((res) => {
-                setEcClient(res.data[0].name)
+                setEcClient(res.data[0])
             });
         axios.get(`${server_config.monitor_url}/network`)
             .then((res) => {
@@ -69,7 +69,7 @@ const Header = () => {
                         <div className="mt-1 flex flex-col sm:mt-0 sm:flex-row sm:flex-wrap sm:space-x-6">
                             <div className="mt-2 flex items-center text-sm text-gray-500">
                                 <ServerIcon className="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
-                                {ecClient},{bcClient}
+                                {ecClient?.name},{bcClient?.name}
                             </div>
                             <div className="mt-2 flex items-center text-sm text-gray-500">
                                 <AdjustmentsHorizontalIcon className="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
@@ -81,11 +81,11 @@ const Header = () => {
                     </div>
                     <div className="mt-5 flex">
                         <span className="hidden sm:block">
-                            <SyncStatusTag progress={nodeSyncProgressStatus.ecStatus.primaryEcStatus.syncProgress} label={ecClient} />
+                            <SyncStatusTag progress={nodeSyncProgressStatus.ecStatus.primaryEcStatus.syncProgress} label={ecClient?.name} />
                         </span>
 
                         <span className="ml-3 hidden sm:block">
-                            <SyncStatusTag progress={nodeSyncProgressStatus.bcStatus.primaryEcStatus.syncProgress} label={bcClient} />
+                            <SyncStatusTag progress={nodeSyncProgressStatus.bcStatus.primaryEcStatus.syncProgress} label={bcClient?.name} />
                         </span>
                     </div>
                 </div>

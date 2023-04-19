@@ -2,7 +2,7 @@ import { server_config } from "./server_config";
 
 const network = server_config.network
 
-export const validator_url = (client: string) => {
+export const client_url = (client: string) => {
     switch (client) {
         case "prysm": switch (network) {
             case "goerli": return "eth2validator-prater.my.ava.do"
@@ -26,14 +26,16 @@ export const validator_url = (client: string) => {
 export const rest_url = (client: string) => {
     switch (client) {
         case "prysm": return `http://prysm-beacon-chain-${network.replace("goerli", "prater")}.my.ava.do:3500`
-        default: return `http://${validator_url(client)}:5051`
+        case "geth":
+        case "nethermind": return `http://${client_url(client)}:8545`
+        default: return `http://${client_url(client)}:5051`
     }
 }
 
 export const validatorAPI = (client: string) => {
     switch (client) {
-        case "prysm": return "http://" + validator_url(client) + ":7500"
-        case "teku": return `https://${validator_url(client)}:5052`
+        case "prysm": return "http://" + client_url(client) + ":7500"
+        case "teku": return `https://${client_url(client)}:5052`
     }
 }
 

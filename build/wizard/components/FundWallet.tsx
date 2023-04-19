@@ -1,11 +1,6 @@
 import ClickToCopy from "./ClickToCopy";
-import { rplPriceDataType, nodeStatusType } from "../types"
 import React, { useEffect } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
-import { walletStatusType } from "../types";
 import { useStaderStatus } from "../lib/status";
-import { staderCommand } from "../lib/staderDaemon"
 import { displayAsETH, etherscanAddressUrl } from "../utils/utils"
 import { useNetwork } from "../hooks/useNetwork";
 import { ConnectButton } from '@rainbow-me/rainbowkit';
@@ -57,7 +52,7 @@ const FundWallet = ({ onFinished }: Props) => {
                     <SendSD />
 
                     <p>Send a minimum of {minSDStake} SD to <ClickToCopy text={nodeStatus.accountAddress}>{etherscanAddressUrl(network, nodeStatus.accountAddress)}</ClickToCopy>
-                        <br />(maximum allowed stake is {maxSDStake} SD - the more you stake, the more you will earn. More details on the <a target="_blank" href="https://wiki.ava.do/en/tutorials/rocketpool">Avado Rocket Pool Wiki page</a> )
+                        <br />(maximum allowed stake is {maxSDStake} SD - the more you stake, the more you will earn. More details on the <a target="_blank" rel="noreferrer" href="https://docs.ava.do/packages/stader">Avado Stader Docs</a> )
                         <br />(All SD sent to this wallet will be used as your stake later - so please send exactly the desired stake amount)
                     </p>
 
@@ -72,9 +67,9 @@ const FundWallet = ({ onFinished }: Props) => {
                         </li>
 
                         <li><b>SD: </b>{(sdBalance < minSDStake) ?
-                            (<span className="tag is-danger ">{displayAsETH(sdBalance.toString())} RPL</span>)
+                            (<span className="tag is-danger ">{displayAsETH(sdBalance.toString())} SD</span>)
                             :
-                            (<span className="tag is-success ">{displayAsETH(sdBalance.toString())} RPL</span>)
+                            (<span className="tag is-success ">{displayAsETH(sdBalance.toString())} SD</span>)
                         }
                         </li>
                     </ul>

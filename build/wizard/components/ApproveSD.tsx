@@ -13,11 +13,11 @@ interface Props {
 }
 
 const ApproveSD = ({ }: Props) => {
-    const [rplApproveButtonDisabled, setRplApproveButtonDisabled] = useState(true);
+    const [sdApproveButtonDisabled, setSdApproveButtonDisabled] = useState(true);
     const [txHash, setTxHash] = useState();
     const [waitingForTx, setWaitingForTx] = useState(false);
     const [feedback, setFeedback] = useState("");
-    const [rplAllowanceOK, setRplAllowanceOK] = useState(false);
+    const [sdlAllowanceOK, setSdAllowanceOK] = useState(false);
 
     useEffect(() => {
         checkAllowance();
@@ -27,7 +27,7 @@ const ApproveSD = ({ }: Props) => {
 
 
     const checkAllowance = () => {
-        setRplApproveButtonDisabled(false);
+        setSdApproveButtonDisabled(false);
 
         staderCommand(`node deposit-sd-allowance`).then((data: any) => {
             if (data.status === "error") {
@@ -35,11 +35,11 @@ const ApproveSD = ({ }: Props) => {
             } else {
                 const allowance: bigint = BigInt(data.allowance)
                 if (allowance > 0) {
-                    setRplApproveButtonDisabled(true);
-                    setRplAllowanceOK(true);
+                    setSdApproveButtonDisabled(true);
+                    setSdAllowanceOK(true);
                 } else {
-                    setRplApproveButtonDisabled(false);
-                    setRplAllowanceOK(false);
+                    setSdApproveButtonDisabled(false);
+                    setSdAllowanceOK(false);
                 }
             }
         });
@@ -54,7 +54,7 @@ const ApproveSD = ({ }: Props) => {
             }
             setTxHash(data.approveTxHash);
             setWaitingForTx(true);
-            setRplApproveButtonDisabled(true);
+            setSdApproveButtonDisabled(true);
         })
     }
 
@@ -74,7 +74,7 @@ const ApproveSD = ({ }: Props) => {
     return (
         <div className="">
             <h4 className="title is-4 has-text-white">1. Approve SD</h4>
-            {!rplAllowanceOK && (
+            {!sdlAllowanceOK && (
                 <>
                     <p>Approve the staking contract to use the SD in your hot-wallet.</p>
                     <br />
@@ -82,7 +82,7 @@ const ApproveSD = ({ }: Props) => {
                         <button
                             className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                             onClick={approveSD}
-                            disabled={rplApproveButtonDisabled}>
+                            disabled={sdApproveButtonDisabled}>
                             Approve {waitingForTx ? <Spinner /> : ""}
                         </button>
                     </div>
@@ -91,7 +91,7 @@ const ApproveSD = ({ }: Props) => {
             {feedback && (
                 <p className="help is-danger">{feedback}</p>
             )}
-            {rplAllowanceOK && (
+            {sdlAllowanceOK && (
                 <span className="tag is-success">Approved <span><FontAwesomeIcon className="icon" icon={faCheck} /></span></span>
             )}
             {txHash && (

@@ -1,17 +1,16 @@
 import * as restify from "restify";
 import corsMiddleware from "restify-cors-middleware2"
-import axios, { Method, AxiosRequestHeaders } from "axios";
 import { SupervisorCtl } from "./SupervisorCtl";
 import { server_config } from "./server_config";
-import { assert } from "console";
-import { execSync } from "child_process"
-import { rest_url, validatorAPI, getAvadoPackageName, getTokenPathInContainer, getAvadoExecutionClientPackageName, validator_url } from "./urls";
+import { rest_url, validatorAPI, getAvadoPackageName, getTokenPathInContainer, getAvadoExecutionClientPackageName, client_url } from "./urls";
 import { DappManagerHelper } from "./DappManagerHelper";
 import { readFileSync } from "fs";
+import AdmZip from 'adm-zip';
+
+
 const autobahn = require('autobahn');
 const exec = require("child_process").exec;
 const fs = require('fs');
-const AdmZip = require("adm-zip");
 const jsonfile = require('jsonfile')
 
 const supported_beacon_chain_clients = ["prysm", "teku"];
@@ -128,18 +127,23 @@ const getInstalledClients = async () => {
     const dappManagerHelper = new DappManagerHelper(server_config.packageName, wampSession);
     const packages = await dappManagerHelper.getPackages();
 
-    const installed_clients = supported_beacon_chain_clients.filter(client => packages.includes(getAvadoPackageName(client, "beaconchain"))
-        && packages.includes(getAvadoPackageName(client, "validator"))
-    );
+    const installed_clients = supported_beacon_chain_clients
+        .filter(client => (packages.includes(getAvadoPackageName(client, "beaconchain"))
+            && packages.includes(getAvadoPackageName(client, "validator")))
+        )
+        .map(client => ({
+            name: client,
+            url: `http://${client_url(client)}`
+        }))
     return installed_clients;
 }
 
-server.get("/clients", async (req: restify.Request, res: restify.Response, next: restify.Next) => {
+server.get("/bc-clients", async (req: restify.Request, res: restify.Response, next: restify.Next) => {
     res.send(200, await getInstalledClients())
     next();
 })
 
-server.get("/executionclients", async (req: restify.Request, res: restify.Response, next: restify.Next) => {
+server.get("/ec-clients", async (req: restify.Request, res: restify.Response, next: restify.Next) => {
     const dappManagerHelper = new DappManagerHelper(server_config.packageName, wampSession);
     const packages = await dappManagerHelper.getPackages();
 
@@ -147,18 +151,19 @@ server.get("/executionclients", async (req: restify.Request, res: restify.Respon
 
     res.send(200, installed_clients.map(client => ({
         name: client,
-        api: `http://${validator_url(client)}:8545`
+        api: rest_url(client),
+        url: `http://${client_url(client)}`
     })))
     next();
 })
 
 
-server.post("/rpd", (req, res, next) => {
+server.post("/stader-api", (req, res, next) => {
     if (!req.body) {
         res.send(400, "not enough parameters");
         return next();
     } else {
-        rpd(req.body.command).then((stdout) => {
+        staderApiCommand(req.body.command).then((stdout) => {
             res.send(200, stdout);
             return next();
         }).catch((e) => {
@@ -168,21 +173,41 @@ server.post("/rpd", (req, res, next) => {
     }
 });
 
+const staderApiCommand = (command: string) => {
+    const cmd = `/go/bin/stader api ${command}`;
+    console.log(`Running ${cmd}`);
+
+    const executionPromise = execute(cmd);
+
+    executionPromise.then((result) => {
+        const data = JSON.parse(result);
+        if (command.includes("wallet init") && "mnemonic" in data) {
+            // store mnemonic to file
+            fs.writeFile("/.stader/mnemonic", data.mnemonic, (err: any) => console.log(err ? err : "Saved mnemoic"));
+        }
+        if ("txHash" in data) {
+            storeTxHash(data.txHash);
+        }
+    })
+
+    return executionPromise;
+}
+
 const execute = (cmd: string) => {
     return new Promise<string>((resolve, reject) => {
-        const child = exec(cmd, (error: Error, stdout: string|Buffer, stderr: string|Buffer) => {
-                if (error) {
-                    console.log(`error: ${error.message}`);
-                    return reject(error.message);
-                }
-                if (stderr) {
-                    console.log(`error: ${stderr}`);
-                    return reject(stderr);
-                }
-                return resolve(stdout.toString());
-           
+        const child = exec(cmd, (error: Error, stdout: string | Buffer, stderr: string | Buffer) => {
+            if (error) {
+                console.log(`error: ${error.message}`);
+                return reject(error.message);
+            }
+            if (stderr) {
+                console.log(`error: ${stderr}`);
+                return reject(stderr);
+            }
+            return resolve(stdout.toString());
+
         });
-        child.stdout.on('data', (data:any) => console.log(data.toString()));
+        child.stdout.on('data', (data: any) => console.log(data.toString()));
     });
 }
 
@@ -198,46 +223,24 @@ const storeTxHash = (txHash: string) => {
     }
 }
 
-const rpd = (command: string) => {
-    const cmd = `/go/bin/stader api ${command}`;
-    console.log(`Running ${cmd}`);
 
-    const executionPromise = execute(cmd);
+//backup
+const backupFileName = "stader-backup.zip";
+server.get("/" + backupFileName, (req: restify.Request, res: restify.Response, next: restify.Next) => {
+    res.setHeader("Content-Disposition", "attachment; " + backupFileName);
+    res.setHeader("Content-Type", "application/zip");
 
-    executionPromise.then((result) => {
-        const data = JSON.parse(result);
-        if (command.includes("wallet init") && "mnemonic" in data) {
-            // store mnemonic to file
-            fs.writeFile("/.stader/mnemonic", data.mnemonic, (err:any) => console.log(err ? err : "Saved mnemoic"));
+    const zip = new AdmZip();
+    zip.addLocalFolder("/.stader/", ".stader");
+    zip.toBuffer(
+        (buffer: Buffer) => {
+            res.setHeader("Content-Length", buffer.length);
+            res.end(buffer, "binary");
+            next();
         }
-        if ("txHash" in data) {
-            storeTxHash(data.txHash);
-        }
-    })
+    )
 
-    return executionPromise;
-}
-
-// //backup
-// const backupFileName = "stader-backup.zip";
-// server.get("/" + backupFileName, (req, res) => {
-//     res.setHeader("Content-Disposition", "attachment; " + backupFileName);
-//     res.setHeader("Content-Type", "application/zip");
-
-//     const zip = new AdmZip();
-//     zip.addLocalFolder("/.stader/data", "data");
-//     zip.toBuffer(
-//         (buffer, err) => {
-//             if (err) {
-//                 reject(err);
-//             } else {
-//                 res.setHeader("Content-Length", buffer.length);
-//                 res.end(buffer, "binary");
-//             }
-//         }
-//     )
-
-// });
+});
 
 // //restore
 // server.post('/restore-backup', (req, res, next) => {
@@ -253,7 +256,7 @@ const rpd = (command: string) => {
 
 //             // delete existing data folder (if it exists)
 //             fs.rmSync("/.stader/data", { recursive: true, force: true /* ignore if not exists */ });
-            
+
 //             // unzip
 //             const zip = new AdmZip(zipfilePath);
 //             zip.extractAllTo("/.stader/", /*overwrite*/ true);

@@ -72,8 +72,7 @@ const DepositETH = ({ }: Props) => {
     }, [waitingForTx, txHash, utils]);
 
     const depositEth = () => {
-        staderCommand(`node deposit ${ETHDepositAmount} ${salt} ${numValidators} ${submit}`).then((data: any) => {  //   rocketpool api node deposit amount min-fee salt use-credit-balance submit
-            //{"status":"success","error":"","txHash":"0x6c8958917414479763aaa65dbff4b00e52d9ef699d64dbd0827a45e1fe8aee38","minipoolAddress":"0xc43a2d435bd48bde1e000c07e89f3e6ebe9161d4","validatorPubkey":"ac9cb87a11fd8c55a9529108964786f11623717a6e3af0db3cd5fde2da5c6a7a4f89e52d13770ad6bc080de1b63427a1","scrubPeriod":3600000000000}
+        staderCommand(`node deposit ${ETHDepositAmount} ${salt} ${numValidators} ${submit}`).then((data: any) => { 
             if (data.status === "error") {
                 setFeedback(data.error);
             }
@@ -91,10 +90,7 @@ const DepositETH = ({ }: Props) => {
             <h4 className="title is-4 has-text-white">3. Deposit 4 ETH</h4>
 
             <>
-                {/* <p>The commission you will receive from other deposits is ?????.<br />
-                    For more info on this check the <a target="_blank" href="https://wiki.ava.do/en/tutorials/rocketpool">Avado Rocket Pool Wiki page</a></p>
-                <br /> */}
-                <div className="field">
+               <div className="field">
                     <button
                         className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                         onClick={depositEth} disabled={ethButtonDisabled}>Deposit 4 ETH {waitingForTx ? <Spinner /> : ""}</button>

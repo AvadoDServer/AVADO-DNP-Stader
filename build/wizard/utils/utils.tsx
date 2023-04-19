@@ -28,7 +28,7 @@ export const etherscanBaseUrl = (network: networkType) => ({
 
 
 export const beaconchainUrl = (network: networkType, validatorPubkey: string, text?: string) => {
-    return <a target="_blank" rel="noopener noreferrer" href={beaconChainBaseUrl(network) + "/validator/" + validatorPubkey + "#rocketpool"}>{text ? text : validatorPubkey}</a>;
+    return <a target="_blank" rel="noopener noreferrer" href={beaconChainBaseUrl(network) + "/validator/" + validatorPubkey}>{text ? text : validatorPubkey}</a>;
 }
 
 const beaconChainBaseUrl = (network: networkType) => ({

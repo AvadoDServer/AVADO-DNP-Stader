@@ -20,7 +20,7 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   useEffect(() => {
     const setupClient = async () => {
-      const data = await axios.get(`${server_config.monitor_url}/executionclients`).then((res) => res.data)
+      const data = await axios.get(`${server_config.monitor_url}/ec-clients`).then((res) => res.data)
       const clientRpcs = data.map((c: any) => c.api)
 
       const { chains, provider, webSocketProvider } = configureChains(

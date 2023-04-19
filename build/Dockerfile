@@ -1,4 +1,4 @@
-FROM node:18.15.0 as builder
+FROM node:16.15.0 as builder
 
 # build wizard
 WORKDIR /usr/src/app/wizard
@@ -18,14 +18,14 @@ FROM --platform=linux/amd64 staderdev/stader-node:v0.3.0-beta as stader
 ####### Main image
 
 FROM --platform=linux/amd64 node:16.15.0
-ARG RP_VERSION
+ARG STADER_VERSION
 
 COPY --from=stader /go/bin/stader /go/bin/stader
 RUN wget https://dub.sh/linuxamd64 -O /go/bin/stader-cli; chmod u+x /go/bin/stader-cli
 
 RUN mkdir -p /stader
 
-RUN apt-get -y update && apt-get -y upgrade && apt-get -y install \
+RUN apt-get -y clean && apt-get -y update && apt-get -y upgrade && apt-get -y install \
     gettext\
     jq \
     nginx \

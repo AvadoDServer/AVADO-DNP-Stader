@@ -1,7 +1,7 @@
 import { server_config } from "../server_config";
 
 export const staderCommandRaw = async (command: string) => {
-    const response = await window.fetch(`${server_config.monitor_url}/rpd`, {
+    const response = await window.fetch(`${server_config.monitor_url}/stader-api`, {
         method: 'POST',
         headers: { 'content-type': 'application/json;charset=UTF-8' },
         body: JSON.stringify({ command }),

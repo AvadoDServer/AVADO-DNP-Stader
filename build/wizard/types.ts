@@ -4,70 +4,6 @@ export type networkType = "prater" | "mainnet"
 
 export type consusClientType = "teku" | "prysm"
 
-// https://github.com/rocket-pool/smartnode/blob/master/shared/types/api/minipool.go
-export type minipoolStatusType = {
-  "status": "success" | "error",
-  "error": string,
-  "minipools": MinipoolDetailsType[],
-  "latestDelegate": string,
-  "isAtlasDeployed": boolean
-}
-
-export type MinipoolDetailsType = {
-  "address": string,
-  "validatorPubkey": string,
-  "status": minipoolStatusDetailsType,
-  "depositType": string,
-  "node": NodeDetailsType,
-  "user": UserDetailsType,
-  "balances": balancesDetailType,
-  "validator": validatorDetailsType,
-  "canStake": boolean,
-  // queue
-  "refundAvailable": boolean,
-  "withdrawalAvailable": boolean,
-  "closeAvailable": boolean,
-  "finalised": boolean,
-  "useLatestDelegate": boolean,
-  "delegate": string,
-  "previousDelegate": string,
-  "effectiveDelegate": string,
-  "timeUntilDissolve": number,
-  "penalties": number,
-  "reduceBondTime": any,
-  "reduceBondCancelled": boolean
-}
-export type minipoolStatusDetailsType = {
-  "status": string,
-  "statusBlock": number,
-  "statusTime": string
-}
-export type NodeDetailsType = {
-  "address": string,
-  "fee": number,
-  "depositBalance": number,
-  "refundBalance": number,
-  "depositAssigned": boolean
-}
-export type UserDetailsType = {
-  "depositBalance": number,
-  "depositAssigned": boolean,
-  "depositAssignedTime": string
-}
-export type balancesDetailType = {
-  "eth": number,
-  "reth": number,
-  "rpl": number,
-  "fixedSupplyRpl": number
-}
-export type validatorDetailsType = {
-  "exists": boolean,
-  "active": boolean,
-  "index": number,
-  "balance": number,
-  "nodeBalance": number
-}
-
 // https://github.com/stader-labs/stader-node-v1.1/blob/beta/shared/types/api/node.go
 export type nodeStatusType = {
   "status": "success" | "error",
@@ -135,18 +71,6 @@ export interface ClientStatusType {
   "syncProgress": number,
   "networkId": number
   "error": string
-}
-
-// https://github.com/rocket-pool/smartnode/blob/master/shared/types/api/network.go#L18
-export type rplPriceDataType = {
-  "status": string,
-  "error": string,
-  "rplPrice": bigint,
-  "rplPriceBlock": number
-  "minPer8EthMinipoolRplStake": bigint,
-  "maxPer8EthMinipoolRplStake": bigint,
-  "minPer16EthMinipoolRplStake": bigint,
-  "maxPer16EthMinipoolRplStake": bigint
 }
 
 // https://github.com/rocket-pool/smartnode/blob/master/shared/types/api/network.go#L9
