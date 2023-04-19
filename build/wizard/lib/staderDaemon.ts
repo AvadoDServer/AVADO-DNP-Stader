@@ -28,9 +28,15 @@ const enquoteBigNumbers = (jsonString: string) =>
         )
 
 export const staderCommand = async (command: string) => {
+    try {
+        return JSON.parse(await staderCommandRaw(command));
+    } catch (e) {
+        return ({
+            status: "error",
+            "error": e
+        })
+    }
 
-    return JSON.parse(await staderCommandRaw(command))
-    
     // return JSON.parse(await staderCommandRaw(command),
     //     (key, value) => !isNaN(value) && isBigNumber(value) ? BigInt(value) : value
     // )

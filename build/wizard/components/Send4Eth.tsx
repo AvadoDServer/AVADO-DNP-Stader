@@ -20,13 +20,13 @@ const Send4Eth = ({ }: Props) => {
 
     const amount = 4.2
 
-    const { config } = usePrepareSendTransaction({
+    const { config, error: prepareError, isError: isPrepareError } = usePrepareSendTransaction({
         request: {
             to: walletStatus.accountAddress,
             value: utils.parseEther(amount.toString())
         },
     })
-    const { data, sendTransaction } = useSendTransaction(config)
+    const { data, sendTransaction, error, isError } = useSendTransaction(config)
 
     const { isLoading, isSuccess } = useWaitForTransaction({
         hash: data?.hash,
@@ -57,6 +57,9 @@ const Send4Eth = ({ }: Props) => {
                         <a href={`${etherscanBaseUrl(network)}/tx/${data?.hash}`}>Etherscan</a>
                     </div>
                 </div>
+            )}
+             {(isPrepareError || isError) && (
+                <div>Error: {(prepareError || error)?.message}</div>
             )}
         </form>
     )

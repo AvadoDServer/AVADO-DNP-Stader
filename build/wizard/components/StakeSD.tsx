@@ -51,9 +51,9 @@ const StakeSD = ({ }: Props) => {
             // first deposit only allowed if bigger than minium.
             // If there is a minipool already, more deposits are allowed.
             if (sdBalanceInWallet < sdMin) {
-                setFeedback(`Not enough RPL in your wallet (${displayAsETH(sdBalanceInWallet, 4)} RPL). Must be more than ${displayAsETH(sdMin, 4)} RPL before you can stake`);
+                setFeedback(`Not enough SD in your wallet (${displayAsETH(sdBalanceInWallet, 4)} SD). Must be more than ${displayAsETH(sdMin, 4)} SD before you can stake`);
             } else {
-                console.log("Staked RPL", stakedSDBalance.toString())
+                console.log("Staked SD", stakedSDBalance.toString())
                 if (sdBalanceInWallet > 0n) {
                     console.log(`node can-node-deposit-sd ${sdBalanceInWallet.toString()}`);
                     staderCommand(`node can-node-deposit-sd ${sdBalanceInWallet.toString()}`).then((data: any) => {

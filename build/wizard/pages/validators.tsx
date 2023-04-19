@@ -27,26 +27,21 @@ const Home: NextPage = () => {
     const { nodeStatus } = useStaderStatus()
     const { network } = useNetwork()
 
-    const decodeKey = (encodedString: string) =>  Buffer.from(encodedString, 'base64').toString('hex')
+    const decodeKey = (encodedString: string) => Buffer.from(encodedString, 'base64').toString('hex')
 
     const validatorsTable = () => {
         return (
             <div className="px-4 sm:px-6 lg:px-8">
                 <div className="sm:flex sm:items-center">
                     <div className="sm:flex-auto">
-                        <h1 className="text-base font-semibold leading-6 text-gray-900">Users</h1>
+                        <h1 className="text-base font-semibold leading-6 text-gray-900">Validators</h1>
                         <p className="mt-2 text-sm text-gray-700">
                             A list of all your Stader validators.
                         </p>
                     </div>
-                    {/* <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
-                  <button
-                    type="button"
-                    className="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                  >
-                    Add user
-                  </button>
-                </div> */}
+                    <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
+                        <AddValidator />
+                    </div>
                 </div>
                 <div className="mt-8 flow-root">
                     <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
@@ -83,7 +78,7 @@ const Home: NextPage = () => {
                                             </td>
                                             <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{validator.Status}</td>
                                             <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm sm:pr-0">
-                                            {beaconchainUrl(network, decodeKey(validator.Pubkey), "Link") }
+                                                {beaconchainUrl(network, decodeKey(validator.Pubkey), "Link")}
                                                 {/* <a href={beaconchainUrl(network, validator.Pubkey, "Link") } className="text-indigo-600 hover:text-indigo-900">
                                                     Edit<span className="sr-only">, {person.name}</span>
                                                 </a> */}
@@ -102,15 +97,15 @@ const Home: NextPage = () => {
 
     return (
         <>
-            <p>
-                List of validators
-            </p>
-            {validatorsTable()}
-            <button
-                className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-            >Add validator</button>
-
-            <AddValidator />
+            {nodeStatus.validatorInfos.length > 0 ? (
+                <>
+                    {validatorsTable()}
+                </>
+            ) : (
+                <>
+                    <p>No validators yet</p>
+                </>
+            )}
         </>
     )
 }

@@ -91,9 +91,9 @@ const DepositETH = ({ }: Props) => {
             <h4 className="title is-4 has-text-white">3. Deposit 4 ETH</h4>
 
             <>
-                <p>The commission you will receive from other deposits is ?????.<br />
+                {/* <p>The commission you will receive from other deposits is ?????.<br />
                     For more info on this check the <a target="_blank" href="https://wiki.ava.do/en/tutorials/rocketpool">Avado Rocket Pool Wiki page</a></p>
-                <br />
+                <br /> */}
                 <div className="field">
                     <button
                         className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
