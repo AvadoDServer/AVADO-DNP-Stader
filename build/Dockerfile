@@ -1,4 +1,4 @@
-FROM node:16.15.0 as builder
+FROM node:18.15.0 as builder
 
 # build wizard
 WORKDIR /usr/src/app/wizard
@@ -17,7 +17,7 @@ FROM --platform=linux/amd64 staderdev/stader-node:v0.3.0-beta as stader
 
 ####### Main image
 
-FROM --platform=linux/amd64 node:16.15.0
+FROM --platform=linux/amd64 node:18.15.0
 ARG STADER_VERSION
 
 COPY --from=stader /go/bin/stader /go/bin/stader
@@ -34,12 +34,6 @@ RUN apt-get -y clean && apt-get -y update && apt-get -y upgrade && apt-get -y in
     vim-tiny \
     && rm -rf /var/lib/apt/lists/*
 RUN useradd -s /bin/false nginx
-
-# Instal node v18.15.0
-RUN curl https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash \
-    && . /root/.nvm/nvm.sh \
-    && nvm install v18.15.0 \
-    && nvm use v18.15.0
 
 # copy wizard & monitor
 COPY --from=builder /usr/src/app/wizard/out /usr/local/wizard
