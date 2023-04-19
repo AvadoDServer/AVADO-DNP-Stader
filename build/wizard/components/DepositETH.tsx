@@ -5,7 +5,7 @@ import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import DownloadBackup from "./DownloadBackup";
 import { useStaderStatus } from "../lib/status";
 import { displayAsPercentage, etherscanBaseUrl, etherscanTransactionUrl, wsProvider } from "../utils/utils"
-import { useNetwork } from "../hooks/useNetwork";
+import { useNetwork } from "../hooks/useServerInfo";
 import { utils } from 'ethers'
 import {
     usePrepareSendTransaction,
@@ -72,7 +72,7 @@ const DepositETH = ({ }: Props) => {
     }, [waitingForTx, txHash, utils]);
 
     const depositEth = () => {
-        staderCommand(`node deposit ${ETHDepositAmount} ${salt} ${numValidators} ${submit}`).then((data: any) => { 
+        staderCommand(`node deposit ${ETHDepositAmount} ${salt} ${numValidators} ${submit}`).then((data: any) => {
             if (data.status === "error") {
                 setFeedback(data.error);
             }
@@ -90,7 +90,7 @@ const DepositETH = ({ }: Props) => {
             <h4 className="title is-4 has-text-white">3. Deposit 4 ETH</h4>
 
             <>
-               <div className="field">
+                <div className="field">
                     <button
                         className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                         onClick={depositEth} disabled={ethButtonDisabled}>Deposit 4 ETH {waitingForTx ? <Spinner /> : ""}</button>

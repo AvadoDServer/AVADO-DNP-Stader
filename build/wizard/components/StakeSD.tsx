@@ -6,7 +6,7 @@ import { faCheck } from "@fortawesome/free-solid-svg-icons";
 
 import { useStaderStatus } from "../lib/status";
 import { displayAsETH, etherscanBaseUrl, etherscanTransactionUrl, wsProvider } from "../utils/utils"
-import { useNetwork } from "../hooks/useNetwork";
+import { useNetwork } from "../hooks/useServerInfo";
 import { utils } from 'ethers'
 import {
     usePrepareSendTransaction,
@@ -108,25 +108,25 @@ const StakeSD = ({ }: Props) => {
             )
             }
 
-            {stakedSDBalance == 0n &&  ( 
-            <>
-                <p>Stake all SD in my hot wallet.</p>
-                <div className="field">
-                    <button
-                        className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                        onClick={stakeSD}
-                        disabled={sdStakeButtonDisabled}>
-                        Stake {sdBalanceInWallet ? displayAsETH(sdBalanceInWallet) + " " : ""} SD {waitingForTx ? <Spinner /> : ""}
-                    </button>
-                    <br />
-                    {feedback && (
-                        <>
-                            <p className="help is-danger">{feedback}</p>
-                            <br />
-                        </>
-                    )}
-                </div>
-            </>
+            {stakedSDBalance == 0n && (
+                <>
+                    <p>Stake all SD in my hot wallet.</p>
+                    <div className="field">
+                        <button
+                            className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                            onClick={stakeSD}
+                            disabled={sdStakeButtonDisabled}>
+                            Stake {sdBalanceInWallet ? displayAsETH(sdBalanceInWallet) + " " : ""} SD {waitingForTx ? <Spinner /> : ""}
+                        </button>
+                        <br />
+                        {feedback && (
+                            <>
+                                <p className="help is-danger">{feedback}</p>
+                                <br />
+                            </>
+                        )}
+                    </div>
+                </>
             )}
             {txHash && (
                 <>

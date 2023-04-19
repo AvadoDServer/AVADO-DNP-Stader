@@ -133,7 +133,8 @@ const getInstalledClients = async () => {
         )
         .map(client => ({
             name: client,
-            url: `http://${client_url(client)}`
+            url: `http://${client_url(client)}`,
+            validatorAPI: `http://${client_url(client)}:9999/keymanager`
         }))
     return installed_clients;
 }
@@ -156,7 +157,6 @@ server.get("/ec-clients", async (req: restify.Request, res: restify.Response, ne
     })))
     next();
 })
-
 
 server.post("/stader-api", (req, res, next) => {
     if (!req.body) {
@@ -296,6 +296,86 @@ server.get("/" + backupFileName, (req: restify.Request, res: restify.Response, n
 //             throw {message:`Invalid backup file. The zip file must contain "${expectedPath}"`}
 //     }
 // });
+
+server.get("/runningValidatorInfos", async (req: restify.Request, res: restify.Response, next: restify.Next) => {
+    const clients = (await getInstalledClients())
+    console.log(clients)
+    if (clients.length == 0 || clients[0].name !== "teku") {
+        res.send(500, "Missing or unsupported Beacon chain client");
+        next()
+        return
+    }
+
+    const keymanagerUrl = `http://teku-prater.my.ava.do:9999/keymanager`
+    const fetchFromKeyManager = async (path: string): Promise<any[]> => JSON.parse(await (await fetch(`${keymanagerUrl}${path}`)).text()).data
+    const restApiUrl = `http://teku-prater.my.ava.do:9999/rest`
+    const fetchFromRestAPi = async (path: string): Promise<any[]> => JSON.parse(await (await fetch(`${restApiUrl}${path}`)).text()).data
+
+    const validators = (await fetchFromKeyManager("/eth/v1/keystores")).map((v: any) => v.validating_pubkey)
+    const getValidatorData = async (pubKey: string) => await fetchFromRestAPi(`/eth/v1/beacon/states/head/validators/${pubKey}`)
+    const getFeeRecipient = async (pubKey: string) => await fetchFromKeyManager(`/eth/v1/validator/${pubKey}/feerecipient`)
+
+    const result = await Promise.all(validators.map(async (pubkey: string) => {
+        const data = await getValidatorData(pubkey)
+        const recipient = await getFeeRecipient(pubkey)
+        return { pubkey: pubkey, data: data, recipient: recipient }
+    }))
+
+    res.send(200, result);
+    next()
+});
+
+// get keyStoreFile
+const getValidatorKeystore = (pubkey: string) => {
+    try {
+        return fs.readFileSync(`/.stader/data/validators/teku/keys/${pubkey}.json`, 'utf8').trim();
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+const getValidatorPassword = (pubkey: string) => {
+    try {
+        return fs.readFileSync(`/.stader/data/validators/teku/passwords/${pubkey}.txt`, 'utf8').trim();
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+server.post("/importValidator", (req, res, next) => {
+    if (!req.body) {
+        res.send(400, "not enough parameters");
+        return next();
+    } else {
+        const pubkey = req.body.pubkey
+
+        console.log(`Importing validator ${pubkey}`)
+
+        // create message
+        const message = {
+            keystores: [getValidatorKeystore(pubkey)],
+            passwords: [getValidatorPassword(pubkey)]
+        }
+
+        const keymanagerUrl = `http://teku-prater.my.ava.do:9999/keymanager/eth/v1/keystores`
+        console.log(keymanagerUrl)
+        fetch(keymanagerUrl, {
+            method: 'POST',
+            headers: { 'content-type': 'application/json;charset=UTF-8' },
+            body: JSON.stringify(message),
+        }).then(async r => {
+            const result = await r.text()
+            console.log(result)
+            res.send(200, result);
+            return next();
+        }).catch(e => {
+            console.log(e)
+            res.send(500, e);
+            return next();
+        })
+    }
+});
+
 
 server.listen(9999, function () {
     console.log("%s listening at %s", server.name, server.url);

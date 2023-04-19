@@ -1,6 +1,6 @@
 import { useStaderStatus } from "../lib/status";
 import { etherscanBaseUrl } from "../utils/utils"
-import { useNetwork } from "../hooks/useNetwork";
+import { useNetwork } from "../hooks/useServerInfo";
 import { utils } from 'ethers'
 import {
     usePrepareSendTransaction,
@@ -36,7 +36,7 @@ const Send4Eth = ({ }: Props) => {
     useEffect(() => {
         fetchNodeStatus()
     }, [isSuccess]);
-    
+
 
     return (
         <form
@@ -58,7 +58,7 @@ const Send4Eth = ({ }: Props) => {
                     </div>
                 </div>
             )}
-             {(isPrepareError || isError) && (
+            {(isPrepareError || isError) && (
                 <div>Error: {(prepareError || error)?.message}</div>
             )}
         </form>

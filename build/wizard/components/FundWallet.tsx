@@ -2,7 +2,7 @@ import ClickToCopy from "./ClickToCopy";
 import React, { useEffect } from "react";
 import { useStaderStatus } from "../lib/status";
 import { displayAsETH, etherscanAddressUrl } from "../utils/utils"
-import { useNetwork } from "../hooks/useNetwork";
+import { useNetwork } from "../hooks/useServerInfo";
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import Send4Eth from "./Send4Eth";
 import SendSD from "./SendSd";

@@ -9,7 +9,7 @@ const network = () => {
 }
 
 export const server_config = {
-    network:  network(),
+    network: network(),
     name: "stader",
     https_options: localdev ? {} : {
         key: readFileSync('/etc/nginx/my.ava.do.key'),

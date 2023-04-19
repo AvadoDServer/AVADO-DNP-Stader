@@ -28,18 +28,18 @@ export type nodeStatusType = {
 
 
 // https://github.com/stader-labs/stader-node-v1.1/blob/beta/shared/utils/stdr/validator-state.go
-// ValidatorState =  map[uint8]string{
-// 	0: "Initialized",
-// 	1: "Invalid Signature",
-// 	2: "Front Run",
-// 	3: "Pre Deposit",
-// 	4: "Deposited",
-// 	5: "In Activation Queue",
-// 	6: "Active",
-// 	7: "In Exit Queue",
-// 	8: "Exited",
-// 	9: "Withdrawn",
-// }
+export const ValidatorStates = [
+  "Initialized", //0
+  "Invalid Signature", //1
+  "Front Run", //2
+  "Pre Deposit",
+  "Deposited",
+  "In Activation Queue",
+  "Active",
+  "In Exit Queue",
+  "Exited",
+  "Withdrawn", //9
+]
 
 export type ValidatorInfoType = {
   "Status": number,
@@ -103,4 +103,13 @@ export interface contractsInfoType {
   ethxToken: Address,
   sdToken: Address,
   sdCollateralContract: Address
+}
+
+export type ecClientType = { name: string, url: string }
+export type bcClientType = { name: string, url: string, api: string }
+
+export interface serverStatusType {
+  ecClients: ecClientType[],
+  bcClients: bcClientType[],
+  network: networkType
 }

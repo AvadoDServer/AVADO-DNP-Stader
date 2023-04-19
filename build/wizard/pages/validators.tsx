@@ -20,14 +20,46 @@ import { useStaderStatus } from "../lib/status"
 import NavBar from '../components/NavBar';
 import AddValidator from '../components/AddValidator';
 import { beaconchainUrl } from "../utils/utils"
-import { useNetwork } from '../hooks/useNetwork';
+import { useBeaconChainClientAndValidator, useExecutionClient, useNetwork, useRunningValidatorInfos } from '../hooks/useServerInfo';
+import { ValidatorStates } from '../types';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSatelliteDish } from "@fortawesome/free-solid-svg-icons";
+
 
 const Home: NextPage = () => {
 
     const { nodeStatus } = useStaderStatus()
     const { network } = useNetwork()
+    const { bcClient } = useBeaconChainClientAndValidator()
+    const { validatorInfos, refetch } = useRunningValidatorInfos()
 
-    const decodeKey = (encodedString: string) => Buffer.from(encodedString, 'base64').toString('hex')
+    useEffect(() => {
+        console.log(validatorInfos)
+    }, [validatorInfos])
+
+    const decodeKey = (encodedString: string) => "0x" + Buffer.from(encodedString, 'base64').toString('hex')
+
+    const isRunningValidator = (pubkey: string) => validatorInfos?.some(i => i.pubkey == pubkey)
+
+    const statusRunningValidator = (pubkey: string) => validatorInfos?.find(i => i.pubkey === pubkey)?.data?.status ?? "pending_initialized"
+
+    const importValidator = (pubkey: string) => {
+        const api_url: string = `${server_config.monitor_url}/importValidator`;
+        const data = { "pubkey": pubkey }
+        console.log(JSON.stringify(data))
+
+        fetch(api_url, {
+            method: 'POST',
+            headers: { 'content-type': 'application/json;charset=UTF-8' },
+            body: JSON.stringify(data),
+        }).then(async r => {
+            const result = await r.text()
+            console.log(result)
+            refetch()
+        }).catch(e => {
+            console.log(e)
+        })
+    }
 
     const validatorsTable = () => {
         return (
@@ -49,6 +81,9 @@ const Home: NextPage = () => {
                             <table className="min-w-full divide-y divide-gray-300">
                                 <thead>
                                     <tr>
+                                        <th scope="col" className="relative py-3.5 pl-3 pr-0">
+                                            <span className="sr-only">Link to beaconcha.in</span>
+                                        </th>
                                         <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0">
                                             <a href="#" className="group inline-flex">
                                                 PubKey
@@ -59,29 +94,49 @@ const Home: NextPage = () => {
                                         </th>
                                         <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                                             <a href="#" className="group inline-flex">
-                                                Status
+                                                Stader Status
                                                 <span className="ml-2 flex-none rounded bg-gray-100 text-gray-900 group-hover:bg-gray-200">
                                                     <ChevronDownIcon className="h-5 w-5" aria-hidden="true" />
                                                 </span>
                                             </a>
                                         </th>
-                                        <th scope="col" className="relative py-3.5 pl-3 pr-0">
-                                            <span className="sr-only">Link</span>
+                                        <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                                            <a href="#" className="group inline-flex">
+                                                Validator Status
+                                                <span className="ml-2 flex-none rounded bg-gray-100 text-gray-900 group-hover:bg-gray-200">
+                                                    <ChevronDownIcon className="h-5 w-5" aria-hidden="true" />
+                                                </span>
+                                            </a>
                                         </th>
+                                        {/* <th scope="col" className="relative py-3.5 pl-3 pr-0">
+                                            <span className="sr-only">Validator</span>
+                                        </th> */}
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-gray-200 bg-white">
                                     {nodeStatus.validatorInfos.map((validator) => (
                                         <tr key={validator.Pubkey}>
+                                            <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm sm:pr-0">
+                                                {beaconchainUrl(network, decodeKey(validator.Pubkey), <FontAwesomeIcon className="icon" icon={faSatelliteDish} />)}
+                                            </td>
                                             <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-0">
                                                 {decodeKey(validator.Pubkey)}
                                             </td>
-                                            <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{validator.Status}</td>
+                                            <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{ValidatorStates[validator.Status]}</td>
                                             <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm sm:pr-0">
-                                                {beaconchainUrl(network, decodeKey(validator.Pubkey), "Link")}
-                                                {/* <a href={beaconchainUrl(network, validator.Pubkey, "Link") } className="text-indigo-600 hover:text-indigo-900">
-                                                    Edit<span className="sr-only">, {person.name}</span>
-                                                </a> */}
+                                                {isRunningValidator(decodeKey(validator.Pubkey)) ? (
+                                                    <>
+                                                        {statusRunningValidator(decodeKey(validator.Pubkey))}
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <button
+                                                            className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                                                            onClick={() => importValidator(decodeKey(validator.Pubkey))}>
+                                                            Import
+                                                        </button>
+                                                    </>
+                                                )}
                                             </td>
                                         </tr>
                                     ))}
@@ -90,7 +145,7 @@ const Home: NextPage = () => {
                         </div>
                     </div>
                 </div>
-            </div>
+            </div >
         )
     }
 

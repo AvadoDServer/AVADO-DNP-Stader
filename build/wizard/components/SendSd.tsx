@@ -1,6 +1,6 @@
 import { useStaderStatus } from "../lib/status";
 import { etherscanBaseUrl } from "../utils/utils"
-import { useNetwork } from "../hooks/useNetwork";
+import { useNetwork } from "../hooks/useServerInfo";
 import { utils } from 'ethers'
 import {
     usePrepareSendTransaction,

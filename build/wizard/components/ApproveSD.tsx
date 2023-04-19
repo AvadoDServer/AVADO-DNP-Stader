@@ -1,5 +1,5 @@
 import { wsProvider, etherscanTransactionUrl } from "../utils/utils"
-import { useNetwork } from "../hooks/useNetwork";
+import { useNetwork } from "../hooks/useServerInfo";
 
 import { useEffect, useState } from "react";
 import { staderCommand } from "../lib/staderDaemon"

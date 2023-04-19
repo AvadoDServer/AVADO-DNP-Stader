@@ -13,6 +13,7 @@ import { server_config } from '../server_config'
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import Layout from '../components/Layout';
+import { useStaderStatus } from '../lib/status';
 
 function MyApp({ Component, pageProps }: AppProps) {
   const [wagmiClient, setWagmiClient] = useState<any>();
@@ -59,6 +60,19 @@ function MyApp({ Component, pageProps }: AppProps) {
     }
 
     setupClient()
+  }, []);
+
+
+  // Trigger initial fetch of all stader info + refresh sync info very 60 seconds
+  const { fetchNodeSyncProgressStatus, fetchContractsInfo, fetchNodeStatus } = useStaderStatus()
+  useEffect(() => {
+    fetchNodeSyncProgressStatus()
+    fetchNodeStatus()
+    fetchContractsInfo()
+    const interval = setInterval(() => {
+      fetchNodeSyncProgressStatus();
+    }, 60 * 1000); // 60 seconds refresh
+    return () => clearInterval(interval);
   }, []);
 
   return <>

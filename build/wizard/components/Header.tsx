@@ -9,54 +9,21 @@ import {
     CheckIcon,
     ChevronDownIcon
 } from '@heroicons/react/20/solid'
-import { Menu, Transition } from '@headlessui/react'
-import axios from "axios";
-import { server_config } from '../server_config';
 import NetworkBanner from '../components/NetworkBanner';
 import SyncStatusTag from '../components/SyncStatusTag';
-import StaderCommandField from '../components/StaderCommandField'
-
 import { useStaderStatus } from "../lib/status"
-import NavBar from '../components/NavBar';
+import { useBeaconChainClientAndValidator, useExecutionClient, useNetwork } from '../hooks/useServerInfo';
 
 const Header = () => {
 
-    const [ecClient, setEcClient] = useState<{name:string, url: string}>();
-    const [bcClient, setBcClient] = useState<{name:string, url: string}>();
-    const [network, setNetwork] = useState<"goerli" | "mainnet" | "gnosis">();
-
-    const { nodeSyncProgressStatus, fetchNodeSyncProgressStatus, fetchContractsInfo, fetchNodeStatus } = useStaderStatus()
+    const { nodeSyncProgressStatus } = useStaderStatus()
+    const { network } = useNetwork()
+    const { bcClient } = useBeaconChainClientAndValidator()
+    const { ecClient } = useExecutionClient()
 
     const title = "Avado Stader"
 
-    useEffect(() => {
-        axios.get(`${server_config.monitor_url}/bc-clients`)
-            .then((res) => {
-                setBcClient(res.data[0])
-            });
-        axios.get(`${server_config.monitor_url}/ec-clients`)
-            .then((res) => {
-                setEcClient(res.data[0])
-            });
-        axios.get(`${server_config.monitor_url}/network`)
-            .then((res) => {
-                setNetwork(res.data)
-            });
-    }, []);
-
-    useEffect(() => {
-        fetchNodeSyncProgressStatus()
-        fetchNodeStatus()
-        fetchContractsInfo()
-    
-        const interval = setInterval(() => {
-            fetchNodeSyncProgressStatus();
-        }, 60 * 1000); // 60 seconds refresh
-        return () => clearInterval(interval);
-    }, []);
-
     return (
-
         <header>
             {network && <NetworkBanner network={network} />}
             <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
@@ -69,7 +36,7 @@ const Header = () => {
                         <div className="mt-1 flex flex-col sm:mt-0 sm:flex-row sm:flex-wrap sm:space-x-6">
                             <div className="mt-2 flex items-center text-sm text-gray-500">
                                 <ServerIcon className="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
-                                {ecClient?.name},{bcClient?.name}
+                                <a href={ecClient?.url}>{ecClient?.name}</a>,<a href={bcClient?.url}>{bcClient?.name}</a>
                             </div>
                             <div className="mt-2 flex items-center text-sm text-gray-500">
                                 <AdjustmentsHorizontalIcon className="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
