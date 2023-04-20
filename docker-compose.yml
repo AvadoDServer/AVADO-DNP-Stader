@@ -1,0 +1,20 @@
+version: '3.4'
+services:
+  stader.avado.dnp.dappnode.eth:
+    image: 'stader.avado.dnp.dappnode.eth:0.0.91'
+    build:
+      context: ./build
+      args:
+        RP_VERSION: v1.9.0
+    volumes:
+      - 'data:/.stader/data'
+    environment:
+      - NETWORK=prater
+      - EXECUTIONCLIENT=geth
+      - CONSENSUSCLIENT=prysm
+      - EXTRA_OPTS=
+    ports:
+      - '80:80'
+      - '9999:9999'
+volumes:
+  data: {}

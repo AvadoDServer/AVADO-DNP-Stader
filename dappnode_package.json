@@ -1,0 +1,29 @@
+{
+  "name": "stader.avado.dnp.dappnode.eth",
+  "version": "0.0.91",
+  "upstream": "v1.9.0",
+  "title": "Stader",
+  "description": "Stader is a decentralised Ethereum staking protocol",
+  "avatar": "/ipfs/QmPQRumFc1ieMJJwhYDT24Bq5Tr7DqUicXaW1twQpiDZjP",
+  "type": "service",
+  "autoupdate": true,
+  "image": {
+    "volumes": [
+      "data:/.stader/data"
+    ],
+    "environment": [
+      "NETWORK=prater",
+      "EXECUTIONCLIENT=geth",
+      "CONSENSUSCLIENT=prysm"
+    ],
+    "restart": "always"
+  },
+  "author": "heeckhau",
+  "license": "Apache(c)",
+  "dependencies": {},
+  "links": {
+    "OnboardingWizard": "http://stader.my.ava.do",
+    "Wiki": "https://docs.ava.do/packages/stader",
+    "HomePage": "https://www.staderlabs.com/"
+  }
+}
