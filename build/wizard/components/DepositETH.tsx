@@ -34,6 +34,7 @@ const DepositETH = ({ currentNumberOfValidators, onFinish }: Props) => {
     const ETHDepositAmount: bigint = 4000000000000000000n
     const ethBalanceInWallet = BigInt(nodeStatus.accountBalances.eth)
 
+
     // stader command arguments to add an extra validator
     const salt = "0"
     const numValidators = 1
@@ -106,7 +107,7 @@ const DepositETH = ({ currentNumberOfValidators, onFinish }: Props) => {
                 </>
             )}
 
-            {nodeStatus && ethBalanceInWallet < ETHDepositAmount && (
+            {nodeStatus && nodeStatus.sdCollateralWorthValidators > currentNumberOfValidators && (
                 <>
                     <button
                         className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
@@ -122,19 +123,8 @@ const DepositETH = ({ currentNumberOfValidators, onFinish }: Props) => {
                 <>
                     {etherscanTransactionUrl(network, txHash, "Transaction details on Etherscan")}
 
-                    <div className="columns">
-                        <div className="column is-two-thirds">
-                            <article className="message is-warning ">
-                                <div className="message-header">
-                                    <p>Download backup</p>
-                                </div>
-                                <div className="message-body">
-                                    <p>Please download a backup of your whole Stader configuration now!</p>
-                                    <DownloadBackup />
-                                </div>
-                            </article>
-                        </div>
-                    </div>
+                    <p>Please download a backup of your whole Stader configuration now!</p>
+                    <DownloadBackup />
 
                     <button
                         type="button"

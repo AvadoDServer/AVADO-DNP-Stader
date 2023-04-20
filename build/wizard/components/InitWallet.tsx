@@ -89,10 +89,6 @@ const InitWallet = ({ onFinished }: Props) => {
 
                         {(!walletStatus.accountAddress || walletStatus.accountAddress === "0x0000000000000000000000000000000000000000") ? (
                             <>
-                                <p className="mt-1 text-sm leading-6 text-gray-600">
-                                    We will create a hot wallet that you will use for your minipool.
-                                </p>
-
                                 <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
                                     <div className="sm:col-span-4">
                                         <label className="block text-sm font-medium leading-6 text-gray-900">

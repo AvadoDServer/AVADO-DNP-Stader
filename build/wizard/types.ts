@@ -16,7 +16,7 @@ export type nodeStatusType = {
   "operatorRewardAddress": string,
   "operatorRewardInETH": string, //bigint
   "depositedSdCollateral": string, //bigint
-  "sdCollateralWorthValidators": string, //bigint
+  "sdCollateralWorthValidators": number,
   "registered": boolean,
   "accountBalances": {
     "eth": string, //bigint

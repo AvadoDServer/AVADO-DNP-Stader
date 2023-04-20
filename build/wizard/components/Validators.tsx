@@ -160,7 +160,7 @@ const Validators = () => {
 
     return (
         <>
-            {nodeStatus.validatorInfos.length > 0 ? (
+            {nodeStatus.registered ? (
                 <>
                     {validatorsTable()}
                 </>
