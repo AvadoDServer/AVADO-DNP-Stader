@@ -54,7 +54,7 @@ const NodeComponent = () => {
             setCurrentStep(FINISHED)
     }, [nodeStatus]);
 
-    const showButtons = false
+    const showButtons = true
 
     return (
         <>
@@ -159,6 +159,7 @@ const NodeComponent = () => {
                                             <li>
                                                 Wallet: {displayAsETH(nodeStatus.accountBalances.eth.toString(), 4)} ETH
                                                 {showButtons && <SendEth amount={4000000000000000000n} />}
+                                                {showButtons && <SendEth amount={100000000000000000n} />}
                                             </li>
                                             <li>
                                                 Wallet: {displayAsETH(nodeStatus.accountBalances.sd.toString(), 4)} SD

@@ -28,12 +28,13 @@ const enquoteBigNumbers = (jsonString: string) =>
         )
 
 export const staderCommand = async (command: string) => {
+    const json = await staderCommandRaw(command)
     try {
-        return JSON.parse(await staderCommandRaw(command));
+        return JSON.parse(json);
     } catch (e) {
         return ({
             status: "error",
-            "error": e
+            "error": json
         })
     }
 

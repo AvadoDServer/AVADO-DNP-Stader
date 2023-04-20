@@ -362,6 +362,31 @@ server.post("/importValidator", (req: restify.Request, res: restify.Response, ne
     }
 });
 
+server.get("/getFeeRecipient", (req: restify.Request, res: restify.Response, next: restify.Next) => {
+    try {
+        const result = fs.readFileSync(`/.stader/data/validators/stader-fee-recipient.txt`, 'utf8').trim();
+        res.send(200, result);
+        return next()
+    } catch (err) {
+        console.error(err);
+        res.send(400, err);
+        return next();
+    }
+})
+
+server.get("/transactions", (req: restify.Request, res: restify.Response, next: restify.Next) => {
+    try {
+        const result = fs.readFileSync(`/.stader/data/transactions.json`, 'utf8')
+        res.send(200, result);
+        return next()
+    } catch (err) {
+        console.error(err);
+        res.send(400, err);
+        return next();
+    }
+})
+
+
 server.post("/setFeeRecipient", (req: restify.Request, res: restify.Response, next: restify.Next) => {
     if (!req.body) {
         res.send(400, "not enough parameters");

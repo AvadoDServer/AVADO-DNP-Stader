@@ -97,8 +97,6 @@ const ApproveSD = ({ }: Props) => {
             {txHash && (
                 <p>{etherscanTransactionUrl(network, txHash, "Transaction details on Etherscan")}</p>
             )}
-            <br />
-            <br />
         </div>);
 }
 

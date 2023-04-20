@@ -55,9 +55,10 @@ const StakeSD = ({ amount }: Props) => {
             //{"status":"success","error":"","stakeTxHash":"0x41a93be5b4fb06e819975acc0cdb91c1084e4c1943d625a3a5f96d823842d0e8"}
             if (data.status === "error") {
                 setFeedback(data.error);
+            } else {
+                setTxHash(data.stakeTxHash);
+                setWaitingForTx(true);
             }
-            setTxHash(data.stakeTxHash);
-            setWaitingForTx(true);
         })
     }
 
@@ -72,7 +73,7 @@ const StakeSD = ({ amount }: Props) => {
                 });
             });
         }
-    }, [waitingForTx, txHash, utils]);
+    }, [waitingForTx, txHash]);
 
     return (
         <div>
