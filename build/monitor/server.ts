@@ -343,7 +343,7 @@ const getValidatorPassword = (pubkey: string) => {
     }
 }
 
-server.post("/importValidator", (req, res, next) => {
+server.post("/importValidator", (req: restify.Request, res: restify.Response, next: restify.Next) => {
     if (!req.body) {
         res.send(400, "not enough parameters");
         return next();
@@ -359,24 +359,45 @@ server.post("/importValidator", (req, res, next) => {
         }
 
         const keymanagerUrl = `http://teku-prater.my.ava.do:9999/keymanager/eth/v1/keystores`
-        console.log(keymanagerUrl)
-        fetch(keymanagerUrl, {
-            method: 'POST',
-            headers: { 'content-type': 'application/json;charset=UTF-8' },
-            body: JSON.stringify(message),
-        }).then(async r => {
-            const result = await r.text()
-            console.log(result)
-            res.send(200, result);
-            return next();
-        }).catch(e => {
-            console.log(e)
-            res.send(500, e);
-            return next();
-        })
+        postToKeyManager(keymanagerUrl, JSON.stringify(message), res, next);
     }
 });
 
+server.post("/setFeeRecipient", (req: restify.Request, res: restify.Response, next: restify.Next) => {
+    if (!req.body) {
+        res.send(400, "not enough parameters");
+        return next();
+    } else {
+        const pubKey = req.body.pubkey
+        const feeRecipientAddress = req.body.feeRecipientAddress
+
+        console.log(`Setting fee recipient for ${pubKey} to ${feeRecipientAddress}`)
+
+        const message = {
+            "ethaddress": feeRecipientAddress
+        }
+
+        const keymanagerUrl = `http://teku-prater.my.ava.do:9999/keymanager/eth/v1/validator/${pubKey}/feerecipient`;
+        postToKeyManager(keymanagerUrl, JSON.stringify(message), res, next);
+    }
+});
+
+function postToKeyManager(keymanagerUrl: string, body: string, res: restify.Response, next: restify.Next) {
+    fetch(keymanagerUrl, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json;charset=UTF-8' },
+        body: body,
+    }).then(async (r) => {
+        const result = await r.text();
+        console.log(result);
+        res.send(200, result);
+        return next();
+    }).catch(e => {
+        console.log(e);
+        res.send(500, e);
+        return next();
+    });
+}
 
 server.listen(9999, function () {
     console.log("%s listening at %s", server.name, server.url);
@@ -384,4 +405,5 @@ server.listen(9999, function () {
     //     console.log("supervisor", value.statename)
     // })
 });
+
 

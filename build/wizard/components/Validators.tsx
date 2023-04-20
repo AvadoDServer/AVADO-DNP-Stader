@@ -19,7 +19,7 @@ import StaderCommandField from './StaderCommandField'
 import { useStaderStatus } from "../lib/status"
 import NavBar from './NavBar';
 import AddValidator from './AddValidator';
-import { beaconchainUrl } from "../utils/utils"
+import { abbreviatePublicKey, beaconchainUrl } from "../utils/utils"
 import { useBeaconChainClientAndValidator, useExecutionClient, useNetwork, useRunningValidatorInfos } from '../hooks/useServerInfo';
 import { ValidatorStates } from '../types';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -32,7 +32,7 @@ const Validators = () => {
     const { network } = useNetwork()
     const { bcClient } = useBeaconChainClientAndValidator()
     const { validatorInfos, refetch } = useRunningValidatorInfos()
-    const expectedRecipient = ""
+    const expectedRecipient = "0xe624471812F4fb739dD4eF40A8f9fAbD9474CEAa" // FIXME: where to get this?
 
     useEffect(() => {
         console.log(validatorInfos)
@@ -110,9 +110,9 @@ const Validators = () => {
                                                 </span>
                                             </a>
                                         </th>
-                                        {/* <th scope="col" className="relative py-3.5 pl-3 pr-0">
-                                            <span className="sr-only">Validator</span>
-                                        </th> */}
+                                        <th scope="col" className="relative py-3.5 pl-3 pr-0">
+                                            <span className="sr-only">Fee recipient</span>
+                                        </th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-gray-200 bg-white">
@@ -122,10 +122,10 @@ const Validators = () => {
                                                 {beaconchainUrl(network, decodeKey(validator.Pubkey), <FontAwesomeIcon className="icon" icon={faSatelliteDish} />)}
                                             </td>
                                             <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-0">
-                                                {decodeKey(validator.Pubkey)}
+                                                {abbreviatePublicKey(decodeKey(validator.Pubkey))}
                                             </td>
                                             <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{ValidatorStates[validator.Status]}</td>
-                                            <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm sm:pr-0">
+                                            <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                                                 {isRunningValidator(decodeKey(validator.Pubkey)) ? (
                                                     <>
                                                         {statusRunningValidator(decodeKey(validator.Pubkey))}
@@ -139,6 +139,9 @@ const Validators = () => {
                                                         </button>
                                                     </>
                                                 )}
+                                            </td>
+                                            <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm sm:pr-0">
+                                                {isFeeRecipientAddressCorrect(decodeKey(validator.Pubkey)) ? "✅" : "⚠️"}
                                             </td>
                                         </tr>
                                     ))}

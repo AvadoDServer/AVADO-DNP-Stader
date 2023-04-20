@@ -15,6 +15,9 @@ export function displayAsETH(num: string | bigint, fractionDigits?: number) {
     return result
 }
 
+export const abbreviatePublicKey = (key: string) => <abbr title={key}>{key?.substring(0, 10) + "…"}</abbr>
+
+
 export function displayAsPercentage(number: string) {
     if (!number)
         return "- %";
