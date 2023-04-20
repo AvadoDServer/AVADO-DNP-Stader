@@ -13,6 +13,7 @@ import NetworkBanner from '../components/NetworkBanner';
 import SyncStatusTag from '../components/SyncStatusTag';
 import { useStaderStatus } from "../lib/status"
 import { useBeaconChainClientAndValidator, useExecutionClient, useNetwork } from '../hooks/useServerInfo';
+import { ConnectButton } from '@rainbow-me/rainbowkit';
 
 const Header = () => {
 
@@ -46,14 +47,21 @@ const Header = () => {
                             </div>
                         </div>
                     </div>
-                    <div className="mt-5 flex">
-                        <span className="hidden sm:block">
-                            <SyncStatusTag progress={nodeSyncProgressStatus.ecStatus.primaryEcStatus.syncProgress} label={ecClient?.name} />
-                        </span>
+                    <div className="mt-5 flex justify-items-end">
+                        <div className="min-w-0 flex-1">
+                            <span className="hidden sm:block">
+                                <ConnectButton />
+                            </span>
+                            <div className="mt-1 flex flex-col sm:mt-0 sm:flex-row sm:flex-wrap sm:space-x-6">
+                                <span className="hidden sm:block">
+                                    <SyncStatusTag progress={nodeSyncProgressStatus.ecStatus.primaryEcStatus.syncProgress} label={ecClient?.name} />
+                                </span>
 
-                        <span className="ml-3 hidden sm:block">
-                            <SyncStatusTag progress={nodeSyncProgressStatus.bcStatus.primaryEcStatus.syncProgress} label={bcClient?.name} />
-                        </span>
+                                <span className="ml-3 hidden sm:block">
+                                    <SyncStatusTag progress={nodeSyncProgressStatus.bcStatus.primaryEcStatus.syncProgress} label={bcClient?.name} />
+                                </span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

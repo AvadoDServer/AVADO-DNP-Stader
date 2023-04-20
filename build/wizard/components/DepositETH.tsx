@@ -14,7 +14,7 @@ import {
 } from 'wagmi'
 import { useEffect, useState } from "react";
 import { staderCommand } from "../lib/staderDaemon"
-import Send4Eth from "./Send4Eth";
+import SendEth from "./SendEth";
 
 
 interface Props {
@@ -102,7 +102,7 @@ const DepositETH = ({ currentNumberOfValidators, onFinish }: Props) => {
             {nodeStatus && ethBalanceInWallet < ETHDepositAmount && (
                 <>
                     <p>To add a validator you need {displayAsETH(ETHDepositAmount)} ETH in your wallet.</p>
-                    <Send4Eth />
+                    <SendEth amount={ETHDepositAmount} />
                 </>
             )}
 

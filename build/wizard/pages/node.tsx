@@ -15,6 +15,8 @@ import RegisterNode from '../components/RegisterNode';
 import { useStaderStatus } from '../lib/status';
 import { displayAsETH } from '../utils/utils';
 import StakeSD from '../components/StakeSD';
+import SendSD from '../components/SendSd';
+import SendEth from '../components/SendEth';
 
 
 const Node: NextPage = () => {
@@ -141,10 +143,12 @@ const Node: NextPage = () => {
             </li>
             <li>
               Wallet: {displayAsETH(nodeStatus.accountBalances.eth.toString(), 4)} ETH
+              <SendEth amount={4000000000000000000n} />
             </li>
             <li>
               Wallet: {displayAsETH(nodeStatus.accountBalances.sd.toString(), 4)} SD
-              <StakeSD amount={nodeStatus.accountBalances.sd} />
+              <SendSD />
+              <StakeSD amount={BigInt(nodeStatus.accountBalances.sd)} />
             </li>
             <li>
               Validators: {nodeStatus.sdCollateralWorthValidators.toString()}
