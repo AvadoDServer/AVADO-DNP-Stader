@@ -31,9 +31,6 @@ const AddValidator = ({ currentNumberOfValidators }: Props) => {
     const stakedSDBalance = BigInt(nodeStatus.depositedSdCollateral)
     const requiredSDStake = (sdMin * BigInt(currentNumberOfValidators + 1))
 
-    console.log(stakedSDBalance)
-    console.log(requiredSDStake)
-
     const content = () => {
         return <div>
             <div className="divide-y divide-gray-200 overflow-hidden rounded-lg bg-white shadow">

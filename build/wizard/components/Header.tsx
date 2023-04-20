@@ -27,7 +27,7 @@ const Header = () => {
 
     return (
         <header>
-            {network && <NetworkBanner network={network} />}
+            <NetworkBanner />
             <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
                 {/* https://tailwindui.com/components/application-ui/headings/page-headings */}
                 <div className="lg:flex lg:items-center lg:justify-between">

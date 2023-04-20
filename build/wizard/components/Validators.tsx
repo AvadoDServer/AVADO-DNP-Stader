@@ -1,26 +1,12 @@
-import { Fragment, useEffect, useState } from 'react'
-import type { NextPage } from 'next';
 import {
-    PlayIcon,
-    AdjustmentsHorizontalIcon,
-    ServerIcon,
-    PencilIcon,
-    LinkIcon,
-    CheckIcon,
     ChevronDownIcon
 } from '@heroicons/react/20/solid'
-import { Menu, Transition } from '@headlessui/react'
-import axios from "axios";
 import { server_config } from '../server_config';
-import NetworkBanner from './NetworkBanner';
-import SyncStatusTag from './SyncStatusTag';
-import StaderCommandField from './StaderCommandField'
 
 import { useStaderStatus } from "../lib/status"
-import NavBar from './NavBar';
 import AddValidator from './AddValidator';
 import { abbreviatePublicKey, beaconchainUrl } from "../utils/utils"
-import { useBeaconChainClientAndValidator, useExecutionClient, useNetwork, useRunningValidatorInfos } from '../hooks/useServerInfo';
+import { useBeaconChainClientAndValidator, useNetwork, useRunningValidatorInfos } from '../hooks/useServerInfo';
 import { ValidatorStates } from '../types';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSatelliteDish } from "@fortawesome/free-solid-svg-icons";
@@ -33,10 +19,6 @@ const Validators = () => {
     const { bcClient } = useBeaconChainClientAndValidator()
     const { validatorInfos, refetch } = useRunningValidatorInfos()
     const expectedRecipient = "0xe624471812F4fb739dD4eF40A8f9fAbD9474CEAa" // FIXME: where to get this?
-
-    useEffect(() => {
-        console.log(validatorInfos)
-    }, [validatorInfos])
 
     const decodeKey = (encodedString: string) => "0x" + Buffer.from(encodedString, 'base64').toString('hex')
 
@@ -56,7 +38,28 @@ const Validators = () => {
             body: JSON.stringify(data),
         }).then(async r => {
             const result = await r.text()
-            console.log(result)
+            refetch()
+            // next: set fee recipient too
+            setFeeRecipient(pubkey)
+        }).catch(e => {
+            console.log(e)
+        })
+    }
+
+    const setFeeRecipient = (pubkey: string) => {
+        const api_url: string = `${server_config.monitor_url}/setFeeRecipient`;
+
+        const data = {
+            pubkey: pubkey,
+            feeRecipientAddress: expectedRecipient
+        }
+
+        fetch(api_url, {
+            method: 'POST',
+            headers: { 'content-type': 'application/json;charset=UTF-8' },
+            body: JSON.stringify(data),
+        }).then(async r => {
+            const result = await r.text()
             refetch()
         }).catch(e => {
             console.log(e)
@@ -133,9 +136,9 @@ const Validators = () => {
                                                 ) : (
                                                     <>
                                                         <button
-                                                            className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                                                            className="rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
                                                             onClick={() => importValidator(decodeKey(validator.Pubkey))}>
-                                                            Import
+                                                            Import into {bcClient.name}
                                                         </button>
                                                     </>
                                                 )}

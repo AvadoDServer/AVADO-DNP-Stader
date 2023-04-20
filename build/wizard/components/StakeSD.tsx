@@ -35,7 +35,6 @@ const StakeSD = ({ amount }: Props) => {
 
         if (nodeStatus) {
             if (sdBalanceInWallet > 0n) {
-                console.log(`node can-node-deposit-sd ${sdBalanceInWallet.toString()}`);
                 staderCommand(`node can-node-deposit-sd ${sdBalanceInWallet.toString()}`).then((data: any) => {
                     if (data.status === "error") {
                         if (sdBalanceInWallet > 0n) {
