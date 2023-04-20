@@ -12,13 +12,13 @@ import {
 import { Menu, Transition } from '@headlessui/react'
 import axios from "axios";
 import { server_config } from '../server_config';
-import NetworkBanner from '../components/NetworkBanner';
-import SyncStatusTag from '../components/SyncStatusTag';
-import StaderCommandField from '../components/StaderCommandField'
+import NetworkBanner from './NetworkBanner';
+import SyncStatusTag from './SyncStatusTag';
+import StaderCommandField from './StaderCommandField'
 
 import { useStaderStatus } from "../lib/status"
-import NavBar from '../components/NavBar';
-import AddValidator from '../components/AddValidator';
+import NavBar from './NavBar';
+import AddValidator from './AddValidator';
 import { beaconchainUrl } from "../utils/utils"
 import { useBeaconChainClientAndValidator, useExecutionClient, useNetwork, useRunningValidatorInfos } from '../hooks/useServerInfo';
 import { ValidatorStates } from '../types';
@@ -26,7 +26,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSatelliteDish } from "@fortawesome/free-solid-svg-icons";
 
 
-const Home: NextPage = () => {
+const Validators = () => {
 
     const { nodeStatus } = useStaderStatus()
     const { network } = useNetwork()
@@ -167,4 +167,4 @@ const Home: NextPage = () => {
     )
 }
 
-export default Home;
+export default Validators;

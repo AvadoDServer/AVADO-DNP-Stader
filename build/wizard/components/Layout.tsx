@@ -11,7 +11,7 @@ const Layout = ({ children }: Props) => {
         <>
             <div className="py-10 bg-white">
                 <Header />
-                <NavBar />
+                {/* <NavBar /> */}
 
                 <main className="bg-white">
                     <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">

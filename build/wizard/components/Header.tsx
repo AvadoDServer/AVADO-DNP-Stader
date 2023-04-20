@@ -1,7 +1,7 @@
 import { Fragment, useEffect, useState } from 'react'
 import type { NextPage } from 'next';
 import {
-    PlayIcon,
+    MapIcon,
     AdjustmentsHorizontalIcon,
     ServerIcon,
     PencilIcon,
@@ -14,6 +14,7 @@ import SyncStatusTag from '../components/SyncStatusTag';
 import { useStaderStatus } from "../lib/status"
 import { useBeaconChainClientAndValidator, useExecutionClient, useNetwork } from '../hooks/useServerInfo';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
+import Link from 'next/link';
 
 const Header = () => {
 
@@ -32,7 +33,7 @@ const Header = () => {
                 <div className="lg:flex lg:items-center lg:justify-between">
                     <div className="min-w-0 flex-1">
                         <h1 className="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">
-                            {title}
+                            <Link href="/">{title}</Link>
                         </h1>
                         <div className="mt-1 flex flex-col sm:mt-0 sm:flex-row sm:flex-wrap sm:space-x-6">
                             <div className="mt-2 flex items-center text-sm text-gray-500">
@@ -44,6 +45,13 @@ const Header = () => {
                                 <a href="http://my.ava.do/#/Packages/stader.avado.dnp.dappnode.eth/detail" className="text-sm leading-6 text-gray-600 hover:text-gray-900">
                                     Logs
                                 </a>
+                            </div>
+                            <div className="mt-2 flex items-center text-sm text-gray-500">
+                                <MapIcon className="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
+                                <Link
+                                    className="text-sm leading-6 text-gray-600 hover:text-gray-900"
+                                    href="/admin">API
+                                </Link>
                             </div>
                         </div>
                     </div>
