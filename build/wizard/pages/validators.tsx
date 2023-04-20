@@ -32,6 +32,7 @@ const Home: NextPage = () => {
     const { network } = useNetwork()
     const { bcClient } = useBeaconChainClientAndValidator()
     const { validatorInfos, refetch } = useRunningValidatorInfos()
+    const expectedRecipient = ""
 
     useEffect(() => {
         console.log(validatorInfos)
@@ -41,12 +42,13 @@ const Home: NextPage = () => {
 
     const isRunningValidator = (pubkey: string) => validatorInfos?.some(i => i.pubkey == pubkey)
 
+    const isFeeRecipientAddressCorrect = (pubkey: string) => (validatorInfos?.find(i => i.pubkey === pubkey)?.recipient.ethaddress == expectedRecipient)
+
     const statusRunningValidator = (pubkey: string) => validatorInfos?.find(i => i.pubkey === pubkey)?.data?.status ?? "pending_initialized"
 
     const importValidator = (pubkey: string) => {
         const api_url: string = `${server_config.monitor_url}/importValidator`;
         const data = { "pubkey": pubkey }
-        console.log(JSON.stringify(data))
 
         fetch(api_url, {
             method: 'POST',
@@ -72,7 +74,7 @@ const Home: NextPage = () => {
                         </p>
                     </div>
                     <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
-                        <AddValidator />
+                        <AddValidator currentNumberOfValidators={nodeStatus.validatorInfos.length} />
                     </div>
                 </div>
                 <div className="mt-8 flow-root">

@@ -13,10 +13,10 @@ import { CheckIcon } from '@heroicons/react/24/outline'
 import { ExclamationTriangleIcon, XMarkIcon } from '@heroicons/react/24/outline'
 
 interface Props {
-
+    currentNumberOfValidators: number
 }
 
-const AddValidator = ({ }: Props) => {
+const AddValidator = ({ currentNumberOfValidators }: Props) => {
     const [showAddValidator, setShowAddValidator] = useState(false);
 
     const content = () => {
@@ -29,8 +29,8 @@ const AddValidator = ({ }: Props) => {
                 </div>
                 <div className="px-4 py-5 sm:p-6">
                     <ApproveSD />
-                    <StakeSD />
-                    <DepositETH />
+                    <StakeSD currentNumberOfValidators={currentNumberOfValidators} />
+                    <DepositETH currentNumberOfValidators={currentNumberOfValidators} onFinish={() => setShowAddValidator(false)} />
                 </div>
             </div>
         </div>

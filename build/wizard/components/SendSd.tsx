@@ -1,5 +1,5 @@
 import { useStaderStatus } from "../lib/status";
-import { etherscanBaseUrl } from "../utils/utils"
+import { displayAsETH, etherscanBaseUrl, etherscanTransactionUrl } from "../utils/utils"
 import { useNetwork } from "../hooks/useServerInfo";
 import { utils } from 'ethers'
 import {
@@ -13,15 +13,13 @@ import { useEffect } from "react";
 import abi_json from "../lib/sd_token.json"
 
 interface Props {
+    amount?: bigint
 }
 
-const SendSD = ({ }: Props) => {
+const SendSD = ({ amount = 640000000000000000000n }: Props) => {
 
     const { walletStatus, contractInfo, fetchNodeStatus } = useStaderStatus()
     const { network } = useNetwork()
-
-    const amount = 640
-
 
     // https://goerli.etherscan.io/address/0x0406f539f24be69baa8b88ed6eabedb7b3cfdc60#code
     const SD_TOKEN_CONTRACT = contractInfo.sdToken;
@@ -34,7 +32,7 @@ const SendSD = ({ }: Props) => {
         address: SD_TOKEN_CONTRACT,
         abi: abi_json,
         functionName: 'transfer',
-        args: [walletStatus.accountAddress, utils.parseEther(amount.toString())
+        args: [walletStatus.accountAddress, amount.toString()
         ],
 
     })
@@ -55,11 +53,17 @@ const SendSD = ({ }: Props) => {
                 className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
 
                 disabled={!write || isLoading} onClick={() => write!()}>
-                {isLoading ? 'Sending...' : `Send ${amount} SD`}
+                {isLoading ? 'Sending...' : `Send ${displayAsETH(amount)} SD`}
             </button>
+            {data?.hash && (
+                <>
+                    <p>{etherscanTransactionUrl(network, data?.hash, "Transaction details on Etherscan")}</p>
+                    <br />
+                </>
+            )}
             {isSuccess && (
                 <div>
-                    Successfully sent {amount} SD to {walletStatus.accountAddress}
+                    Successfully sent {displayAsETH(amount)} SD to {walletStatus.accountAddress}
                     <div>
                         <a href={`${etherscanBaseUrl(network)}/tx/${data?.hash}`}>Etherscan</a>
                     </div>

@@ -1,46 +1,35 @@
-import React from "react";
 import Spinner from "./Spinner";
 import web3 from "web3";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
-
 import { useStaderStatus } from "../lib/status";
-import { displayAsETH, etherscanBaseUrl, etherscanTransactionUrl, wsProvider } from "../utils/utils"
+import { displayAsETH, etherscanTransactionUrl, wsProvider } from "../utils/utils"
 import { useNetwork } from "../hooks/useServerInfo";
 import { utils } from 'ethers'
-import {
-    usePrepareSendTransaction,
-    useSendTransaction,
-    useWaitForTransaction,
-    usePrepareContractWrite,
-    useContractWrite,
-} from 'wagmi'
-import { useEffect } from "react";
-import abi_json from "../lib/sd_token.json"
+import { useEffect, useState } from "react";
 import { staderCommand } from "../lib/staderDaemon";
+import SendSD from "./SendSd";
 
 interface Props {
+    currentNumberOfValidators: number
 }
 
-const StakeSD = ({ }: Props) => {
-
+const StakeSD = ({ currentNumberOfValidators }: Props) => {
     const { nodeStatus, fetchNodeStatus } = useStaderStatus()
     const { network } = useNetwork()
 
-
-    const [sdStakeButtonDisabled, setSdStakeButtonDisabled] = React.useState(true);
-    const [feedback, setFeedback] = React.useState("");
-    const [txHash, setTxHash] = React.useState();
-    const [waitingForTx, setWaitingForTx] = React.useState(false);
+    const [sdStakeButtonDisabled, setSdStakeButtonDisabled] = useState(true);
+    const [feedback, setFeedback] = useState("");
+    const [txHash, setTxHash] = useState();
+    const [waitingForTx, setWaitingForTx] = useState(false);
 
     const sdBalanceInWallet = BigInt(nodeStatus.accountBalances.sd)
     const sdMin = BigInt("640000000000000000000")
     const stakedSDBalance = BigInt(nodeStatus.depositedSdCollateral)
-    // const targetCountBN: bigint = BigInt(targetCount)
 
+    const requiredSDStake = (sdMin * BigInt(currentNumberOfValidators + 1))
 
-
-    React.useEffect(() => {
+    useEffect(() => {
 
         setSdStakeButtonDisabled(true); //set default
 
@@ -72,8 +61,8 @@ const StakeSD = ({ }: Props) => {
         }
     }, [nodeStatus, waitingForTx]);
 
-    const stakeSD = () => {
-        staderCommand(`node deposit-sd ${sdBalanceInWallet}`).then((data: any) => {
+    const stakeSD = (amount: bigint) => {
+        staderCommand(`node deposit-sd ${amount}`).then((data: any) => {
             //{"status":"success","error":"","stakeTxHash":"0x41a93be5b4fb06e819975acc0cdb91c1084e4c1943d625a3a5f96d823842d0e8"}
             if (data.status === "error") {
                 setFeedback(data.error);
@@ -83,7 +72,7 @@ const StakeSD = ({ }: Props) => {
         })
     }
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (waitingForTx && txHash) {
             staderCommand(`wait ${txHash}`).then((data: any) => {
                 const w3 = new web3(wsProvider(network));
@@ -99,24 +88,20 @@ const StakeSD = ({ }: Props) => {
     return (
         <div className="">
             <h4 className="title is-4 has-text-white">2. Stake SD</h4>
-            {stakedSDBalance > 0 && nodeStatus && (
-
-                <p>You have already staked {displayAsETH(stakedSDBalance, 2)} SD <span className="tag is-success"><span><FontAwesomeIcon className="icon" icon={faCheck} /></span></span></p>
-                // <p>The minimum stake is currently {Math.ceil(utils.displayAsETH(rplPriceData.minPer16EthMinipoolRplStake))} RPL per minipool<br />
-                //     You have already staked {stakedRplBalance && (<>{utils.displayAsETH(stakedRplBalance, 2)}</>)} RPL for {count()} minipools.
-                //     For {targetCount} minipools, you need {Math.ceil(utils.displayAsETH(sdMin * targetCountBN))} RPL</p>
-            )
-            }
-
-            {stakedSDBalance == 0n && (
+            {stakedSDBalance < requiredSDStake && (
                 <>
-                    <p>Stake all SD in my hot wallet.</p>
+                    {nodeStatus && (sdBalanceInWallet < requiredSDStake) &&
+                        <>
+                            <p>To add a validator you need {displayAsETH(sdMin)} SD in your wallet.</p>
+                            <SendSD amount={requiredSDStake - sdBalanceInWallet} />
+                        </>
+                    }
                     <div className="field">
                         <button
                             className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                            onClick={stakeSD}
+                            onClick={() => stakeSD(requiredSDStake - stakedSDBalance)}
                             disabled={sdStakeButtonDisabled}>
-                            Stake {sdBalanceInWallet ? displayAsETH(sdBalanceInWallet) + " " : ""} SD {waitingForTx ? <Spinner /> : ""}
+                            Stake {displayAsETH(requiredSDStake - stakedSDBalance)} SD {waitingForTx ? <Spinner /> : ""}
                         </button>
                         <br />
                         {feedback && (
@@ -128,13 +113,16 @@ const StakeSD = ({ }: Props) => {
                     </div>
                 </>
             )}
+            {stakedSDBalance >= requiredSDStake && (
+                <span className="tag is-success">Staked <span><FontAwesomeIcon className="icon" icon={faCheck} /></span></span>
+            )}
             {txHash && (
                 <>
                     <p>{etherscanTransactionUrl(network, txHash, "Transaction details on Etherscan")}</p>
                     <br />
                 </>
             )}
-            <br />
+
         </div>);
 }
 

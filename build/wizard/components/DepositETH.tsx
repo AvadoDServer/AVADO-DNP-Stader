@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import DownloadBackup from "./DownloadBackup";
 import { useStaderStatus } from "../lib/status";
-import { displayAsPercentage, etherscanBaseUrl, etherscanTransactionUrl, wsProvider } from "../utils/utils"
+import { displayAsETH, displayAsPercentage, etherscanBaseUrl, etherscanTransactionUrl, wsProvider } from "../utils/utils"
 import { useNetwork } from "../hooks/useServerInfo";
 import { utils } from 'ethers'
 import {
@@ -14,12 +14,15 @@ import {
 } from 'wagmi'
 import { useEffect, useState } from "react";
 import { staderCommand } from "../lib/staderDaemon"
+import Send4Eth from "./Send4Eth";
 
 
 interface Props {
+    currentNumberOfValidators: number
+    onFinish?: () => void
 }
 
-const DepositETH = ({ }: Props) => {
+const DepositETH = ({ currentNumberOfValidators, onFinish }: Props) => {
     const { nodeStatus, fetchNodeStatus } = useStaderStatus()
     const { network } = useNetwork()
 
@@ -29,7 +32,9 @@ const DepositETH = ({ }: Props) => {
     const [waitingForTx, setWaitingForTx] = useState(false);
 
     const ETHDepositAmount: bigint = 4000000000000000000n
+    const ethBalanceInWallet = BigInt(nodeStatus.accountBalances.eth)
 
+    // stader command arguments to add an extra validator
     const salt = "0"
     const numValidators = 1
     const submit = true
@@ -41,7 +46,7 @@ const DepositETH = ({ }: Props) => {
         setEthButtonDisabled(true); //set default
         if (nodeStatus) {
 
-            if ((BigInt(nodeStatus.accountBalances.eth) / 1000000000000000000n) < 4n) {
+            if (ethBalanceInWallet < ETHDepositAmount) {
                 setFeedback("There is not enough ETH in your wallet. You need at least 4 ETH + gas.")
             } else {
                 staderCommand(`node can-deposit ${ETHDepositAmount} ${salt} ${numValidators} ${submit}`).then((data: any) => {
@@ -81,6 +86,11 @@ const DepositETH = ({ }: Props) => {
         })
     }
 
+    const finish = () => {
+        fetchNodeStatus()
+        onFinish?.()
+    }
+
     if (!nodeStatus) {
         return null;
     }
@@ -89,24 +99,29 @@ const DepositETH = ({ }: Props) => {
         <div className="">
             <h4 className="title is-4 has-text-white">3. Deposit 4 ETH</h4>
 
-            <>
-                <div className="field">
+            {nodeStatus && ethBalanceInWallet < ETHDepositAmount && (
+                <>
+                    <p>To add a validator you need {displayAsETH(ETHDepositAmount)} ETH in your wallet.</p>
+                    <Send4Eth />
+                </>
+            )}
+
+            {nodeStatus && ethBalanceInWallet < ETHDepositAmount && (
+                <>
                     <button
                         className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                        onClick={depositEth} disabled={ethButtonDisabled}>Deposit 4 ETH {waitingForTx ? <Spinner /> : ""}</button>
-                </div>
-                {feedback && (
-                    <p className="help is-danger">{feedback}</p>
-                )}
-                <br />
-            </>
+                        onClick={depositEth} disabled={ethButtonDisabled}>Deposit 4 ETH {waitingForTx ? <Spinner /> : ""}
+                    </button>
+                </>
+            )}
+            {feedback && (
+                <p className="help is-danger">{feedback}</p>
+            )}
 
             {txHash && !waitingForTx && (
                 <>
-                    <br />
-                    <p>Your MiniPool has been successfully created! Click the button below to go to the status page.</p>
-                    <p>{etherscanTransactionUrl(network, txHash, "Transaction details on Etherscan")}</p>
-                    <br />
+                    {etherscanTransactionUrl(network, txHash, "Transaction details on Etherscan")}
+
                     <div className="columns">
                         <div className="column is-two-thirds">
                             <article className="message is-warning ">
@@ -114,19 +129,21 @@ const DepositETH = ({ }: Props) => {
                                     <p>Download backup</p>
                                 </div>
                                 <div className="message-body">
-                                    <p>Please download a backup of your whole minipool configuration now!</p>
+                                    <p>Please download a backup of your whole Stader configuration now!</p>
                                     <DownloadBackup />
                                 </div>
                             </article>
                         </div>
                     </div>
-                    <br />
-                    <p>
-                        <button className="button" onClick={() => {
-                            fetchNodeStatus();
-                        }} >Go to the status page</button>
-                    </p>
-                    <br />
+
+                    <button
+                        type="button"
+                        className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
+                        onClick={finish}
+                    >
+                        Close
+                    </button>
+
                 </>
             )}
         </div>);
