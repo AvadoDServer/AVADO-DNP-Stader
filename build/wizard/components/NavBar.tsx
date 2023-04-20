@@ -54,25 +54,23 @@ export default function NavBar() {
                   />
                 </div>
                 <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
-                  {pages.slice(0, -1).map((page, index) => (<>
-                    <Link key={index}
-                      href={page.href}
-                      className={className(false, page.href)}
-                    >
-                      {page.name}
-                    </Link>
-                  </>))}
-                </div>
-              </div>
-              <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
-                {pages.slice(-1).map((page, index) => (<>
-                  <Link key={index}
+                  {pages.slice(0, -1).map((page, index) => <Link key={`${page}-${index}`}
                     href={page.href}
                     className={className(false, page.href)}
                   >
                     {page.name}
                   </Link>
-                </>))}
+                  )}
+                </div>
+              </div>
+              <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
+                {pages.slice(-1).map((page, index) => <Link key={`${page}-${index}`}
+                  href={page.href}
+                  className={className(false, page.href)}
+                >
+                  {page.name}
+                </Link>
+                )}
               </div>
               <div className="-mr-2 flex items-center sm:hidden">
                 {/* Mobile menu button */}
@@ -90,14 +88,13 @@ export default function NavBar() {
 
           <Disclosure.Panel className="sm:hidden">
             <div className="space-y-1 pb-3 pt-2">
-              {pages.map((page, index) => (<>
-                <Link key={index}
-                    href={page.href}
-                    className={className(true, page.href)}
-                  >
-                    {page.name}
-                  </Link>
-              </>))}
+              {pages.map((page, index) => <Link key={index}
+                href={page.href}
+                className={className(true, page.href)}
+              >
+                {page.name}
+              </Link>
+              )}
             </div>
           </Disclosure.Panel>
         </>

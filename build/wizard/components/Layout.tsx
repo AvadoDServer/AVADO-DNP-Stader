@@ -1,7 +1,12 @@
-import React, { PropsWithChildren } from "react";
+import React, { FunctionComponent, ReactNode } from "react";
 import NavBar from "./NavBar";
 import Header from "./Header";
-const Layout = ({ children }: PropsWithChildren) => {
+
+interface Props {
+    children: ReactNode
+}
+
+const Layout = ({ children }: Props) => {
     return (
         <>
             <div className="py-10 bg-white">
