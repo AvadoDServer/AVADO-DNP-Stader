@@ -1,11 +1,15 @@
 import type { NextPage } from 'next';
 
 import StaderCommandField from '../components/StaderCommandField'
+import DownloadBackup from '../components/DownloadBackup';
 
-const Home: NextPage = () => {
+const AdminPage: NextPage = () => {
     return (
-        <StaderCommandField />
+        <>
+            <StaderCommandField />
+            <DownloadBackup />
+        </>
     )
 }
 
-export default Home;
+export default AdminPage;

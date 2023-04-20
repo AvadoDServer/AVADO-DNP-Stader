@@ -11,10 +11,10 @@ import { staderCommand } from "../lib/staderDaemon";
 import SendSD from "./SendSd";
 
 interface Props {
-    currentNumberOfValidators: number
+    amount: bigint
 }
 
-const StakeSD = ({ currentNumberOfValidators }: Props) => {
+const StakeSD = ({ amount }: Props) => {
     const { nodeStatus, fetchNodeStatus } = useStaderStatus()
     const { network } = useNetwork()
 
@@ -27,36 +27,26 @@ const StakeSD = ({ currentNumberOfValidators }: Props) => {
     const sdMin = BigInt("640000000000000000000")
     const stakedSDBalance = BigInt(nodeStatus.depositedSdCollateral)
 
-    const requiredSDStake = (sdMin * BigInt(currentNumberOfValidators + 1))
-
     useEffect(() => {
-
         setSdStakeButtonDisabled(true); //set default
 
         if (waitingForTx)
             return;
 
         if (nodeStatus) {
-            // first deposit only allowed if bigger than minium.
-            // If there is a minipool already, more deposits are allowed.
-            if (sdBalanceInWallet < sdMin) {
-                setFeedback(`Not enough SD in your wallet (${displayAsETH(sdBalanceInWallet, 4)} SD). Must be more than ${displayAsETH(sdMin, 4)} SD before you can stake`);
-            } else {
-                console.log("Staked SD", stakedSDBalance.toString())
-                if (sdBalanceInWallet > 0n) {
-                    console.log(`node can-node-deposit-sd ${sdBalanceInWallet.toString()}`);
-                    staderCommand(`node can-node-deposit-sd ${sdBalanceInWallet.toString()}`).then((data: any) => {
-                        if (data.status === "error") {
-                            if (sdBalanceInWallet > 0n) {
-                                setFeedback(data.error);
-                            }
-                        } else {
-                            // stader says that I can stake - if I have enough in my wallet, enable button
-                            setFeedback("");
-                            setSdStakeButtonDisabled(false);
+            if (sdBalanceInWallet > 0n) {
+                console.log(`node can-node-deposit-sd ${sdBalanceInWallet.toString()}`);
+                staderCommand(`node can-node-deposit-sd ${sdBalanceInWallet.toString()}`).then((data: any) => {
+                    if (data.status === "error") {
+                        if (sdBalanceInWallet > 0n) {
+                            setFeedback(data.error);
                         }
-                    });
-                }
+                    } else {
+                        // stader says that I can stake - if I have enough in my wallet, enable button
+                        setFeedback("");
+                        setSdStakeButtonDisabled(false);
+                    }
+                });
             }
         }
     }, [nodeStatus, waitingForTx]);
@@ -86,35 +76,18 @@ const StakeSD = ({ currentNumberOfValidators }: Props) => {
     }, [waitingForTx, txHash, utils]);
 
     return (
-        <div className="">
-            <h4 className="title is-4 has-text-white">2. Stake SD</h4>
-            {stakedSDBalance < requiredSDStake && (
+        <div>
+            <button
+                className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                onClick={() => stakeSD(amount)}
+                disabled={sdStakeButtonDisabled}>
+                Stake {displayAsETH(amount)} SD {waitingForTx ? <Spinner /> : ""}
+            </button>
+            <br />
+            {feedback && (
                 <>
-                    {nodeStatus && (sdBalanceInWallet < requiredSDStake) &&
-                        <>
-                            <p>To add a validator you need {displayAsETH(sdMin)} SD in your wallet.</p>
-                            <SendSD amount={requiredSDStake - sdBalanceInWallet} />
-                        </>
-                    }
-                    <div className="field">
-                        <button
-                            className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                            onClick={() => stakeSD(requiredSDStake - stakedSDBalance)}
-                            disabled={sdStakeButtonDisabled}>
-                            Stake {displayAsETH(requiredSDStake - stakedSDBalance)} SD {waitingForTx ? <Spinner /> : ""}
-                        </button>
-                        <br />
-                        {feedback && (
-                            <>
-                                <p className="help is-danger">{feedback}</p>
-                                <br />
-                            </>
-                        )}
-                    </div>
+                    <p className="help is-danger">{feedback}</p>
                 </>
-            )}
-            {stakedSDBalance >= requiredSDStake && (
-                <span className="tag is-success">Staked <span><FontAwesomeIcon className="icon" icon={faCheck} /></span></span>
             )}
             {txHash && (
                 <>
@@ -122,7 +95,6 @@ const StakeSD = ({ currentNumberOfValidators }: Props) => {
                     <br />
                 </>
             )}
-
         </div>);
 }
 

@@ -14,6 +14,7 @@ import FundWallet from '../components/FundWallet';
 import RegisterNode from '../components/RegisterNode';
 import { useStaderStatus } from '../lib/status';
 import { displayAsETH } from '../utils/utils';
+import StakeSD from '../components/StakeSD';
 
 
 const Node: NextPage = () => {
@@ -143,12 +144,10 @@ const Node: NextPage = () => {
             </li>
             <li>
               Wallet: {displayAsETH(nodeStatus.accountBalances.sd.toString(), 4)} SD
+              <StakeSD amount={nodeStatus.accountBalances.sd} />
             </li>
             <li>
-            <FundWallet onFinished={() => {}} />
-            </li>
-            <li>
-              Validators: {nodeStatus.numberOfValidatorsRegistered || 0}  / {nodeStatus.sdCollateralWorthValidators.toString()}
+              Validators: {nodeStatus.sdCollateralWorthValidators.toString()}
             </li>
           </ul>
         </div>

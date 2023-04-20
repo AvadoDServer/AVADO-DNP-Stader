@@ -11,6 +11,11 @@ import DepositETH from "./DepositETH";
 import { Dialog, Transition } from '@headlessui/react'
 import { CheckIcon } from '@heroicons/react/24/outline'
 import { ExclamationTriangleIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import { faCheck } from "@fortawesome/free-solid-svg-icons";
+import { displayAsETH, etherscanTransactionUrl, wsProvider } from "../utils/utils"
+import { useNetwork } from "../hooks/useServerInfo";
+import { utils } from 'ethers'
+import SendSD from "./SendSd";
 
 interface Props {
     currentNumberOfValidators: number
@@ -18,6 +23,16 @@ interface Props {
 
 const AddValidator = ({ currentNumberOfValidators }: Props) => {
     const [showAddValidator, setShowAddValidator] = useState(false);
+    const { nodeStatus, fetchNodeStatus } = useStaderStatus()
+
+
+    const sdBalanceInWallet = BigInt(nodeStatus.accountBalances.sd)
+    const sdMin = BigInt("640000000000000000000")
+    const stakedSDBalance = BigInt(nodeStatus.depositedSdCollateral)
+    const requiredSDStake = (sdMin * BigInt(currentNumberOfValidators + 1))
+
+    console.log(stakedSDBalance)
+    console.log(requiredSDStake)
 
     const content = () => {
         return <div>
@@ -29,7 +44,23 @@ const AddValidator = ({ currentNumberOfValidators }: Props) => {
                 </div>
                 <div className="px-4 py-5 sm:p-6">
                     <ApproveSD />
-                    <StakeSD currentNumberOfValidators={currentNumberOfValidators} />
+                    <div className="">
+                        <h4 className="title is-4 has-text-white">2. Stake SD</h4>
+                        {stakedSDBalance < requiredSDStake && (
+                            <>
+                                {nodeStatus && (stakedSDBalance + sdBalanceInWallet < requiredSDStake) &&
+                                    <>
+                                        <p>To add a validator you need {displayAsETH(sdMin)} SD in your wallet.</p>
+                                        <SendSD amount={requiredSDStake - stakedSDBalance - sdBalanceInWallet} />
+                                    </>
+                                }
+                                <StakeSD amount={requiredSDStake - stakedSDBalance} />
+                            </>
+                        )}
+                        {stakedSDBalance >= requiredSDStake && (
+                            <span className="tag is-success">Staked <span><FontAwesomeIcon className="icon" icon={faCheck} /></span></span>
+                        )}
+                    </div>
                     <DepositETH currentNumberOfValidators={currentNumberOfValidators} onFinish={() => setShowAddValidator(false)} />
                 </div>
             </div>
