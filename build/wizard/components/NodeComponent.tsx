@@ -54,6 +54,8 @@ const NodeComponent = () => {
             setCurrentStep(FINISHED)
     }, [nodeStatus]);
 
+    const showButtons = false
+
     return (
         <>
             <div className="px-4 sm:px-6 lg:px-8">
@@ -139,30 +141,32 @@ const NodeComponent = () => {
                                 </div>
                             )}
                             {currentStep.id === FINISHED.id && (
-                                <div>
-                                    <ul>
-                                        <li>
-                                            Node name: {nodeStatus.operatorName}
-                                        </li>
-                                        <li>
-                                            Node address: {nodeStatus.accountAddressFormatted || nodeStatus.accountAddress}
-                                        </li>
-                                        <li>
-                                            Node id: {nodeStatus.operatorId}
-                                        </li>
-                                        <li>
-                                            Node reward address: {nodeStatus.operatorRewardAddress}
-                                        </li>
-                                        <li>
-                                            Wallet: {displayAsETH(nodeStatus.accountBalances.eth.toString(), 4)} ETH
-                                            <SendEth amount={4000000000000000000n} />
-                                        </li>
-                                        <li>
-                                            Wallet: {displayAsETH(nodeStatus.accountBalances.sd.toString(), 4)} SD
-                                            <SendSD />
-                                            <StakeSD amount={BigInt(nodeStatus.accountBalances.sd)} />
-                                        </li>
-                                    </ul>
+                                <div className="sm:flex sm:items-center">
+                                    <div className="sm:flex-auto">
+                                        <ul className="list-disc">
+                                            <li>
+                                                Node name: {nodeStatus.operatorName}
+                                            </li>
+                                            <li>
+                                                Node address: {nodeStatus.accountAddressFormatted || nodeStatus.accountAddress}
+                                            </li>
+                                            <li>
+                                                Node id: {nodeStatus.operatorId}
+                                            </li>
+                                            <li>
+                                                Node reward address: {nodeStatus.operatorRewardAddress}
+                                            </li>
+                                            <li>
+                                                Wallet: {displayAsETH(nodeStatus.accountBalances.eth.toString(), 4)} ETH
+                                                {showButtons && <SendEth amount={4000000000000000000n} />}
+                                            </li>
+                                            <li>
+                                                Wallet: {displayAsETH(nodeStatus.accountBalances.sd.toString(), 4)} SD
+                                                {showButtons && <SendSD />}
+                                                {showButtons && <StakeSD amount={BigInt(nodeStatus.accountBalances.sd)} />}
+                                            </li>
+                                        </ul>
+                                    </div>
                                 </div>
                             )}
                         </div>

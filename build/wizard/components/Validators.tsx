@@ -86,9 +86,6 @@ const Validators = () => {
                             <table className="min-w-full divide-y divide-gray-300">
                                 <thead>
                                     <tr>
-                                        <th scope="col" className="relative py-3.5 pl-3 pr-0">
-                                            <span className="sr-only">Link to beaconcha.in</span>
-                                        </th>
                                         <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0">
                                             <a href="#" className="group inline-flex">
                                                 PubKey
@@ -121,11 +118,8 @@ const Validators = () => {
                                 <tbody className="divide-y divide-gray-200 bg-white">
                                     {nodeStatus.validatorInfos.map((validator) => (
                                         <tr key={validator.Pubkey}>
-                                            <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm sm:pr-0">
-                                                {beaconchainUrl(network, decodeKey(validator.Pubkey), <FontAwesomeIcon className="icon" icon={faSatelliteDish} />)}
-                                            </td>
                                             <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-0">
-                                                {abbreviatePublicKey(decodeKey(validator.Pubkey))}
+                                                {beaconchainUrl(network, decodeKey(validator.Pubkey), <><FontAwesomeIcon className="icon" icon={faSatelliteDish} /> {abbreviatePublicKey(decodeKey(validator.Pubkey))}</>)}
                                             </td>
                                             <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{ValidatorStates[validator.Status]}</td>
                                             <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">

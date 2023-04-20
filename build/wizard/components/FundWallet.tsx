@@ -20,7 +20,7 @@ const FundWallet = ({ onFinished }: Props) => {
     const sdBalance = BigInt(nodeStatus.accountBalances.sd)
 
     const ethStake = 4000000000000000000n
-    const gasMoney = 200000000000000000n
+    const gasMoney = 300000000000000000n
     const sdStake = 640000000000000000000n
 
     useEffect(() => {

@@ -300,7 +300,6 @@ server.get("/" + backupFileName, (req: restify.Request, res: restify.Response, n
 
 server.get("/runningValidatorInfos", async (req: restify.Request, res: restify.Response, next: restify.Next) => {
     const clients = (await getInstalledClients())
-    console.log(clients)
     if (clients.length == 0 || clients[0].name !== "teku") {
         res.send(500, "Missing or unsupported Beacon chain client");
         next()

@@ -53,10 +53,11 @@ const DepositETH = ({ currentNumberOfValidators, onFinish }: Props) => {
                 staderCommand(`node can-deposit ${ETHDepositAmount} ${salt} ${numValidators} ${submit}`).then((data: any) => {
                     if (data.status === "error") {
                         setFeedback(data.error);
+                        setEthButtonDisabled(true);
                     } else {
                         setFeedback("");
+                        setEthButtonDisabled(false);
                     }
-                    setEthButtonDisabled(false);
                 });
             }
 
