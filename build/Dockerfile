@@ -1,19 +1,21 @@
+ARG STADER_VERSION
 FROM node:18.15.0 as builder
 
 # build wizard
 WORKDIR /usr/src/app/wizard
 COPY wizard .
-RUN yarn
+RUN yarn --frozen-lockfile
 RUN rm -Rf build && yarn run build
 
 # Monitor
 WORKDIR /usr/src/monitor
 COPY monitor .
-RUN yarn
+RUN yarn --frozen-lockfile
 RUN rm -Rf build && yarn run build
+RUN rm -Rf node_modules
+RUN yarn --production
 
-
-FROM --platform=linux/amd64 staderdev/stader-node:v0.3.0-beta as stader
+FROM --platform=linux/amd64 staderdev/stader-node:${STADER_VERSION} as stader
 
 ####### Main image
 

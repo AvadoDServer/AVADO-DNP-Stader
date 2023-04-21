@@ -10,7 +10,6 @@ import { publicProvider } from 'wagmi/providers/public';
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
 import { goerli } from 'wagmi/chains'
 import { server_config } from '../server_config'
-import axios from 'axios';
 import { useEffect, useState } from 'react';
 import Layout from '../components/Layout';
 import { useStaderStatus } from '../lib/status';
