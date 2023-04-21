@@ -1,7 +1,6 @@
 import useSWR from "swr";
 import { server_config } from "../server_config"
 import { bcClientType, ecClientType, networkType } from "../types";
-import { useEffect, useState } from "react";
 
 const get = (api_url: string) => {
     const fetcher = async (url: string) => await fetch(url).then((res) => res.json());

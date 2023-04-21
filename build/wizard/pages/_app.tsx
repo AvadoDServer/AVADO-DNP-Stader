@@ -21,26 +21,26 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   useEffect(() => {
     const setupClient = async () => {
-      const data = await axios.get(`${server_config.monitor_url}/ec-clients`).then((res) => res.data)
-      const clientRpcs = data.map((c: any) => c.api)
+      const clientRpcs = await getClientRpcs();
+
+      const rpcProviders: any = clientRpcs.map((client_rpc: any) =>
+        jsonRpcProvider({
+          rpc: (_) => ({ http: client_rpc })
+        })
+      )
 
       const { chains, provider, webSocketProvider } = configureChains(
         [
           goerli
         ],
-        clientRpcs.map((client_rpc: any) =>
-          jsonRpcProvider({
-            rpc: (_) => ({
-              http: client_rpc,
-            }),
-          })).concat([
-            alchemyProvider({
-              // This is Alchemy's default API key.
-              // You can get your own at https://dashboard.alchemyapi.io
-              apiKey: "8kMhSrpLGyIlRYBtAtT9IAVWeVK8hiOZ",
-            }),
-            publicProvider(),
-          ])
+        rpcProviders.concat([
+          alchemyProvider({
+            // This is Alchemy's default API key.
+            // You can get your own at https://dashboard.alchemyapi.io
+            apiKey: "8kMhSrpLGyIlRYBtAtT9IAVWeVK8hiOZ",
+          }),
+          publicProvider(),
+        ])
       );
 
       const { connectors } = getDefaultWallets({
@@ -84,12 +84,21 @@ function MyApp({ Component, pageProps }: AppProps) {
             <Component {...pageProps} />
           </Layout>
         </RainbowKitProvider>
-
       </WagmiConfig>
     ) : (
       <>Connecting to Ethereum clients...</>
     )}
   </>
+
+  async function getClientRpcs(): Promise<string[]> {
+    try {
+      const data = JSON.parse(await (await fetch(`${server_config.monitor_url}/ec-clients`)).text()).data;
+      const clientRpcs = data ? data.map((c: any) => c.api) : [];
+      return clientRpcs;
+    } catch (e) {
+      return []
+    }
+  }
 }
 
 export default MyApp;

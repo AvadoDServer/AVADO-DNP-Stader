@@ -164,7 +164,7 @@ const NodeComponent = () => {
                                             <li>
                                                 Wallet: {displayAsETH(nodeStatus.accountBalances.sd.toString(), 4)} SD
                                                 {showButtons && <SendSD />}
-                                                {showButtons && <StakeSD amount={BigInt(nodeStatus.accountBalances.sd)} />}
+                                                {showButtons && BigInt(nodeStatus.accountBalances.sd) > 0 && <StakeSD amount={BigInt(nodeStatus.accountBalances.sd)} />}
                                             </li>
                                         </ul>
                                     </div>

@@ -25,6 +25,20 @@ const Header = () => {
 
     const title = "Avado Stader"
 
+    const ecClientLink = () => {
+        if (ecClient)
+            return <a href={ecClient.url}>{ecClient.name}</a>
+        else
+            return <div className="bg-red-200 text-red-700">Missing execution client</div>
+    }
+
+    const bcClientLink = () => {
+        if (bcClient)
+            return <a href={bcClient.url}>{bcClient.name}</a>
+        else
+            return <div className="bg-red-200 text-red-700">Missing beacon client</div>
+    }
+
     return (
         <header>
             <NetworkBanner />
@@ -38,7 +52,7 @@ const Header = () => {
                         <div className="mt-1 flex flex-col sm:mt-0 sm:flex-row sm:flex-wrap sm:space-x-6">
                             <div className="mt-2 flex items-center text-sm text-gray-500">
                                 <ServerIcon className="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
-                                <a href={ecClient?.url}>{ecClient?.name}</a>,<a href={bcClient?.url}>{bcClient?.name}</a>
+                                {ecClientLink()},{bcClientLink()}
                             </div>
                             <div className="mt-2 flex items-center text-sm text-gray-500">
                                 <AdjustmentsHorizontalIcon className="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
@@ -62,11 +76,11 @@ const Header = () => {
                             </span>
                             <div className="mt-1 flex flex-col sm:mt-0 sm:flex-row sm:flex-wrap sm:space-x-6">
                                 <span className="hidden sm:block">
-                                    <SyncStatusTag progress={nodeSyncProgressStatus.ecStatus.primaryEcStatus.syncProgress} label={ecClient?.name} />
+                                    <SyncStatusTag clientStatus={nodeSyncProgressStatus.ecStatus.primaryEcStatus} label={ecClient?.name ?? "execution client"} />
                                 </span>
 
                                 <span className="ml-3 hidden sm:block">
-                                    <SyncStatusTag progress={nodeSyncProgressStatus.bcStatus.primaryEcStatus.syncProgress} label={bcClient?.name} />
+                                    <SyncStatusTag clientStatus={nodeSyncProgressStatus.bcStatus.primaryEcStatus} label={bcClient?.name ?? "beacon client"} />
                                 </span>
                             </div>
                         </div>

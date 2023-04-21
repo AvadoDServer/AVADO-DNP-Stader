@@ -189,7 +189,7 @@ const staderApiCommand = (command: string) => {
             if (data.txHash !== "0x0000000000000000000000000000000000000000000000000000000000000000")
                 storeTxHash(data.txHash);
         }
-    })
+    }).catch(e => console.error)
 
     return executionPromise;
 }
@@ -376,13 +376,13 @@ server.get("/getFeeRecipient", (req: restify.Request, res: restify.Response, nex
 
 server.get("/transactions", (req: restify.Request, res: restify.Response, next: restify.Next) => {
     try {
-        const result = fs.readFileSync(`/.stader/data/transactions.json`, 'utf8')
+        const result = JSON.parse(fs.readFileSync(`/.stader/data/transactions.json`, 'utf8'))
         res.send(200, result);
         return next()
     } catch (err) {
-        console.error(err);
-        res.send(400, err);
-        return next();
+        const result = { transactions: [] }
+        res.send(200, result);
+        return next()
     }
 })
 
