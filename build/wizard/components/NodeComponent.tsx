@@ -17,6 +17,7 @@ import { displayAsETH } from '../utils/utils';
 import StakeSD from './StakeSD';
 import SendSD from './SendSd';
 import SendEth from './SendEth';
+import { useAccount, useBalance } from 'wagmi';
 
 
 const NodeComponent = () => {
@@ -47,7 +48,14 @@ const NodeComponent = () => {
         return "complete"
     }
 
-    const { nodeStatus, walletStatus, fetchWalletStatus, fetchNodeStatus } = useStaderStatus()
+    const { nodeStatus, walletStatus, fetchWalletStatus, fetchNodeStatus, contractInfo } = useStaderStatus()
+
+    // Get amount of SD tokens in user wallletl
+    const { address } = useAccount()
+    const { data: sdBalance } = useBalance({
+        address: address,
+        token: contractInfo.sdToken
+    })
 
     useEffect(() => {
         if (nodeStatus && nodeStatus.registered)
@@ -164,7 +172,9 @@ const NodeComponent = () => {
                                             <li>
                                                 Wallet: {displayAsETH(nodeStatus.accountBalances.sd.toString(), 4)} SD
                                                 {showButtons && <SendSD />}
+                                                {showButtons && (sdBalance?.value?.toBigInt() ?? 0n) > 0 && <SendSD amount={(sdBalance?.value?.toBigInt() ?? 0n)} />}
                                                 {showButtons && BigInt(nodeStatus.accountBalances.sd) > 0 && <StakeSD amount={BigInt(nodeStatus.accountBalances.sd)} />}
+
                                             </li>
                                         </ul>
                                     </div>
