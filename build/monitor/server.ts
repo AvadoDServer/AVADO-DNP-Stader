@@ -302,8 +302,7 @@ server.get("/runningValidatorInfos", async (req: restify.Request, res: restify.R
     const clients = (await getInstalledClients())
     if (clients.length == 0 || clients[0].name !== "teku") {
         res.send(500, "Missing or unsupported Beacon chain client");
-        next()
-        return
+        return next()
     }
 
     const keymanagerUrl = `http://teku-prater.my.ava.do:9999/keymanager`
