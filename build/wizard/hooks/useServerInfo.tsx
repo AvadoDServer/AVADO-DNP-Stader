@@ -56,5 +56,7 @@ export function useRunningValidatorInfos() {
 
     const refetch = () => mutate()
 
-    return { validatorInfos: data as runningValidatorInfosType[], refetch, error };
+    const infos: runningValidatorInfosType[] = (typeof data === "string") ? [] : (data ?? [])
+
+    return { validatorInfos: infos, refetch, error };
 }

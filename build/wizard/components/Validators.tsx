@@ -22,11 +22,11 @@ const Validators = () => {
 
     const decodeKey = (encodedString: string) => "0x" + Buffer.from(encodedString, 'base64').toString('hex')
 
-    const isRunningValidator = (pubkey: string) => validatorInfos?.some(i => i.pubkey == pubkey)
+    const isRunningValidator = (pubkey: string) => validatorInfos.some(i => i.pubkey == pubkey)
 
-    const isFeeRecipientAddressCorrect = (pubkey: string) => (validatorInfos?.find(i => i.pubkey === pubkey)?.recipient.ethaddress == expectedRecipient)
+    const isFeeRecipientAddressCorrect = (pubkey: string) => (validatorInfos.find(i => i.pubkey === pubkey)?.recipient.ethaddress == expectedRecipient)
 
-    const statusRunningValidator = (pubkey: string) => validatorInfos?.find(i => i.pubkey === pubkey)?.data?.status ?? "pending_initialized"
+    const statusRunningValidator = (pubkey: string) => validatorInfos.find(i => i.pubkey === pubkey)?.data?.status ?? "pending_initialized"
 
     const importValidator = (pubkey: string) => {
         const api_url: string = `${server_config.monitor_url}/importValidator`;

@@ -1,6 +1,6 @@
 {
   "name": "stader.avado.dnp.dappnode.eth",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "upstream": "v0.3.0-beta",
   "title": "Stader",
   "description": "Stader is a decentralised Ethereum staking protocol",
@@ -11,7 +11,11 @@
     "volumes": [
       "data:/.stader"
     ],
-    "environment": [],
+    "environment": [
+      "NETWORK=prater",
+      "EXECUTIONCLIENT=geth",
+      "CONSENSUSCLIENT=teku"
+    ],
     "restart": "always"
   },
   "author": "heeckhau",
