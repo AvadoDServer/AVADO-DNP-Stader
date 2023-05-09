@@ -1,6 +1,6 @@
 import { readFileSync } from "fs";
 
-const localdev = false;
+const localdev = process.env.LOCALDEV || false;
 
 const network = () => {
     var env_network = process.env.NETWORK ?? "goerli" // use goerli by default
