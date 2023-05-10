@@ -21,7 +21,7 @@ const FundWallet = ({ onFinished }: Props) => {
 
     const ethStake = 4000000000000000000n
     const gasMoney = 300000000000000000n
-    const sdStake = 640000000000000000000n
+    const sdStake = 1000000000000000000000n
 
     useEffect(() => {
         if (nodeStatus && ethBalance >= ethStake && sdBalance >= sdStake)

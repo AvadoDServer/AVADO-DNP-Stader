@@ -24,7 +24,7 @@ const StakeSD = ({ amount }: Props) => {
     const [waitingForTx, setWaitingForTx] = useState(false);
 
     const sdBalanceInWallet = BigInt(nodeStatus.accountBalances.sd)
-    const sdMin = BigInt("640000000000000000000")
+    const sdMin = BigInt("1000000000000000000000")
     const stakedSDBalance = BigInt(nodeStatus.depositedSdCollateral)
 
     useEffect(() => {
