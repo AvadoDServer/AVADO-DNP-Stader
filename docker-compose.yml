@@ -5,7 +5,7 @@ services:
     build:
       context: ./build
       args:
-        STADER_VERSION: v0.4.0-beta
+        STADER_VERSION: v0.4.0-avado
     volumes:
       - 'data:/.stader/'
     environment:
