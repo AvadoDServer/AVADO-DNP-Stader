@@ -67,14 +67,7 @@ const NodeComponent = () => {
     return (
         <>
             <div className="px-4 sm:px-6 lg:px-8">
-                <div className="sm:flex sm:items-center">
-                    <div className="sm:flex-auto">
-                        <h1 className="text-base font-semibold leading-6 text-gray-900">Stader Node</h1>
-                        <p className="mt-2 text-sm text-gray-700">
-                            Node information
-                        </p>
-                    </div>
-                </div>
+
                 <div className="mt-8 flow-root">
                     <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                         <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
@@ -149,35 +142,45 @@ const NodeComponent = () => {
                                 </div>
                             )}
                             {currentStep.id === FINISHED.id && (
-                                <div className="sm:flex sm:items-center">
-                                    <div className="sm:flex-auto">
-                                        <ul className="list-disc">
-                                            <li>
-                                                Node name: {nodeStatus.operatorName}
-                                            </li>
-                                            <li>
-                                                Node address: {nodeStatus.accountAddressFormatted || nodeStatus.accountAddress}
-                                            </li>
-                                            <li>
-                                                Node id: {nodeStatus.operatorId}
-                                            </li>
-                                            <li>
-                                                Node reward address: {nodeStatus.operatorRewardAddress}
-                                            </li>
-                                            <li>
-                                                Wallet: {displayAsETH(nodeStatus.accountBalances.eth.toString(), 4)} ETH
-                                                {showButtons && <SendEth amount={4000000000000000000n} />}
-                                                {showButtons && <SendEth amount={100000000000000000n} />}
-                                            </li>
-                                            <li>
-                                                Wallet: {displayAsETH(nodeStatus.accountBalances.sd.toString(), 4)} SD
-                                                {showButtons && <SendSD />}
-                                                {showButtons && (sdBalance?.value?.toBigInt() ?? 0n) > 0 && <SendSD amount={(sdBalance?.value?.toBigInt() ?? 0n)} />}
-                                                {showButtons && BigInt(nodeStatus.accountBalances.sd) > 0 && <StakeSD amount={BigInt(nodeStatus.accountBalances.sd)} />}
-                                            </li>
-                                        </ul>
+                                <>
+                                    <div className="sm:flex sm:items-center">
+                                        <div className="sm:flex-auto">
+                                            <h1 className="text-base font-semibold leading-6 text-gray-900">Stader Node</h1>
+                                            <p className="mt-2 text-sm text-gray-700">
+                                                Node information
+                                            </p>
+                                        </div>
                                     </div>
-                                </div>
+                                    <div className="sm:flex sm:items-center">
+                                        <div className="sm:flex-auto">
+                                            <ul className="list-disc">
+                                                <li>
+                                                    Node name: {nodeStatus.operatorName}
+                                                </li>
+                                                <li>
+                                                    Node address: {nodeStatus.accountAddressFormatted || nodeStatus.accountAddress}
+                                                </li>
+                                                <li>
+                                                    Node id: {nodeStatus.operatorId}
+                                                </li>
+                                                <li>
+                                                    Node reward address: {nodeStatus.operatorRewardAddress}
+                                                </li>
+                                                <li>
+                                                    Wallet: {displayAsETH(nodeStatus.accountBalances.eth.toString(), 4)} ETH
+                                                    {showButtons && <SendEth amount={4000000000000000000n} />}
+                                                    {showButtons && <SendEth amount={100000000000000000n} />}
+                                                </li>
+                                                <li>
+                                                    Wallet: {displayAsETH(nodeStatus.accountBalances.sd.toString(), 4)} SD
+                                                    {showButtons && <SendSD />}
+                                                    {showButtons && (sdBalance?.value?.toBigInt() ?? 0n) > 0 && <SendSD amount={(sdBalance?.value?.toBigInt() ?? 0n)} />}
+                                                    {showButtons && BigInt(nodeStatus.accountBalances.sd) > 0 && <StakeSD amount={BigInt(nodeStatus.accountBalances.sd)} />}
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </>
                             )}
                         </div>
                     </div>

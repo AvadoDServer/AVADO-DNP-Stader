@@ -47,7 +47,7 @@ const Header = () => {
                 <div className="lg:flex lg:items-center lg:justify-between">
                     <div className="min-w-0 flex-1">
                         <h1 className="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">
-                            <Link href="/">{title}</Link>
+                            <Link href="/"><h1>{title}</h1></Link>
                         </h1>
                         <div className="mt-1 flex flex-col sm:mt-0 sm:flex-row sm:flex-wrap sm:space-x-6">
                             <div className="mt-2 flex items-center text-sm text-gray-500">
@@ -71,9 +71,9 @@ const Header = () => {
                     </div>
                     <div className="mt-5 flex justify-items-end">
                         <div className="min-w-0 flex-1">
-                            <span className="hidden sm:block">
+                            {/* <span className="hidden sm:block">
                                 <ConnectButton />
-                            </span>
+                            </span> */}
                             <div className="mt-1 flex flex-col sm:mt-0 sm:flex-row sm:flex-wrap sm:space-x-6">
                                 <span className="hidden sm:block">
                                     <SyncStatusTag clientStatus={nodeSyncProgressStatus.ecStatus.primaryEcStatus} label={ecClient?.name ?? "execution client"} />

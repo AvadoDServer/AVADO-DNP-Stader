@@ -1,0 +1,115 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+
+    .error {
+        border-color:red;
+        border-width:3px;
+    }
+    .error-message {
+        color:#880000;
+    }
+
+    .smallbtn {
+        @apply bg-white text-darkblue font-bold text-[14px] leading-[18px] py-[6px] px-[15px] rounded-[4px];
+      }
+
+    .mediumbtn {
+      @apply bg-white text-darkblue font-bold text-[14px] md:text-[18px] leading-[22px] py-[9px] px-[30px] rounded-[4px];
+    }
+    .bigbtn {
+        @apply bg-white text-darkblue font-bold text-[16px] md:text-[20px] leading-[24px] py-[18px] px-[65px] rounded-[4px];
+    }
+    .twentytwo {
+        @apply text-[22px] leading-[28px];
+    }
+    .twenty {
+        @apply text-[20px] leading-[28px];
+    }
+    .eighteen {
+        @apply text-[18px] leading-[24px];
+    }
+    .sixteen {
+        @apply text-[16px] leading-[20px];
+    }
+    h1 {
+        @apply text-[38px] leading-[42px] md:text-[46px] md:leading-[48px] font-bold;
+    }
+    h2 {
+        @apply text-[28px] md:text-[32px] leading-[34px] md:leading-[38px] font-bold;
+    }
+    h3 {
+        @apply text-[22px] leading-[28px] font-bold;
+    }
+    a {
+        font-size: inherit;
+
+    }
+    .pluslist ul {
+        list-style: none;
+    }
+    .pluslist li:before {
+        content: "+";
+        margin-right: 22px;
+    }
+    .normalshadow {
+        @apply shadow-[0_7px_12px_0_rgba(11,44,113,0.05)];
+    }
+    .heavyshadow {
+        @apply shadow-[0_7px_12px_0_rgba(11,44,113,0.2)];
+    }
+
+
+    .tweet {
+        @apply ml-[15px];
+    }
+    .tweet h4,p  {
+        @apply text-[14px] leading-[18px];
+    }
+    .tweet a  {
+        @apply font-bold;
+    }
+    .bg-darkblue-texture {
+        @apply bg-[url('/images/avado_bg.png')] bg-repeat;
+    }
+    .footercol {
+        @apply flex flex-col items-start justify-start text-white;
+    }
+    .footercol a {
+        @apply text-[16px] text-lightblue font-bold my-[8px] text-opacity-70;
+    }
+    .footercol a:hover {
+        @apply text-opacity-100;
+    }
+    .textonly h1 {
+        @apply mb-4;
+    }
+    .textonly h2 {
+        @apply text-[22px] leading-[28px] font-bold mt-8 mb-3;
+    }
+    .textonly p {
+        @apply mb-5;
+    }
+    .robotofont {
+        font-family: "Roboto";
+    }
+    .blog h1 {
+        @apply mb-2;
+    }
+    .blog h2 {
+        @apply text-[22px] leading-[28px] font-bold mt-8 mb-3;
+    }
+    .blog p {
+        @apply mb-5 text-[18px] leading-[26px] w-full max-w-[900px];
+    }
+    .blog .publish-date {
+        @apply mb-2 text-[14px] leading-[16px];
+    }
+    .textonly li {
+        list-style: disc;
+        margin-left: 1em;
+    }
+
+}
