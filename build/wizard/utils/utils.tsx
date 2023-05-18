@@ -6,8 +6,8 @@ export function etherscanTransactionUrl(network: networkType, txHash: string, te
     return <a target="_blank" rel="noopener noreferrer" href={etherscanBaseUrl(network) + "/tx/" + txHash}>{text ? text : txHash}</a>;
 }
 
-export function displayAsETH(num: string | bigint, fractionDigits?: number) {
-    if (!num)
+export function displayAsETH(num: string | bigint, fractionDigits: number = 2) {
+    if (!num) 
         return 0;
     const result = web3.utils.fromWei(num.toString(), 'ether');
     if (fractionDigits)
