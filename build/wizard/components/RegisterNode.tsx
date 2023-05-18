@@ -7,6 +7,7 @@ import { staderCommand } from "../lib/staderDaemon"
 import { etherscanTransactionUrl, wsProvider } from "../utils/utils"
 import { useNetwork } from "../hooks/useServerInfo";
 import { useAccount } from "wagmi";
+import ButtonSpinner from "./ButtonSpinner";
 
 interface Props {
     onFinished: () => void
@@ -97,29 +98,30 @@ const RegisterNode = ({ onFinished }: Props) => {
 
     return (
         <div>
-            <h1 className="text-base font-semibold leading-7 text-gray-900">Register Node</h1>
+            <div className="text-5xl pb-5">Choose a name for your node.</div>
             {nodeStatus && !nodeStatus.registered && (
                 <div className="space-y-12">
                     <div className="border-b border-gray-900/10 pb-12">
                         <label className="block text-sm font-medium leading-6 text-gray-900">
-                            Choose a node name  {"emoji's are allowed 😎)"}
+                             {"emoji's are allowed 😎"}
                         </label>
                         <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
-
                             <input
                                 className="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
                                 onChange={(e) => { setName(e.target.value) }}
                             />
                         </div>
 
-                        <br />
+                        <hr className="mt-10 pt-5 " />
 
                         <div className="mt-1 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
                             <button
                                 className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                                 onClick={registerNode}
                                 disabled={name == "" || buttonDisabled}>
-                                Register Node {waitingForTx ? <Spinner /> : ""}
+                                {waitingForTx ? (                                
+                                <ButtonSpinner text={`Registring node`} />
+                                ) : "Register Node"}
                             </button>
                         </div>
                         {error && (<p className="help is-danger">{error}</p>)}

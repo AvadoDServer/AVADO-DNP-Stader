@@ -160,7 +160,7 @@ const Validators = () => {
                 </>
             ) : (
                 <>
-                    <p>No validators yet</p>
+                    {/* <p>No validators yet</p> */}
                 </>
             )}
         </>

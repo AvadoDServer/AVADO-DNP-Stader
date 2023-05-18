@@ -1,6 +1,7 @@
 import '../styles/globals.css';
 // import '../styles/style.sass';
 import '@rainbow-me/rainbowkit/styles.css';
+import '@fontsource/exo-2';
 
 import type { AppProps } from 'next/app';
 import { RainbowKitProvider, getDefaultWallets } from '@rainbow-me/rainbowkit';

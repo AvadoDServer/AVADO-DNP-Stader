@@ -4,6 +4,10 @@
 
 @layer base {
 
+    body {
+        font-family: "Exo 2";
+    }
+
     .error {
         border-color:red;
         border-width:3px;

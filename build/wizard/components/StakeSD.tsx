@@ -84,11 +84,11 @@ const StakeSD = ({ amount }: Props) => {
                 Stake {displayAsETH(amount)} SD {waitingForTx ? <Spinner /> : ""}
             </button>
             <br />
-            {feedback && (
+            {/* {feedback && (
                 <>
                     <p className="help is-danger">{feedback}</p>
                 </>
-            )}
+            )} */}
             {txHash && (
                 <>
                     <p>{etherscanTransactionUrl(network, txHash, "Transaction details on Etherscan")}</p>
