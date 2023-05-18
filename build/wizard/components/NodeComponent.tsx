@@ -48,7 +48,7 @@ const NodeComponent = () => {
         return "complete"
     }
 
-    const { nodeStatus, walletStatus, fetchWalletStatus, fetchNodeStatus, contractInfo } = useStaderStatus()
+    const { nodeStatus, contractInfo } = useStaderStatus()
 
     // Get amount of SD tokens in user wallletl
     const { address } = useAccount()
@@ -174,7 +174,6 @@ const NodeComponent = () => {
                                                 {showButtons && <SendSD />}
                                                 {showButtons && (sdBalance?.value?.toBigInt() ?? 0n) > 0 && <SendSD amount={(sdBalance?.value?.toBigInt() ?? 0n)} />}
                                                 {showButtons && BigInt(nodeStatus.accountBalances.sd) > 0 && <StakeSD amount={BigInt(nodeStatus.accountBalances.sd)} />}
-
                                             </li>
                                         </ul>
                                     </div>

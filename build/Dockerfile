@@ -23,7 +23,6 @@ FROM --platform=linux/amd64 node:18.15.0
 ARG STADER_VERSION
 
 COPY --from=stader /go/bin/stader /go/bin/stader
-RUN wget https://dub.sh/linuxamd64 -O /go/bin/stader-cli; chmod u+x /go/bin/stader-cli
 
 RUN mkdir -p /stader
 

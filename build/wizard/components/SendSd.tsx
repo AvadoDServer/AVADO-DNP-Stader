@@ -16,7 +16,7 @@ interface Props {
     amount?: bigint
 }
 
-const SendSD = ({ amount = 640000000000000000000n }: Props) => {
+const SendSD = ({ amount = 1000000000000000000000n }: Props) => {
 
     const { walletStatus, contractInfo, fetchNodeStatus } = useStaderStatus()
     const { network } = useNetwork()

@@ -32,17 +32,33 @@ const RegisterNode = ({ onFinished }: Props) => {
             return;
         if (nodeStatus && !nodeStatus.registered && BigInt(nodeStatus.accountBalances.eth) > BigInt(0)) {
 
-            staderCommand(`node can-register ${name} ${accountAddress} true`).then((data: any) => {
+            staderCommand(`node can-register "${name}" "${accountAddress}" true`).then((data: any) => {
                 if (data.status === "error") {
                     setError("Error running can-register: " + data.error + (data.registrationDisabled ? " Node registrations are currently disabled." : ""));
                     return;
                 }
-                if (data.canRegister)
-                    setButtonDisabled(false);
+                if (data.alreadyRegistered) {
+                    setError("Already registered");
+                    return;
+                }
+                if (data.operatorNameTooLong) {
+                    setError("Operator name too long");
+                    return;
+                }
+                if (data.operatorRewardAddressZero) {
+                    setError("Invalid operator Address");
+                    return;
+                }
+                if (data.registrationPaused) {
+                    setError("Registration is currently paused");
+                    return;
+                }
+                setError(undefined);
+                setButtonDisabled(false);
                 setGasInfo(data.gasInfo);
             });
         }
-    }, [nodeStatus]);
+    }, [nodeStatus, name, accountAddress]);
 
     useEffect(() => {
         if (waitingForTx && txHash) {
