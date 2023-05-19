@@ -6,7 +6,7 @@ import { useNetwork } from "../hooks/useServerInfo";
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import SendEth from "./SendEth";
 import SendSD from "./SendSd";
-import AddToken from "./AddToken"
+// import AddToken from "./AddToken"
 import {
     useAccount,
 } from 'wagmi'
@@ -33,11 +33,11 @@ const FundWallet = ({ onFinished }: Props) => {
     const sdStake = 1000000000000000000n
 
     // in this step - update status every 5s
-    useEffect(()=>{
-        const interval = setInterval(()=>{
+    useEffect(() => {
+        const interval = setInterval(() => {
             fetchNodeStatus();
-        },5000);
-        return(()=>{
+        }, 5000);
+        return (() => {
             clearInterval(interval);
         })
     });
@@ -51,7 +51,7 @@ const FundWallet = ({ onFinished }: Props) => {
             sdBalance >= sdStake
         )
     }, [
-        nodeStatus, ethBalance, sdBalance
+        nodeStatus, ethBalance, sdBalance, ethStake, gasMoney, sdStake
     ]);
 
     // useEffect(() => {
@@ -118,11 +118,11 @@ const FundWallet = ({ onFinished }: Props) => {
                             </div>
                             <div className="w-40 h-35">
                                 {(sdStake - sdBalance) > 0 && (
-                                    <SendSD amount={sdStake - sdBalance}  onSuccess={fetchNodeStatus}/>
+                                    <SendSD amount={sdStake - sdBalance} onSuccess={fetchNodeStatus} />
                                 )}
                             </div>
                             <div className="w-32 h-35">
-                                <AddToken />
+                                {/* <AddToken /> */}
                             </div>
 
                         </div>
@@ -177,7 +177,7 @@ const FundWallet = ({ onFinished }: Props) => {
                                             You can go to the next step once you have funded your wallet sufficiently.
                                         </label>
                                     </div>
-                                ):(
+                                ) : (
                                     <div className="text-sm leading-6">
                                         <label className="font-medium">
                                             Your hot-wallet has been funded!

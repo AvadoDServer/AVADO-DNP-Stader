@@ -29,7 +29,7 @@ const DepositETH = ({ currentNumberOfValidators, onFinish }: Props) => {
     // stader command arguments to add an extra validator
     const salt = "0"
     const numValidators = 1
-    const reloadKeys = true
+    const reloadKeys = false
 
     useEffect(() => {
         if (waitingForTx)
@@ -46,7 +46,7 @@ const DepositETH = ({ currentNumberOfValidators, onFinish }: Props) => {
                 }
             });
         }
-    }, [nodeStatus, waitingForTx]);
+    }, [nodeStatus, waitingForTx, ETHDepositAmount, reloadKeys]);
 
     useEffect(() => {
         if (waitingForTx && txHash) {
@@ -60,7 +60,7 @@ const DepositETH = ({ currentNumberOfValidators, onFinish }: Props) => {
                 });
             });
         }
-    }, [waitingForTx, txHash]);
+    }, [waitingForTx, txHash, fetchNodeStatus, network, onFinish]);
 
     const depositEth = () => {
         staderCommand(`node deposit ${ETHDepositAmount.toString()} ${salt} ${numValidators} ${reloadKeys}`).then((data: any) => {

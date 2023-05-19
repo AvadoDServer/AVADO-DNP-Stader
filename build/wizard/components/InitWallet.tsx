@@ -47,7 +47,7 @@ const InitWallet = ({ onFinished }: Props) => {
 
     useEffect(() => {
         fetchWalletStatus()
-    }, []);
+    });
 
     useEffect(() => {
         if (!initialWalletStatus)
@@ -85,7 +85,7 @@ const InitWallet = ({ onFinished }: Props) => {
         <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
             <div className="sm:col-span-4">
                 <label className="text-5xl">
-                    Let's create a hot-wallet for your node.
+                    Let&apos;s create a hot-wallet for your node.
                 </label>
                 <p className="mt-3 text-sm leading-6 text-gray-600">Choose a password to encrypt your Stader wallet - minimum length is 12 characters.</p>
                 <div className="mt-2">
@@ -179,22 +179,22 @@ const InitWallet = ({ onFinished }: Props) => {
                 </div>
             </div>
             <div className="sm:col-span-1">
-                {enableContinue? (
-                <button
-                className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                onClick={() => { onFinished(); }}
-            >
-                continue to next step
-            </button>
-
-                ):(
+                {enableContinue ? (
                     <button
-                    className="cursor-not-allowed opacity-50 rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                    onClick={() => { onFinished(); }}
-                >
-                    continue to next step
-                </button>
-    
+                        className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                        onClick={() => { onFinished(); }}
+                    >
+                        continue to next step
+                    </button>
+
+                ) : (
+                    <button
+                        className="cursor-not-allowed opacity-50 rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                        onClick={() => { onFinished(); }}
+                    >
+                        continue to next step
+                    </button>
+
                 )}
             </div>
 

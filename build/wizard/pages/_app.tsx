@@ -73,7 +73,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       fetchNodeSyncProgressStatus();
     }, 60 * 1000); // 60 seconds refresh
     return () => clearInterval(interval);
-  }, []);
+  }, [fetchContractsInfo, fetchNodeStatus, fetchNodeSyncProgressStatus]);
 
   return <>
     {/* <link rel="stylesheet" href="https://rsms.me/inter/inter.css"></link> */}

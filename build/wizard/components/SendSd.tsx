@@ -65,7 +65,7 @@ const SendSD = ({ amount = 1000000000000000000000n, onSuccess }: Props) => {
                 </button>
                 <br />
                 <span className="text-red-500 text-xs">
-                    You don't have enough SD
+                    You don&apos;t have enough SD
                 </span>
             </div>
         );

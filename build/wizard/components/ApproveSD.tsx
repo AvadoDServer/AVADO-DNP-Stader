@@ -70,7 +70,7 @@ const ApproveSD = ({ }: Props) => {
                 });
             });
         }
-    }, [waitingForTx, txHash]);
+    }, [waitingForTx, txHash, network]);
 
     return (
         <div className="">
