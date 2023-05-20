@@ -25,12 +25,12 @@ const FundWallet = ({ onFinished }: Props) => {
     const ethBalance = BigInt(nodeStatus.accountBalances.eth)
     const sdBalance = BigInt(nodeStatus.accountBalances.sd)
 
-    // const ethStake = 4000000000000000000n
-    // const gasMoney = 300000000000000000n
-    // const sdStake = 1000000000000000000000n
-    const ethStake = 400000000000000000n
-    const gasMoney = 30000000000000000n
-    const sdStake = 1000000000000000000n
+    const ethStake = 4000000000000000000n
+    const gasMoney = 300000000000000000n
+    const sdStake = 1000000000000000000000n
+    // const ethStake = 400000000000000000n
+    // const gasMoney = 30000000000000000n
+    // const sdStake = 1000000000000000000n
 
     // in this step - update status every 5s
     useEffect(() => {
