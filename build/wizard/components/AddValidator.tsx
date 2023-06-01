@@ -77,10 +77,10 @@ const AddValidator = ({ currentNumberOfValidators }: Props) => {
                     <div className="">
                         <h4 className="title is-4 has-text-white">3. Deposit 4 ETH</h4>
                         {!ready && ethBalanceInWallet < ETHDepositAmount && (
-                            <>
+                            <div className="pb-3">
                                 <p>To add a validator you need {displayAsETH(ETHDepositAmount)} ETH in your wallet.</p>
                                 <SendEth amount={ETHDepositAmount} />
-                            </>
+                            </div>
                         )}
                         {!ready && nodeStatus.sdCollateralWorthValidators > currentNumberOfValidators && (
                             <>

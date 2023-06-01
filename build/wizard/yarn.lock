@@ -660,6 +660,11 @@
     "@ethersproject/properties" "^5.7.0"
     "@ethersproject/strings" "^5.7.0"
 
+"@fontsource/exo-2@^4.5.11":
+  "integrity" "sha512-wNE9MJHL+NBEoPy/gDWLF3Wzn0YJLyM8YUVxfuW0w0ociY50Ae1x0DrC5A3R2G59aySiox/VYJppenWZJG3psQ=="
+  "resolved" "https://registry.npmjs.org/@fontsource/exo-2/-/exo-2-4.5.11.tgz"
+  "version" "4.5.11"
+
 "@fortawesome/fontawesome-common-types@6.4.0":
   "integrity" "sha512-HNii132xfomg5QVZw0HwXXpN22s7VBHQBv9CeOu9tfJnhsWQNd2lmTNi8CSrnw5B+5YOmzu1UoPAyxaXsJ6RgQ=="
   "resolved" "https://registry.npmjs.org/@fortawesome/fontawesome-common-types/-/fontawesome-common-types-6.4.0.tgz"
@@ -6613,6 +6618,11 @@
   "integrity" "sha512-N3WMsuqV66lT30CrXNbEjx4GEwlow3v6rr4mCcv6prnfwhS01rkgyFdjPNBYd9br7LpXV1+Emh01fHnq2Gdgrw=="
   "resolved" "https://registry.npmjs.org/tr46/-/tr46-0.0.3.tgz"
   "version" "0.0.3"
+
+"truncate-eth-address@^1.0.2":
+  "integrity" "sha512-MLGSzEIDam9XdBQejtCpQfdbgXfYTEkQseqpz+Pcqu6SEvvVC4mYniWFp4n8VG+KOi6jYVtUfA6cqWecSvS3rw=="
+  "resolved" "https://registry.npmjs.org/truncate-eth-address/-/truncate-eth-address-1.0.2.tgz"
+  "version" "1.0.2"
 
 "ts-interface-checker@^0.1.9":
   "integrity" "sha512-Y/arvbn+rrz3JCKl9C4kVNfTfSm2/mEp5FSz5EsZSANGPSlQrpRI5M4PKF+mJnE52jOO90PnPSc3Ur3bTQw0gA=="

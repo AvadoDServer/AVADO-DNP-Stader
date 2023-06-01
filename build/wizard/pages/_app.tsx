@@ -1,6 +1,7 @@
-import '../styles/globals.scss';
+import '../styles/globals.css';
 // import '../styles/style.sass';
 import '@rainbow-me/rainbowkit/styles.css';
+import '@fontsource/exo-2';
 
 import type { AppProps } from 'next/app';
 import { RainbowKitProvider, getDefaultWallets } from '@rainbow-me/rainbowkit';
@@ -72,10 +73,10 @@ function MyApp({ Component, pageProps }: AppProps) {
       fetchNodeSyncProgressStatus();
     }, 60 * 1000); // 60 seconds refresh
     return () => clearInterval(interval);
-  }, []);
+  }, [fetchContractsInfo, fetchNodeStatus, fetchNodeSyncProgressStatus]);
 
   return <>
-    <link rel="stylesheet" href="https://rsms.me/inter/inter.css"></link>
+    {/* <link rel="stylesheet" href="https://rsms.me/inter/inter.css"></link> */}
     {wagmiClient ? (
       <WagmiConfig client={wagmiClient}>
         <RainbowKitProvider chains={chains}>
@@ -85,7 +86,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         </RainbowKitProvider>
       </WagmiConfig>
     ) : (
-      <>Connecting to Ethereum clients...</>
+      <>Connecting to Ethereum clients... Please wait</>
     )}
   </>
 

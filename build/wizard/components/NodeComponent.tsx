@@ -13,12 +13,15 @@ import InitWallet from './InitWallet';
 import FundWallet from './FundWallet';
 import RegisterNode from './RegisterNode';
 import { useStaderStatus } from '../lib/status';
-import { displayAsETH } from '../utils/utils';
+import { displayAsETH, etherscanAddressUrl } from '../utils/utils';
 import StakeSD from './StakeSD';
 import SendSD from './SendSd';
 import SendEth from './SendEth';
 import { useAccount, useBalance } from 'wagmi';
-
+import truncateEthAddress from 'truncate-eth-address'
+import ClickToCopy from "./ClickToCopy";
+import { useNetwork } from "../hooks/useServerInfo";
+// import ApproveSD from './ApproveSD';
 
 const NodeComponent = () => {
 
@@ -28,8 +31,8 @@ const NodeComponent = () => {
     }
 
     const steps: step[] = [
-        { id: 1, name: 'Init wallet' },
-        { id: 2, name: 'Fund node' },
+        { id: 1, name: 'Create hot-wallet' },
+        { id: 2, name: 'Fund hot-wallet' },
         { id: 3, name: 'Register node' },
     ]
 
@@ -39,6 +42,7 @@ const NodeComponent = () => {
     const FINISHED = { id: 4, name: 'Finished' }
 
     const [currentStep, setCurrentStep] = useState<step>(INIT);
+    const { network } = useNetwork();
 
     const getStatus = (step: step) => {
         if (step.id === currentStep.id)
@@ -48,7 +52,8 @@ const NodeComponent = () => {
         return "complete"
     }
 
-    const { nodeStatus, contractInfo } = useStaderStatus()
+    const { nodeStatus, contractInfo, allowanceStatus } = useStaderStatus()
+
 
     // Get amount of SD tokens in user wallletl
     const { address } = useAccount()
@@ -67,19 +72,12 @@ const NodeComponent = () => {
     return (
         <>
             <div className="px-4 sm:px-6 lg:px-8">
-                <div className="sm:flex sm:items-center">
-                    <div className="sm:flex-auto">
-                        <h1 className="text-base font-semibold leading-6 text-gray-900">Stader Node</h1>
-                        <p className="mt-2 text-sm text-gray-700">
-                            Node information
-                        </p>
-                    </div>
-                </div>
+
                 <div className="mt-8 flow-root">
                     <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                         <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
                             {currentStep.id !== FINISHED.id && (
-                                <nav aria-label="Progress">
+                                <nav className="pb-5" aria-label="Progress">
                                     <ol role="list" className="divide-y divide-gray-300 rounded-md border border-gray-300 md:flex md:divide-y-0">
                                         {steps.map((step, stepIdx) => (
                                             <li key={step.name} className="relative md:flex md:flex-1">
@@ -149,35 +147,122 @@ const NodeComponent = () => {
                                 </div>
                             )}
                             {currentStep.id === FINISHED.id && (
-                                <div className="sm:flex sm:items-center">
-                                    <div className="sm:flex-auto">
-                                        <ul className="list-disc">
-                                            <li>
-                                                Node name: {nodeStatus.operatorName}
-                                            </li>
-                                            <li>
-                                                Node address: {nodeStatus.accountAddressFormatted || nodeStatus.accountAddress}
-                                            </li>
-                                            <li>
-                                                Node id: {nodeStatus.operatorId}
-                                            </li>
-                                            <li>
-                                                Node reward address: {nodeStatus.operatorRewardAddress}
-                                            </li>
-                                            <li>
-                                                Wallet: {displayAsETH(nodeStatus.accountBalances.eth.toString(), 4)} ETH
+                                <>
+
+
+                                    <div className="text-5xl pb-5">{nodeStatus.operatorName}</div>
+
+                                    <dl className="mb-5 border mx-auto grid grid-cols-1 gap-px bg-gray-900/5 sm:grid-cols-2 lg:grid-cols-3">
+                                        {[
+                                            {
+                                                name: "Hot wallet address", value:
+                                                    (
+                                                        <>
+                                                            {etherscanAddressUrl(network, (nodeStatus.accountAddressFormatted || nodeStatus.accountAddress), truncateEthAddress(nodeStatus.accountAddressFormatted || nodeStatus.accountAddress))}
+                                                            <span className="text-sm">
+                                                                <ClickToCopy text={nodeStatus.accountAddressFormatted || nodeStatus.accountAddress}><></></ClickToCopy>
+                                                            </span>
+                                                        </>)
+
+                                            },
+                                            { name: "Node id", value: nodeStatus.operatorId },
+                                            {
+                                                name: "Reward address", value:
+
+
+                                                    (
+                                                        <>
+                                                            {etherscanAddressUrl(network, (nodeStatus.operatorRewardAddress), truncateEthAddress(nodeStatus.operatorRewardAddress))}
+                                                            <span className="text-sm">
+                                                                <ClickToCopy text={nodeStatus.operatorRewardAddress}><></></ClickToCopy>
+                                                            </span>
+                                                        </>)
+                                            }]
+                                            .map((stat) => (
+                                                <div
+                                                    key={stat.name}
+                                                    className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-2 bg-white px-4 py-10 sm:px-6 xl:px-8"
+                                                >
+                                                    <dt className="text-sm  font-medium leading-6 text-gray-500">{stat.name}</dt>
+                                                    <dd className="w-full flex-none text-3xl font-medium leading-10 tracking-tight text-gray-900">
+                                                        {stat.value}
+                                                    </dd>
+                                                </div>
+                                            ))}
+                                    </dl>
+
+                                    <div className="text-1xl pb-5">Hot wallet</div>
+
+
+                                    <dl className="mb-5 border mx-auto grid grid-cols-1 gap-px bg-gray-900/5 sm:grid-cols-2 lg:grid-cols-2">
+                                        <div
+
+                                            className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-2 bg-white px-4 py-10 sm:px-6 xl:px-8"
+                                        >
+                                            <dt className="text-sm font-medium leading-6 text-gray-500">ETH balance</dt>
+                                            <dd className="w-full flex-none text-3xl font-medium leading-10 tracking-tight text-gray-900">
+                                                {displayAsETH(nodeStatus.accountBalances.eth.toString(), 4)}
                                                 {showButtons && <SendEth amount={4000000000000000000n} />}
                                                 {showButtons && <SendEth amount={100000000000000000n} />}
-                                            </li>
-                                            <li>
-                                                Wallet: {displayAsETH(nodeStatus.accountBalances.sd.toString(), 4)} SD
+
+                                            </dd>
+                                        </div>
+                                        <div
+                                            className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-2 bg-white px-4 py-10 sm:px-6 xl:px-8"
+                                        >
+                                            <dt className="text-sm font-medium leading-6 text-gray-500">SD balance</dt>
+                                            <dd className="w-full flex-none text-3xl font-medium leading-10 tracking-tight text-gray-900">
+                                                {displayAsETH(nodeStatus.accountBalances.sd.toString(), 4)}
                                                 {showButtons && <SendSD />}
                                                 {showButtons && (sdBalance?.value?.toBigInt() ?? 0n) > 0 && <SendSD amount={(sdBalance?.value?.toBigInt() ?? 0n)} />}
-                                                {showButtons && BigInt(nodeStatus.accountBalances.sd) > 0 && <StakeSD amount={BigInt(nodeStatus.accountBalances.sd)} />}
-                                            </li>
-                                        </ul>
+                                                {showButtons && allowanceStatus?.allowance > 0 && BigInt(nodeStatus.accountBalances.sd) > 0 && <StakeSD amount={BigInt(nodeStatus.accountBalances.sd)} />}
+                                            </dd>
+                                        </div>
+                                    </dl>
+
+
+
+                                    <hr />
+
+{/* 
+                                    <div className="sm:flex sm:items-center">
+                                        <div className="sm:flex-auto">
+                                            <h1 className="text-base font-semibold leading-6 text-gray-900">Stader Node</h1>
+                                            <p className="mt-2 text-sm text-gray-700">
+                                                Node information
+                                            </p>
+                                        </div>
                                     </div>
-                                </div>
+                                    <div className="sm:flex sm:items-center">
+                                        <div className="sm:flex-auto">
+                                            <ul className="list-disc">
+                                                <li>
+                                                    Node name: {nodeStatus.operatorName}
+                                                </li>
+                                                <li>
+                                                    Node address: {nodeStatus.accountAddressFormatted || nodeStatus.accountAddress}
+                                                </li>
+                                                <li>
+                                                    Node id: {nodeStatus.operatorId}
+                                                </li>
+                                                <li>
+                                                    Node reward address: {nodeStatus.operatorRewardAddress}
+                                                </li>
+                                                <li>
+                                                    Wallet: {displayAsETH(nodeStatus.accountBalances.eth.toString(), 4)} ETH
+                                                    {showButtons && <SendEth amount={4000000000000000000n} />}
+                                                    {showButtons && <SendEth amount={100000000000000000n} />}
+                                                </li>
+                                                <li>
+                                                    Wallet: {displayAsETH(nodeStatus.accountBalances.sd.toString(), 4)} SD
+                                                    {showButtons && <SendSD />}
+                                                    {showButtons && (sdBalance?.value?.toBigInt() ?? 0n) > 0 && <SendSD amount={(sdBalance?.value?.toBigInt() ?? 0n)} />}
+                                                    {showButtons && BigInt(nodeStatus.accountBalances.sd) > 0 && <StakeSD amount={BigInt(nodeStatus.accountBalances.sd)} />}
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div> */}
+                                </>
                             )}
                         </div>
                     </div>

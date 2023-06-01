@@ -7,6 +7,8 @@ import { useNetwork } from "../hooks/useServerInfo";
 import { utils } from 'ethers'
 import { useEffect, useState } from "react";
 import { staderCommand } from "../lib/staderDaemon"
+import ButtonSpinner from "./ButtonSpinner";
+import { clearInterval } from "timers";
 
 interface Props {
     currentNumberOfValidators: number
@@ -27,7 +29,7 @@ const DepositETH = ({ currentNumberOfValidators, onFinish }: Props) => {
     // stader command arguments to add an extra validator
     const salt = "0"
     const numValidators = 1
-    const submit = true
+    const reloadKeys = false
 
     useEffect(() => {
         if (waitingForTx)
@@ -35,7 +37,7 @@ const DepositETH = ({ currentNumberOfValidators, onFinish }: Props) => {
 
         setEthButtonDisabled(true); //set default
         if (nodeStatus) {
-            staderCommand(`node can-deposit ${ETHDepositAmount.toString()} ${salt} ${numValidators} ${submit}`).then((data: any) => {
+            staderCommand(`node can-deposit ${ETHDepositAmount.toString()} ${salt} ${numValidators} ${reloadKeys}`).then((data: any) => {
                 if (data.status === "error") {
                     setFeedback(data.error);
                 } else {
@@ -44,8 +46,7 @@ const DepositETH = ({ currentNumberOfValidators, onFinish }: Props) => {
                 }
             });
         }
-    }, [nodeStatus, waitingForTx]);
-
+    }, [nodeStatus, waitingForTx, ETHDepositAmount, reloadKeys]);
 
     useEffect(() => {
         if (waitingForTx && txHash) {
@@ -59,10 +60,10 @@ const DepositETH = ({ currentNumberOfValidators, onFinish }: Props) => {
                 });
             });
         }
-    }, [waitingForTx, txHash]);
+    }, [waitingForTx, txHash, fetchNodeStatus, network, onFinish]);
 
     const depositEth = () => {
-        staderCommand(`node deposit ${ETHDepositAmount.toString()} ${salt} ${numValidators} ${submit}`).then((data: any) => {
+        staderCommand(`node deposit ${ETHDepositAmount.toString()} ${salt} ${numValidators} ${reloadKeys}`).then((data: any) => {
             if (data.status === "error") {
                 setFeedback(data.error);
             } else {
@@ -78,7 +79,8 @@ const DepositETH = ({ currentNumberOfValidators, onFinish }: Props) => {
                 <>
                     <button
                         className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                        onClick={depositEth} disabled={ethButtonDisabled}>Deposit 4 ETH {waitingForTx ? <Spinner /> : ""}
+                        onClick={depositEth} disabled={ethButtonDisabled}>
+                        {waitingForTx ? <ButtonSpinner text={`Depositing...`} /> : "Deposit 4 ETH"}
                     </button>
                 </>
             )}

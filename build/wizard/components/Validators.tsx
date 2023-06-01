@@ -18,7 +18,7 @@ const Validators = () => {
     const { network } = useNetwork()
     const { bcClient } = useBeaconChainClientAndValidator()
     const { validatorInfos, refetch } = useRunningValidatorInfos()
-    const expectedRecipient = "0xe624471812F4fb739dD4eF40A8f9fAbD9474CEAa" // FIXME: where to get this?
+    const expectedRecipient = "0x6DA4c7aF13ECB85C5283B0b78fbd3C204eFB2c0c" // FIXME: where to get this?
 
     const decodeKey = (encodedString: string) => "0x" + Buffer.from(encodedString, 'base64').toString('hex')
 
@@ -160,7 +160,7 @@ const Validators = () => {
                 </>
             ) : (
                 <>
-                    <p>No validators yet</p>
+                    {/* <p>No validators yet</p> */}
                 </>
             )}
         </>

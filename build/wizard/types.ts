@@ -92,6 +92,12 @@ export interface walletStatusType {
   accountAddress: string
 }
 
+export interface allowanceStatusType {
+  error: string,
+  allowance: number
+}
+
+
 export interface contractsInfoType {
   status: "success" | "error",
   error: string,

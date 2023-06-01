@@ -15,6 +15,6 @@ export const createWalletStatusSlice: StateCreator<WalletStatusSlice> = (set) =>
         walletInitialized: false,
         accountAddress: "0x0000000000000000000000000000000000000000"
     },
-
     fetchWalletStatus: async () => set({ walletStatus: await staderCommand("wallet status") })
 })
+
