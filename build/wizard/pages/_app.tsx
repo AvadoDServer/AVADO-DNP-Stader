@@ -86,7 +86,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         </RainbowKitProvider>
       </WagmiConfig>
     ) : (
-      <>Connecting to Ethereum clients...</>
+      <>Connecting to Ethereum clients... Please wait</>
     )}
   </>
 
