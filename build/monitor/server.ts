@@ -163,7 +163,7 @@ server.post("/stader-api", (req, res, next) => {
         res.send(400, "not enough parameters");
         return next();
     } else {
-        staderApiCommand(req.body.command).then((stdout) => {
+        staderCommand(req.body.command).then((stdout) => {
             res.send(200, stdout);
             return next();
         }).catch((e) => {
@@ -173,8 +173,8 @@ server.post("/stader-api", (req, res, next) => {
     }
 });
 
-const staderApiCommand = (command: string) => {
-    const cmd = `/go/bin/stader api ${command}`;
+const staderCommand = (command: string) => {
+    const cmd = `/go/bin/stader ${command}`;
     console.log(`Running ${cmd}`);
 
     const executionPromise = execute(cmd);

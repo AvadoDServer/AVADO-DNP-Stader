@@ -30,13 +30,13 @@ const StaderCommandField = () => {
 
     return (
         <>
-            <h2 className="title is-3 has-text-white">Run a manual Stader API command</h2>
+            <h2 className="title is-3 has-text-white">Run a manual Stader command</h2>
             <div className="w-full max-w-sm">
                 <div className="flex items-center py-2">
-                    <label className="label">Stader API command:</label>
+                    <label className="label">Stader command:</label>
                     <input className="appearance-none bg-transparent w-full text-gray-700 mr-3 py-1 px-2"
                         type="text"
-                        placeholder="Type command (e.g. &quot;node status&quot;)"
+                        placeholder="Type command (e.g. &quot;api node status&quot;)"
                         aria-label="stader command"
                         onChange={(e) => { setCommand(e.target.value) }}
                         onKeyDown={handleKeypress}
