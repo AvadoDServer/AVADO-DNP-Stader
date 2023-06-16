@@ -62,10 +62,10 @@ const NodeComponent = () => {
         token: contractInfo.sdToken
     })
 
-    useEffect(() => {
-        if (nodeStatus && nodeStatus.registered)
-            setCurrentStep(FINISHED)
-    }, [nodeStatus]);
+    // useEffect(() => {
+    //     if (nodeStatus && nodeStatus.registered)
+    //         setCurrentStep(FINISHED)
+    // }, [nodeStatus]);
 
     const showButtons = true
 

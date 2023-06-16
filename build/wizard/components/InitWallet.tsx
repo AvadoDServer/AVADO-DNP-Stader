@@ -47,7 +47,7 @@ const InitWallet = ({ onFinished }: Props) => {
 
     useEffect(() => {
         fetchWalletStatus()
-    });
+    },[]);
 
     useEffect(() => {
         if (!initialWalletStatus)
@@ -71,7 +71,7 @@ const InitWallet = ({ onFinished }: Props) => {
             setWalletMnemonic(data2.mnemonic);
 
             // Do a recover to save the wallet
-            const data3 = await staderCommand(`wallet recover "${data2.mnemonic}"`)
+            const data3 = await staderCommand(`wallet recover "${data2.mnemonic}" --skip-validator-key-recovery`)
             if (data3.status === "error") {
                 setPasswordFeedback(data3.error);
             }
