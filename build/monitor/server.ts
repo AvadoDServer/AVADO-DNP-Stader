@@ -6,6 +6,7 @@ import { rest_url, validatorAPI, getAvadoPackageName, getTokenPathInContainer, g
 import { DappManagerHelper } from "./DappManagerHelper";
 import { readFileSync } from "fs";
 import AdmZip from 'adm-zip';
+import cache from "memory-cache";
 
 
 const autobahn = require('autobahn');
@@ -139,6 +140,13 @@ const getInstalledClients = async () => {
     return installed_clients;
 }
 
+server.get("/avado-params", async (req: restify.Request, res: restify.Response, next: restify.Next) => {
+    const dappManagerHelper = new DappManagerHelper(server_config.packageName, wampSession);
+    const params = await dappManagerHelper.getParams();
+    res.send(200, params);
+    next();
+});
+
 server.get("/bc-clients", async (req: restify.Request, res: restify.Response, next: restify.Next) => {
     res.send(200, await getInstalledClients())
     next();
@@ -163,7 +171,7 @@ server.post("/stader-api", (req, res, next) => {
         res.send(400, "not enough parameters");
         return next();
     } else {
-        staderApiCommand(req.body.command).then((stdout) => {
+        staderCommand(`api ${req.body.command}`).then((stdout) => {
             res.send(200, stdout);
             return next();
         }).catch((e) => {
@@ -173,11 +181,29 @@ server.post("/stader-api", (req, res, next) => {
     }
 });
 
-const staderApiCommand = (command: string) => {
-    const cmd = `/go/bin/stader api ${command}`;
+
+server.post("/stader-any", (req, res, next) => {
+    if (!req.body) {
+        res.send(400, "not enough parameters");
+        return next();
+    } else {
+        staderCommand(req.body.command).then((stdout) => {
+            res.send(200, stdout);
+            return next();
+        }).catch((e) => {
+            res.send(500, e);
+            return next();
+        })
+    }
+});
+
+const staderCommand = (command: string) => {
+    const cmd = `/go/bin/stader ${command}`;
     console.log(`Running ${cmd}`);
 
-    const executionPromise = execute(cmd);
+    const executionPromise = execute(cmd, {
+        cwd: '/.stader'
+    });
 
     executionPromise.then((result) => {
         const data = JSON.parse(result);
@@ -194,9 +220,9 @@ const staderApiCommand = (command: string) => {
     return executionPromise;
 }
 
-const execute = (cmd: string) => {
+const execute = (cmd: string, opts: object) => {
     return new Promise<string>((resolve, reject) => {
-        const child = exec(cmd, (error: Error, stdout: string | Buffer, stderr: string | Buffer) => {
+        const child = exec(cmd, opts, (error: Error, stdout: string | Buffer, stderr: string | Buffer) => {
             if (error) {
                 console.log(`error: ${error.message}`);
                 return reject(error.message);
@@ -384,6 +410,29 @@ server.get("/transactions", (req: restify.Request, res: restify.Response, next: 
         return next()
     }
 })
+
+server.get("/sdprice", (req: restify.Request, res: restify.Response, next: restify.Next) => {
+    const price = cache.get("sdprice");
+    if (price) {
+        console.log(`SD/ETH price is cached ${price}`);
+        res.send(200, price);
+        return next();
+    } else {
+        fetch("https://api.coingecko.com/api/v3/simple/price?ids=stader&vs_currencies=eth", {
+            method: 'GET'
+        }).then(async (r) => {
+            const result = await r.json();
+            console.log(`SD/ETH price is currently ${result.stader.eth}`);
+            cache.put("sdprice", result.stader.eth, 1000 * 60 * 5) // cache 5 mins
+            res.send(200, result.stader.eth);
+            return next();
+        }).catch(e => {
+            console.log(e);
+            res.send(500, e);
+            return next();
+        });
+    }
+});
 
 
 server.post("/setFeeRecipient", (req: restify.Request, res: restify.Response, next: restify.Next) => {

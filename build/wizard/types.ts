@@ -94,7 +94,7 @@ export interface walletStatusType {
 
 export interface allowanceStatusType {
   error: string,
-  allowance: number
+  allowance: string
 }
 
 

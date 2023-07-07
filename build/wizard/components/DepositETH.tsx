@@ -4,7 +4,6 @@ import DownloadBackup from "./DownloadBackup";
 import { useStaderStatus } from "../lib/status";
 import { etherscanTransactionUrl, wsProvider } from "../utils/utils"
 import { useNetwork } from "../hooks/useServerInfo";
-import { utils } from 'ethers'
 import { useEffect, useState } from "react";
 import { staderCommand } from "../lib/staderDaemon"
 import ButtonSpinner from "./ButtonSpinner";
@@ -35,9 +34,9 @@ const DepositETH = ({ currentNumberOfValidators, onFinish }: Props) => {
         if (waitingForTx)
             return;
 
-        setEthButtonDisabled(true); //set default
+        setEthButtonDisabled(false); //set default
         if (nodeStatus) {
-            staderCommand(`node can-deposit ${ETHDepositAmount.toString()} ${salt} ${numValidators} ${reloadKeys}`).then((data: any) => {
+            staderCommand(`validator can-deposit ${ETHDepositAmount.toString()} ${numValidators} ${reloadKeys}`).then((data: any) => {
                 if (data.status === "error") {
                     setFeedback(data.error);
                 } else {
@@ -63,7 +62,7 @@ const DepositETH = ({ currentNumberOfValidators, onFinish }: Props) => {
     }, [waitingForTx, txHash, fetchNodeStatus, network, onFinish]);
 
     const depositEth = () => {
-        staderCommand(`node deposit ${ETHDepositAmount.toString()} ${salt} ${numValidators} ${reloadKeys}`).then((data: any) => {
+        staderCommand(`validator deposit ${ETHDepositAmount.toString()} ${numValidators} ${reloadKeys}`).then((data: any) => {
             if (data.status === "error") {
                 setFeedback(data.error);
             } else {
@@ -80,7 +79,7 @@ const DepositETH = ({ currentNumberOfValidators, onFinish }: Props) => {
                     <button
                         className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                         onClick={depositEth} disabled={ethButtonDisabled}>
-                        {waitingForTx ? <ButtonSpinner text={`Depositing...`} /> : "Deposit 4 ETH"}
+                        {waitingForTx ? <ButtonSpinner text={`Depositing...`} /> : "Deposit 4 ETH and create new Stader validator"}
                     </button>
                 </>
             )}

@@ -1,8 +1,8 @@
 import ClickToCopy from "./ClickToCopy";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useStaderStatus } from "../lib/status";
 import { displayAsETH, etherscanAddressUrl } from "../utils/utils"
-import { useNetwork } from "../hooks/useServerInfo";
+import { useNetwork, useSDPrice } from "../hooks/useServerInfo";
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import SendEth from "./SendEth";
 import SendSD from "./SendSd";
@@ -20,6 +20,7 @@ const FundWallet = ({ onFinished }: Props) => {
     const { nodeStatus, walletStatus, fetchWalletStatus, fetchNodeStatus } = useStaderStatus()
     const { network } = useNetwork()
     const { isConnected } = useAccount()
+    const { sdPrice } = useSDPrice();
     const [enableContinue, setEnableContinue] = React.useState(false);
 
     const ethBalance = BigInt(nodeStatus.accountBalances.eth)
@@ -27,10 +28,8 @@ const FundWallet = ({ onFinished }: Props) => {
 
     const ethStake = 4000000000000000000n
     const gasMoney = 300000000000000000n
-    const sdStake = 1000000000000000000000n
-    // const ethStake = 400000000000000000n
-    // const gasMoney = 30000000000000000n
-    // const sdStake = 1000000000000000000n
+    const [sdStake, setSdStake] = useState<bigint>(1000000000000000000000n);
+    const [sdStakeMargin, setSdStakeMargin] = useState<bigint>(1000000000000000000n);
 
     // in this step - update status every 5s
     useEffect(() => {
@@ -42,13 +41,25 @@ const FundWallet = ({ onFinished }: Props) => {
         })
     });
 
+    // recalculate SD needed to fund
+    useEffect(() => {
+        if (sdPrice) {
+            const sdPrice_b = BigInt(Math.ceil(1 / sdPrice * 0.4));
+            console.log(`You need ${sdPrice_b} SD tokens`);
+            setSdStake(sdPrice_b * 1000000000000000000n);
+            setSdStakeMargin(sdPrice_b * 100000000000000000n); // 10% margin
+        }
+    }, [
+        sdPrice
+    ]);
+
     useEffect(() => {
         if (!nodeStatus) {
             return;
         }
         setEnableContinue(
             ethBalance >= (ethStake + gasMoney) &&
-            sdBalance >= sdStake
+            sdBalance >= (sdStake)
         )
     }, [
         nodeStatus, ethBalance, sdBalance, ethStake, gasMoney, sdStake
@@ -76,16 +87,18 @@ const FundWallet = ({ onFinished }: Props) => {
                     </p>
 
                     {(!isConnected) && (
-                        <p className="pb-1">
-                            Please connect to your wallet first.
-                        </p>
+                        <>
+                            <p className="pb-1">
+                                Please connect to your wallet first.
+                            </p>
+                            <div className="pb-4">
+                                <ConnectButton />
+                            </div>
+                        </>
                     )}
-                    <div className="pb-4">
-                        <ConnectButton />
-                    </div>
 
                     <p className="pb-1">
-                        This is the hot wallet address to receive the funds:
+                        Your stader hot wallet address that will receive the funds:
                     </p>
                     <p className="pb-4"><ClickToCopy text={nodeStatus.accountAddress}>{etherscanAddressUrl(network, nodeStatus.accountAddress)}</ClickToCopy></p>
                     <div className="pb-5">
@@ -97,7 +110,12 @@ const FundWallet = ({ onFinished }: Props) => {
                         <div className="flex space-x-6">
                             <div className="w-32 h-10">Required</div>
                             <div className="w-40 h-10">{`${displayAsETH((ethStake + gasMoney).toString())}`}</div>
-                            <div className="w-40 h-10">{`${displayAsETH((sdStake).toString())}`}</div>
+                            <div className="w-40 h-10">{`${displayAsETH((sdStake + sdStakeMargin).toString())}`}</div>
+                        </div>
+                        <div className="flex space-x-6">
+                            <div className="w-32 h-10"></div>
+                            <div className="w-40 h-10 text-sm">{`=${displayAsETH((ethStake).toString(), 0)} ETH + ${displayAsETH((gasMoney).toString(), 0)} for gas`}</div>
+                            <div className="w-40 h-10 text-sm">{`=${displayAsETH((sdStake).toString(), 0)} SD + ${displayAsETH((sdStakeMargin).toString(), 0)} margin`}</div>
                         </div>
                         <div className="flex space-x-6">
                             <div className="w-32 h-10">Current Balance</div>
@@ -117,8 +135,8 @@ const FundWallet = ({ onFinished }: Props) => {
                                 )}
                             </div>
                             <div className="w-40 h-35">
-                                {(sdStake - sdBalance) > 0 && (
-                                    <SendSD amount={sdStake - sdBalance} onSuccess={fetchNodeStatus} />
+                                {(sdStake + sdStakeMargin - sdBalance) > 0 && (
+                                    <SendSD amount={sdStake + sdStakeMargin - sdBalance} onSuccess={fetchNodeStatus} />
                                 )}
                             </div>
                             <div className="w-32 h-35">

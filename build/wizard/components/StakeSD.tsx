@@ -5,7 +5,6 @@ import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import { useStaderStatus } from "../lib/status";
 import { displayAsETH, etherscanTransactionUrl, wsProvider } from "../utils/utils"
 import { useNetwork } from "../hooks/useServerInfo";
-import { utils } from 'ethers'
 import { useEffect, useState } from "react";
 import { staderCommand } from "../lib/staderDaemon";
 import SendSD from "./SendSd";

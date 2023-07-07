@@ -2,23 +2,31 @@ import {
     ChevronDownIcon
 } from '@heroicons/react/20/solid'
 import { server_config } from '../server_config';
-
+import { useEffect } from "react";
 import { useStaderStatus } from "../lib/status"
 import AddValidator from './AddValidator';
 import { abbreviatePublicKey, beaconchainUrl } from "../utils/utils"
-import { useBeaconChainClientAndValidator, useNetwork, useRunningValidatorInfos } from '../hooks/useServerInfo';
+import { useBeaconChainClientAndValidator, useNetwork, useRunningValidatorInfos, useParams } from '../hooks/useServerInfo';
 import { ValidatorStates } from '../types';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSatelliteDish } from "@fortawesome/free-solid-svg-icons";
+import ClaimReward from './ClaimReward';
 
+import { staderCommandRaw } from "../lib/staderDaemon"
 
 const Validators = () => {
 
     const { nodeStatus } = useStaderStatus()
+    const { avadoParams } = useParams();
     const { network } = useNetwork()
     const { bcClient } = useBeaconChainClientAndValidator()
     const { validatorInfos, refetch } = useRunningValidatorInfos()
     const expectedRecipient = "0x6DA4c7aF13ECB85C5283B0b78fbd3C204eFB2c0c" // FIXME: where to get this?
+
+    useEffect(() => {
+        console.log("avadoParams", avadoParams);
+
+    }, [avadoParams]);
 
     const decodeKey = (encodedString: string) => "0x" + Buffer.from(encodedString, 'base64').toString('hex')
 
@@ -66,6 +74,22 @@ const Validators = () => {
         })
     }
 
+    const mkClaim = async (pubKey: string) => {
+        const co = {
+            pubkey: pubKey,
+            nodeId: avadoParams.nodeid
+        };
+        const claimStr = JSON.stringify(co);
+        const res: any = await staderCommandRaw(`api node sign-message '${claimStr}'`);
+        const resJSON = JSON.parse(res);
+        return {
+            claimdata: co,
+            signature: resJSON?.signedData
+        }
+    }
+
+    if (!avadoParams) return null;
+
     const validatorsTable = () => {
         return (
             <div className="px-4 sm:px-6 lg:px-8">
@@ -95,23 +119,16 @@ const Validators = () => {
                                             </a>
                                         </th>
                                         <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                                            <a href="#" className="group inline-flex">
-                                                Stader Status
-                                                <span className="ml-2 flex-none rounded bg-gray-100 text-gray-900 group-hover:bg-gray-200">
-                                                    <ChevronDownIcon className="h-5 w-5" aria-hidden="true" />
-                                                </span>
-                                            </a>
+                                            Stader Status
                                         </th>
                                         <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                                            <a href="#" className="group inline-flex">
-                                                Validator Status
-                                                <span className="ml-2 flex-none rounded bg-gray-100 text-gray-900 group-hover:bg-gray-200">
-                                                    <ChevronDownIcon className="h-5 w-5" aria-hidden="true" />
-                                                </span>
-                                            </a>
+                                            Validator Status
                                         </th>
-                                        <th scope="col" className="relative py-3.5 pl-3 pr-0">
-                                            <span className="sr-only">Fee recipient</span>
+                                        <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                                            Fee recipient
+                                        </th>
+                                        <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                                            Claim reward
                                         </th>
                                     </tr>
                                 </thead>
@@ -137,8 +154,11 @@ const Validators = () => {
                                                     </>
                                                 )}
                                             </td>
-                                            <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm sm:pr-0">
+                                            <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                                                 {isFeeRecipientAddressCorrect(decodeKey(validator.Pubkey)) ? "✅" : "⚠️"}
+                                            </td>
+                                            <td>
+                                                <ClaimReward pubKey={decodeKey(validator.Pubkey)}/>
                                             </td>
                                         </tr>
                                     ))}

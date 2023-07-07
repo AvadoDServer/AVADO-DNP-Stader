@@ -1,7 +1,6 @@
 import { useStaderStatus } from "../lib/status";
 import { displayAsETH, etherscanBaseUrl } from "../utils/utils"
 import { useNetwork } from "../hooks/useServerInfo";
-import { utils } from 'ethers';
 import ButtonSpinner from "./ButtonSpinner";
 
 import {
@@ -23,18 +22,15 @@ const SendEth = ({ amount, onSuccess }: Props) => {
 
     const { walletStatus, fetchNodeStatus } = useStaderStatus()
     const { network } = useNetwork()
-    const { address } = useAccount();
-
+    const { address, isConnected } = useAccount();
 
     const { data: ETHBalance } = useBalance({
         address: address,
     })
 
     const { config, error: prepareError, isError: isPrepareError } = usePrepareSendTransaction({
-        request: {
-            to: walletStatus.accountAddress,
-            value: amount.toString()
-        },
+        to: walletStatus.accountAddress,
+        value: amount
     })
     const { data, sendTransaction, error, isError } = useSendTransaction(config)
 
@@ -49,7 +45,14 @@ const SendEth = ({ amount, onSuccess }: Props) => {
     }, [isSuccess]);
 
 
-    if (ETHBalance?.value.lt(amount)) {
+    useEffect(() => {
+        if (error || prepareError) {
+            console.log(error, prepareError);
+            debugger;
+        }
+    }, [error, prepareError])
+
+    if (!isConnected || (ETHBalance && (ETHBalance?.value || 0n) < amount)) {
         return (
             <>
                 <button
@@ -57,41 +60,45 @@ const SendEth = ({ amount, onSuccess }: Props) => {
                     disabled={true}>
                     {`Send ${displayAsETH(amount)} ETH to hot wallet`}
                 </button>
-                Not enough ETH in wallet {displayAsETH(ETHBalance.value.toString())}
+                {ETHBalance && (
+                    <span className="text-red-500 text-xs">
+                        You only have {displayAsETH(ETHBalance.value.toString())} ETH in your wallet
+                    </span>
+                )}
             </>
         )
     }
 
+    console.log("=====", JSON.stringify(walletStatus));
 
     return (
-        <form
-            onSubmit={(e) => {
-                e.preventDefault()
-                sendTransaction?.()
-            }}
-        >
+        // <form
+        //     onSubmit={(e) => {
+        //         e.preventDefault()
+        //         debugger;
+        //         sendTransaction?.()
+        //     }}
+        // >
+        <>
+
             <button
+                onClick={() => {
+                    debugger;
+
+                    sendTransaction?.()
+                }}
                 className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                disabled={isLoading || !sendTransaction || !walletStatus.accountAddress}>
-               
+                disabled={isLoading || !walletStatus.accountAddress}>
+
                 {isLoading ? (
                     <ButtonSpinner text={`Sending...`} />
                 ) : (<>
-                    {`Send ${displayAsETH(amount)} ETH`}
+                    {`Add ${displayAsETH(amount)} ETH to hot wallet`}
+
                 </>)}
             </button>
-            {/* {isSuccess && (
-                <div>
-                    Successfully sent {displayAsETH(amount)} ETH to {walletStatus.accountAddress}
-                    <div>
-                        <a href={`${etherscanBaseUrl(network)}/tx/${data?.hash}`}>Etherscan</a>
-                    </div>
-                </div>
-            )} */}
-            {/* {(isPrepareError || isError) && (
-                <div>Error: {(prepareError || error)?.message}</div>
-            )} */}
-        </form>
+        </>
+        // </form>
     )
 }
 

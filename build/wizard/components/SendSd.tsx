@@ -2,7 +2,6 @@ import { useStaderStatus } from "../lib/status";
 import { displayAsETH, etherscanBaseUrl, etherscanTransactionUrl } from "../utils/utils"
 import { useNetwork } from "../hooks/useServerInfo";
 import ButtonSpinner from "./ButtonSpinner"
-import { utils } from 'ethers'
 import {
     useWaitForTransaction,
     usePrepareContractWrite,
@@ -21,7 +20,7 @@ const SendSD = ({ amount = 1000000000000000000000n, onSuccess }: Props) => {
 
     const { walletStatus, contractInfo, fetchNodeStatus } = useStaderStatus()
     const { network } = useNetwork()
-    const { address } = useAccount();
+    const { address, isConnected } = useAccount();
 
     // https://goerli.etherscan.io/address/0x0406f539f24be69baa8b88ed6eabedb7b3cfdc60#code
     const SD_TOKEN_CONTRACT = contractInfo.sdToken;
@@ -55,7 +54,7 @@ const SendSD = ({ amount = 1000000000000000000000n, onSuccess }: Props) => {
         if (isSuccess && onSuccess) onSuccess();
     }, [isSuccess]);
 
-    if (tokenBalance?.value.lt(amount)) {
+    if (!isConnected || (tokenBalance && tokenBalance.value < amount)) {
         return (
             <div className="mb-5">
                 <button
@@ -64,9 +63,11 @@ const SendSD = ({ amount = 1000000000000000000000n, onSuccess }: Props) => {
                     {`Send ${displayAsETH(amount)} SD`}
                 </button>
                 <br />
-                <span className="text-red-500 text-xs">
-                    You don&apos;t have enough SD
-                </span>
+                {tokenBalance && (
+                    <span className="text-red-500 text-xs">
+                        You only have {displayAsETH(tokenBalance.value.toString())} SD in your wallet
+                    </span>
+                )}
             </div>
         );
         // return <div>Not enough SD tokens {displayAsETH(tokenBalance.value.toString())}</div>
@@ -80,7 +81,7 @@ const SendSD = ({ amount = 1000000000000000000000n, onSuccess }: Props) => {
                 {isLoading ? (
                     <ButtonSpinner text={`Sending...`} />
                 ) : (<>
-                    {`Send ${displayAsETH(amount)} SD`}
+                    {`Add ${displayAsETH(amount)} SD to hot wallet`}
                 </>)}
             </button>
             {/* {data?.hash && (

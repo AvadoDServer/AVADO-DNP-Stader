@@ -13,8 +13,8 @@ export const createNodeSyncProgressSlice: StateCreator<NodeSyncProgressSlice> = 
         error: "",
         ecStatus: {
             primaryEcStatus: {
-                isWorking: true,
-                isSynced: true,
+                isWorking: false,
+                isSynced: false,
                 syncProgress: 1,
                 networkId: 1,
                 error: ""
@@ -31,8 +31,8 @@ export const createNodeSyncProgressSlice: StateCreator<NodeSyncProgressSlice> = 
         bcStatus: {
             primaryEcStatus:
             {
-                isWorking: true,
-                isSynced: true,
+                isWorking: false,
+                isSynced: false,
                 syncProgress: 1,
                 networkId: 0,
                 error: ""

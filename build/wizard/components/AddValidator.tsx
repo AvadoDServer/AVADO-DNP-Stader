@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { walletStatusType } from "../types";
 import { useStaderStatus } from "../lib/status";
-import { staderCommandRaw, staderCommand } from "../lib/staderDaemon"
+import { staderCommand } from "../lib/staderDaemon"
 import DownloadBackup from "./DownloadBackup";
 import ApproveSD from "./ApproveSD";
 import StakeSD from "./StakeSD";
@@ -13,8 +13,7 @@ import { CheckIcon } from '@heroicons/react/24/outline'
 import { ExclamationTriangleIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import { displayAsETH, etherscanTransactionUrl, wsProvider } from "../utils/utils"
-import { useNetwork } from "../hooks/useServerInfo";
-import { utils } from 'ethers'
+import { useNetwork, useSDPrice } from "../hooks/useServerInfo";
 import SendSD from "./SendSd";
 import SendEth from "./SendEth";
 
@@ -24,21 +23,36 @@ interface Props {
 
 const AddValidator = ({ currentNumberOfValidators }: Props) => {
     const [showAddValidator, setShowAddValidator] = useState(false);
-    const { nodeStatus, fetchNodeStatus } = useStaderStatus()
+    const { nodeStatus, fetchNodeStatus, allowanceStatus, fetchAllowance } = useStaderStatus()
+
+    const { sdPrice } = useSDPrice();
 
     const [ready, setReady] = useState(false)
 
     const sdBalanceInWallet = BigInt(nodeStatus.accountBalances.sd)
-    const sdMin = BigInt("1000000000000000000000")
+    // const sdMin = BigInt("1000000000000000000000")
+    const [sdMin, setSdMin] = useState<bigint>(1000000000000000000000n);
     const stakedSDBalance = BigInt(nodeStatus.depositedSdCollateral)
     const requiredSDStake = (sdMin * BigInt(currentNumberOfValidators + 1))
 
     const ETHDepositAmount: bigint = 4000000000000000000n
     const ethBalanceInWallet = BigInt(nodeStatus.accountBalances.eth)
 
+    // recalculate SD needed to fund
+    useEffect(() => {
+        if (sdPrice && typeof sdPrice === "number") {
+            const sdPrice_b = BigInt(Math.ceil(1 / sdPrice * 0.4));
+            setSdMin(sdPrice_b * 3000000000000000000n);
+        }
+    }, [
+        sdPrice
+    ]);
+
     const onFinish = () => {
+        debugger;
         setReady(true)
         fetchNodeStatus()
+        fetchAllowance()
     }
 
     const content = () => {
@@ -50,72 +64,71 @@ const AddValidator = ({ currentNumberOfValidators }: Props) => {
                     </h2>
                 </div>
                 <div className="px-4 py-5 sm:p-6">
-                    <ApproveSD />
-                    <br />
-                    <br />
-                    <div className="">
-                        <h4 className="title is-4 has-text-white">2. Stake SD</h4>
-                        {stakedSDBalance < requiredSDStake && (
-                            <>
-                                {nodeStatus && (stakedSDBalance + sdBalanceInWallet < requiredSDStake) &&
-                                    <>
-                                        <p>To add a validator you need {displayAsETH(sdMin)} SD in your wallet.</p>
-                                        <SendSD amount={requiredSDStake - stakedSDBalance - sdBalanceInWallet} />
-                                    </>
-                                }
-                                {sdBalanceInWallet >= sdMin && (
-                                    <StakeSD amount={requiredSDStake - stakedSDBalance} />
-                                )}
-                            </>
-                        )}
-                        {stakedSDBalance >= requiredSDStake && (
-                            <span className="tag is-success">Staked <span><FontAwesomeIcon className="icon" icon={faCheck} /></span></span>
-                        )}
+                    <div className="pb-5">
+                        <p>
+                            ✅ Staked SD balance: {`${displayAsETH(stakedSDBalance)} SD`}
+                        </p>
+                        <p>
+                            ✅ Hot wallet ETH balance: {`${displayAsETH(ethBalanceInWallet)} SD`}
+                        </p>
                     </div>
-                    <br />
-                    <br />
-                    <div className="">
-                        <h4 className="title is-4 has-text-white">3. Deposit 4 ETH</h4>
-                        {!ready && ethBalanceInWallet < ETHDepositAmount && (
-                            <div className="pb-3">
-                                <p>To add a validator you need {displayAsETH(ETHDepositAmount)} ETH in your wallet.</p>
-                                <SendEth amount={ETHDepositAmount} />
-                            </div>
-                        )}
-                        {!ready && nodeStatus.sdCollateralWorthValidators > currentNumberOfValidators && (
+
+                    {!ready &&
+                        nodeStatus.sdCollateralWorthValidators > currentNumberOfValidators &&
+                        (
                             <>
                                 <DepositETH currentNumberOfValidators={currentNumberOfValidators} onFinish={onFinish} />
                             </>
                         )}
-                    </div>
-                    <br />
-                    <br />
+
                     {ready && (
                         <>
-                            <p>Please download a backup of your whole Stader configuration now!</p>
+                            <p className="pb-2">Please download a backup of your new Stader validator set now!</p>
+                            <div className="flex justify-between">
+                                <DownloadBackup />
 
-                            <DownloadBackup />
-
-                            <button
-                                type="button"
-                                className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
-                                onClick={() => setShowAddValidator(false)}
-                            >
-                                Close
-                            </button>
+                                <button
+                                    type="button"
+                                    className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
+                                    onClick={() => setShowAddValidator(false)}
+                                >
+                                    Close
+                                </button>
+                            </div>
                         </>
                     )}
+
                 </div>
+
             </div>
         </div>
     }
 
+    let errors = [];
+    if (nodeStatus?.sdCollateralWorthValidators <= currentNumberOfValidators) {
+        errors.push(<li>You don&apos;t have enough SD staked to add a validator</li>);
+    }
+    if (ethBalanceInWallet < ETHDepositAmount) {
+        errors.push(<li>You don&apos;t have enough ETH in your hot wallet to add a validator</li>);
+    }
+    const maxApproval = ((BigInt(2) ** BigInt(256)) - BigInt(1));
+
+    if (allowanceStatus?.allowance != maxApproval.toString()) {
+        errors.push(<li>You still need to give approval to spend your SD tokens</li>);
+    }
+
     return <>
         {!showAddValidator && (
-            <button
-                className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                onClick={() => setShowAddValidator(!showAddValidator)}
-            >Add validator</button>
+            <>
+                {(errors.length > 0) && (
+                    <ul>{errors}</ul>
+                )}
+                <button
+                    disabled={errors.length > 0}
+                    className={`${errors.length > 0 ? "disabled:opacity-50" : ""} rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600`}
+                    onClick={() => setShowAddValidator(!showAddValidator)}
+                >Add validator</button>
+            </>
         )}
         {showAddValidator && (
             <>

@@ -22,7 +22,9 @@ import truncateEthAddress from 'truncate-eth-address'
 import ClickToCopy from "./ClickToCopy";
 import { useNetwork } from "../hooks/useServerInfo";
 // import ApproveSD from './ApproveSD';
-
+import { ConnectButton } from '@rainbow-me/rainbowkit';
+import ApproveSD from './ApproveSD';
+// Show onboarding or hot wallet info + funding buttons + add validator button
 const NodeComponent = () => {
 
     type step = {
@@ -54,6 +56,9 @@ const NodeComponent = () => {
 
     const { nodeStatus, contractInfo, allowanceStatus } = useStaderStatus()
 
+    console.log(`allowanceStatus`, allowanceStatus);
+
+    // debugger;
 
     // Get amount of SD tokens in user wallletl
     const { address } = useAccount()
@@ -62,17 +67,16 @@ const NodeComponent = () => {
         token: contractInfo.sdToken
     })
 
-    // useEffect(() => {
-    //     if (nodeStatus && nodeStatus.registered)
-    //         setCurrentStep(FINISHED)
-    // }, [nodeStatus]);
+    useEffect(() => {
+        if (nodeStatus && nodeStatus.registered)
+            setCurrentStep(FINISHED)
+    }, [nodeStatus]);
 
     const showButtons = true
 
     return (
         <>
             <div className="px-4 sm:px-6 lg:px-8">
-
                 <div className="mt-8 flow-root">
                     <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                         <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
@@ -148,83 +152,61 @@ const NodeComponent = () => {
                             )}
                             {currentStep.id === FINISHED.id && (
                                 <>
-
-
-                                    <div className="text-5xl pb-5">{nodeStatus.operatorName}</div>
-
-                                    <dl className="mb-5 border mx-auto grid grid-cols-1 gap-px bg-gray-900/5 sm:grid-cols-2 lg:grid-cols-3">
-                                        {[
-                                            {
-                                                name: "Hot wallet address", value:
-                                                    (
-                                                        <>
-                                                            {etherscanAddressUrl(network, (nodeStatus.accountAddressFormatted || nodeStatus.accountAddress), truncateEthAddress(nodeStatus.accountAddressFormatted || nodeStatus.accountAddress))}
-                                                            <span className="text-sm">
-                                                                <ClickToCopy text={nodeStatus.accountAddressFormatted || nodeStatus.accountAddress}><></></ClickToCopy>
-                                                            </span>
-                                                        </>)
-
-                                            },
-                                            { name: "Node id", value: nodeStatus.operatorId },
-                                            {
-                                                name: "Reward address", value:
-
-
-                                                    (
-                                                        <>
-                                                            {etherscanAddressUrl(network, (nodeStatus.operatorRewardAddress), truncateEthAddress(nodeStatus.operatorRewardAddress))}
-                                                            <span className="text-sm">
-                                                                <ClickToCopy text={nodeStatus.operatorRewardAddress}><></></ClickToCopy>
-                                                            </span>
-                                                        </>)
-                                            }]
-                                            .map((stat) => (
-                                                <div
-                                                    key={stat.name}
-                                                    className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-2 bg-white px-4 py-10 sm:px-6 xl:px-8"
-                                                >
-                                                    <dt className="text-sm  font-medium leading-6 text-gray-500">{stat.name}</dt>
-                                                    <dd className="w-full flex-none text-3xl font-medium leading-10 tracking-tight text-gray-900">
-                                                        {stat.value}
-                                                    </dd>
-                                                </div>
-                                            ))}
-                                    </dl>
-
-                                    <div className="text-1xl pb-5">Hot wallet</div>
-
-
+                                    <div className="text-5xl pb-2">{nodeStatus.operatorName}</div>
+                                    <div className="text-1xl pb-3">
+                                        Hot wallet {etherscanAddressUrl(network, (nodeStatus.accountAddressFormatted || nodeStatus.accountAddress), truncateEthAddress(nodeStatus.accountAddressFormatted || nodeStatus.accountAddress))}
+                                        <span className="text-sm">
+                                            <ClickToCopy text={nodeStatus.accountAddressFormatted || nodeStatus.accountAddress}><></></ClickToCopy>
+                                        </span>
+                                    </div>
                                     <dl className="mb-5 border mx-auto grid grid-cols-1 gap-px bg-gray-900/5 sm:grid-cols-2 lg:grid-cols-2">
+
+                                        {/* </dl> */}
+
+                                        {/* <div className="text-1xl pb-5">Hot wallet</div> */}
+                                        {/* <dl className="mb-5 border mx-auto grid grid-cols-1 gap-px bg-gray-900/5 sm:grid-cols-2 lg:grid-cols-2"> */}
                                         <div
 
                                             className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-2 bg-white px-4 py-10 sm:px-6 xl:px-8"
                                         >
-                                            <dt className="text-sm font-medium leading-6 text-gray-500">ETH balance</dt>
-                                            <dd className="w-full flex-none text-3xl font-medium leading-10 tracking-tight text-gray-900">
-                                                {displayAsETH(nodeStatus.accountBalances.eth.toString(), 4)}
-                                                {showButtons && <SendEth amount={4000000000000000000n} />}
-                                                {showButtons && <SendEth amount={100000000000000000n} />}
+                                            <div className="self-start">
+                                                <dt className="text-sm font-medium leading-6 text-gray-500">ETH balance (not staked)</dt>
+                                                <dd className="w-full flex-none text-3xl font-medium leading-10 tracking-tight text-gray-900">
+                                                    {displayAsETH(nodeStatus.accountBalances.eth.toString(), 4)} ETH <br />
+                                                    {showButtons && <SendEth amount={4000000000000000000n} />}
+                                                    {/* {showButtons && <SendEth amount={100000000000000000n} />} */}
 
-                                            </dd>
+                                                </dd>
+                                            </div>
                                         </div>
                                         <div
                                             className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-2 bg-white px-4 py-10 sm:px-6 xl:px-8"
                                         >
-                                            <dt className="text-sm font-medium leading-6 text-gray-500">SD balance</dt>
-                                            <dd className="w-full flex-none text-3xl font-medium leading-10 tracking-tight text-gray-900">
-                                                {displayAsETH(nodeStatus.accountBalances.sd.toString(), 4)}
-                                                {showButtons && <SendSD />}
-                                                {showButtons && (sdBalance?.value?.toBigInt() ?? 0n) > 0 && <SendSD amount={(sdBalance?.value?.toBigInt() ?? 0n)} />}
-                                                {showButtons && allowanceStatus?.allowance > 0 && BigInt(nodeStatus.accountBalances.sd) > 0 && <StakeSD amount={BigInt(nodeStatus.accountBalances.sd)} />}
-                                            </dd>
+                                            <div className="self-start">
+                                                <dt className="text-sm font-medium leading-6 text-gray-500">SD balance (not staked)</dt>
+                                                <dd className="w-full flex-none text-3xl font-medium leading-10 tracking-tight text-gray-900 pb-4">
+                                                    {displayAsETH(nodeStatus.accountBalances.sd.toString())} SD <br />
+                                                    {showButtons && <SendSD />}
+                                                    {showButtons && (BigInt(nodeStatus.accountBalances.sd || 0n) > 0n) && <StakeSD amount={BigInt(nodeStatus.accountBalances.sd)} />}
+                                                    {/* {showButtons && (sdBalance?.value ?? 0n) > 0 && <SendSD amount={(sdBalance?.value ?? 0n)} />} */}
+                                                </dd>
+                                                <hr className="pb-4" />
+
+                                                <dt className="text-sm font-medium leading-6 text-gray-500">SD balance (staked)</dt>
+                                                <dd className="w-full flex-none text-3xl font-medium leading-10 tracking-tight text-gray-900">
+                                                    <div>{`${displayAsETH(nodeStatus.depositedSdCollateral)} SD`}</div>
+                                                    <div className="text-sm">(good for {nodeStatus.sdCollateralWorthValidators} validators)</div>
+                                                    <ApproveSD />
+                                                </dd>
+
+                                            </div>
+
                                         </div>
                                     </dl>
 
+                                    {/* <hr /> */}
 
-
-                                    <hr />
-
-{/* 
+                                    {/* 
                                     <div className="sm:flex sm:items-center">
                                         <div className="sm:flex-auto">
                                             <h1 className="text-base font-semibold leading-6 text-gray-900">Stader Node</h1>

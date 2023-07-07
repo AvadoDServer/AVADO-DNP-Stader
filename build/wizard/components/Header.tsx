@@ -67,7 +67,7 @@ const Header = () => {
                                 <MapIcon className="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
                                 <Link
                                     className="text-sm leading-6 text-gray-600 hover:text-gray-900"
-                                    href="/admin">API
+                                    href="/admin">Advanced mode
                                 </Link>
                             </div>
                             <div className="mt-2 flex items-center text-sm text-gray-500">
@@ -77,9 +77,9 @@ const Header = () => {
                     </div>
                     <div className="mt-5 flex justify-items-end">
                         <div className="min-w-0 flex-1">
-                            {/* <span className="hidden sm:block">
+                            <span className="flex justify-end items-center pb-4">
                                 <ConnectButton />
-                            </span> */}
+                            </span>
                             <div className="mt-1 flex flex-col sm:mt-0 sm:flex-row sm:flex-wrap sm:space-x-6">
                                 <span className="hidden sm:block">
                                     <EcClientLink>

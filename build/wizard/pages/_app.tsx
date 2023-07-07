@@ -5,7 +5,7 @@ import '@fontsource/exo-2';
 
 import type { AppProps } from 'next/app';
 import { RainbowKitProvider, getDefaultWallets } from '@rainbow-me/rainbowkit';
-import { configureChains, createClient, WagmiConfig } from 'wagmi';
+import { configureChains, createConfig, WagmiConfig } from 'wagmi';
 import { alchemyProvider } from 'wagmi/providers/alchemy';
 import { publicProvider } from 'wagmi/providers/public';
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
@@ -14,9 +14,10 @@ import { server_config } from '../server_config'
 import { useEffect, useState } from 'react';
 import Layout from '../components/Layout';
 import { useStaderStatus } from '../lib/status';
+// import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
 
 function MyApp({ Component, pageProps }: AppProps) {
-  const [wagmiClient, setWagmiClient] = useState<any>();
+  const [wagmiConfig, setWagmiConfig] = useState<any>();
   const [chains, setChains] = useState<any>();
 
   useEffect(() => {
@@ -29,33 +30,62 @@ function MyApp({ Component, pageProps }: AppProps) {
         })
       )
 
-      const { chains, provider, webSocketProvider } = configureChains(
+
+
+
+      const { chains, publicClient } = configureChains(
+        [goerli],
         [
-          goerli
-        ],
-        rpcProviders.concat([
           alchemyProvider({
-            // This is Alchemy's default API key.
-            // You can get your own at https://dashboard.alchemyapi.io
+            // https://dashboard.alchemyapi.io
             apiKey: "8kMhSrpLGyIlRYBtAtT9IAVWeVK8hiOZ",
           }),
           publicProvider(),
-        ])
-      );
+        ]
+      )
+
+      // const { chains, provider, webSocketProvider } = configureChains(
+      //   [
+      //     goerli
+      //   ],
+      //   rpcProviders.concat([
+      //     alchemyProvider({
+      //       // This is Alchemy's default API key.
+      //       // You can get your own at https://dashboard.alchemyapi.io
+      //       apiKey: "8kMhSrpLGyIlRYBtAtT9IAVWeVK8hiOZ",
+      //     }),
+      //     publicProvider(),
+      //   ])
+      // );
+
+      // const connector = new WalletConnectConnector({
+      //   options: {
+      //     projectId: "b5371f3f7bd2de6a26493f22901da531",
+      //     showQrModal: true
+      //   }
+      // })
 
       const { connectors } = getDefaultWallets({
         appName: 'Avado Stader',
+        projectId: "b5371f3f7bd2de6a26493f22901da531",
         chains,
       });
 
-      const wagmiClient = createClient({
+
+      const wagmiConfig = createConfig({
         autoConnect: true,
         connectors,
-        provider,
-        webSocketProvider,
-      });
+        publicClient
+      })
 
-      setWagmiClient(wagmiClient)
+      // const wagmiConfig = createClient({
+      //   autoConnect: true,
+      //   connectors: [connector],
+      //   provider,
+      //   webSocketProvider,
+      // });
+
+      setWagmiConfig(wagmiConfig)
       setChains(chains)
     }
 
@@ -64,11 +94,12 @@ function MyApp({ Component, pageProps }: AppProps) {
 
 
   // Trigger initial fetch of all stader info + refresh sync info very 60 seconds
-  const { fetchNodeSyncProgressStatus, fetchContractsInfo, fetchNodeStatus } = useStaderStatus()
+  const { fetchNodeSyncProgressStatus, fetchContractsInfo, fetchNodeStatus, fetchAllowance } = useStaderStatus()
   useEffect(() => {
     fetchNodeSyncProgressStatus()
     fetchNodeStatus()
     fetchContractsInfo()
+    fetchAllowance()
     const interval = setInterval(() => {
       fetchNodeSyncProgressStatus();
     }, 60 * 1000); // 60 seconds refresh
@@ -77,8 +108,8 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   return <>
     {/* <link rel="stylesheet" href="https://rsms.me/inter/inter.css"></link> */}
-    {wagmiClient ? (
-      <WagmiConfig client={wagmiClient}>
+    {wagmiConfig ? (
+      <WagmiConfig config={wagmiConfig}>
         <RainbowKitProvider chains={chains}>
           <Layout>
             <Component {...pageProps} />

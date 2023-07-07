@@ -7,11 +7,25 @@ const get = (api_url: string) => {
     return useSWR(api_url, fetcher);
 }
 
+export function useSDPrice() {
+    const api_url: string = `${server_config.monitor_url}/sdprice`;
+    const { data, error } = get(api_url)
+    const sdPrice = data as number
+    return { sdPrice , error };
+}
+
 export function useNetwork() {
     const api_url: string = `${server_config.monitor_url}/network`;
     const { data, error } = get(api_url)
     const network: networkType = data?.replace("goerli", "prater") ?? "mainnet"
     return { network, error };
+}
+
+export function useParams() {
+    const api_url: string = `${server_config.monitor_url}/avado-params`;
+    const { data, error } = get(api_url);
+    const avadoParams = data;
+    return { avadoParams, error };
 }
 
 export function useBeaconChainClientAndValidator() {
@@ -53,10 +67,7 @@ export type runningValidatorInfosType = {
 export function useRunningValidatorInfos() {
     const api_url: string = `${server_config.monitor_url}/runningValidatorInfos`;
     const { data, error, mutate } = get(api_url)
-
     const refetch = () => mutate()
-
     const infos: runningValidatorInfosType[] = (typeof data === "string") ? [] : (data ?? [])
-
     return { validatorInfos: infos, refetch, error };
 }
