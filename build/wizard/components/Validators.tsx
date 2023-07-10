@@ -127,9 +127,9 @@ const Validators = () => {
                                         <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                                             Fee recipient
                                         </th>
-                                        <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                                        {/* <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                                             Claim reward
-                                        </th>
+                                        </th> */}
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-gray-200 bg-white">
@@ -157,9 +157,9 @@ const Validators = () => {
                                             <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                                                 {isFeeRecipientAddressCorrect(decodeKey(validator.Pubkey)) ? "✅" : "⚠️"}
                                             </td>
-                                            <td>
+                                            {/* <td>
                                                 <ClaimReward pubKey={decodeKey(validator.Pubkey)}/>
-                                            </td>
+                                            </td> */}
                                         </tr>
                                     ))}
                                 </tbody>
