@@ -28,6 +28,7 @@
     }
   },
   "links": {
+    "OnboardingWizard": "http://stader.my.ava.do",
     "Wiki": "https://docs.ava.do/packages/stader",
     "HomePage": "https://www.staderlabs.com/"
   }

@@ -101,7 +101,7 @@ const Validators = () => {
                         </p>
                     </div>
                     <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
-                        <AddValidator currentNumberOfValidators={nodeStatus.validatorInfos.length} />
+                        <AddValidator />
                     </div>
                 </div>
                 <div className="mt-8 flow-root">
@@ -133,10 +133,10 @@ const Validators = () => {
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-gray-200 bg-white">
-                                    {nodeStatus.validatorInfos.map((validator) => (
+                                    {nodeStatus.validatorInfos.map((validator,i) => (
                                         <tr key={validator.Pubkey}>
                                             <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-0">
-                                                {beaconchainUrl(network, decodeKey(validator.Pubkey), <><FontAwesomeIcon className="icon" icon={faSatelliteDish} /> {abbreviatePublicKey(decodeKey(validator.Pubkey))}</>)}
+                                                {i+1} {beaconchainUrl(network, decodeKey(validator.Pubkey), <><FontAwesomeIcon className="icon" icon={faSatelliteDish} /> {abbreviatePublicKey(decodeKey(validator.Pubkey))}</>)}
                                             </td>
                                             <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{ValidatorStates[validator.Status]}</td>
                                             <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
