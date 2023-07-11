@@ -23,11 +23,6 @@ const Validators = () => {
     const { validatorInfos, refetch } = useRunningValidatorInfos()
     const expectedRecipient = "0x6DA4c7aF13ECB85C5283B0b78fbd3C204eFB2c0c" // FIXME: where to get this?
 
-    useEffect(() => {
-        console.log("avadoParams", avadoParams);
-
-    }, [avadoParams]);
-
     const decodeKey = (encodedString: string) => "0x" + Buffer.from(encodedString, 'base64').toString('hex')
 
     const isRunningValidator = (pubkey: string) => validatorInfos.some(i => i.pubkey == pubkey)

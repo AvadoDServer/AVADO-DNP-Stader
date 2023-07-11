@@ -9,11 +9,11 @@ export const staderCommandRaw = async (command: string) => {
     const result = await response.json()
 
     const json = enquoteBigNumbers(result)
-    try {
-        console.log(command, JSON.stringify(JSON.parse(json), null, 2));
-    } catch {
-        console.log(command, json);
-    }
+    // try {
+    //     console.log(command, JSON.stringify(JSON.parse(json), null, 2));
+    // } catch {
+    //     console.log(command, json);
+    // }
     return json
 }
 // function that implements desired criteria to separate *big numbers* from *small* ones
