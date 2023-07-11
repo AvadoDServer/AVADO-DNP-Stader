@@ -1,14 +1,14 @@
 import '../styles/globals.css';
-// import '../styles/style.sass';
 import '@rainbow-me/rainbowkit/styles.css';
 import '@fontsource/exo-2';
 
 import type { AppProps } from 'next/app';
 import { RainbowKitProvider, getDefaultWallets } from '@rainbow-me/rainbowkit';
-import { configureChains, createConfig, WagmiConfig } from 'wagmi';
+import { configureChains, createConfig, WagmiConfig, Chain } from 'wagmi';
 import { alchemyProvider } from 'wagmi/providers/alchemy';
 import { publicProvider } from 'wagmi/providers/public';
-import { goerli } from 'wagmi/chains'
+import { goerli, mainnet } from 'wagmi/chains'
+import { jsonRpcProvider } from '@wagmi/core/providers/jsonRpc'
 import { server_config } from '../server_config'
 import { useEffect, useState } from 'react';
 import Layout from '../components/Layout';
@@ -22,8 +22,25 @@ function MyApp({ Component, pageProps }: AppProps) {
     const setupClient = async () => {
 
       const { chains, publicClient } = configureChains(
-        [goerli],
+        [goerli, mainnet],
         [
+          jsonRpcProvider({
+            rpc: (chain) => {
+              switch (chain.name) {
+                case "goerli":
+                  return {
+                    http: `http://goerli-geth.my.ava.do:8545`,
+                    webSocket: `ws://goerli-geth.my.ava.do:8546`
+                  }
+                default:
+                  return {
+                    http: `http://ethchain-geth.my.ava.do:8545`,
+                    webSocket: `ws://ethchain-geth.my.ava.do:8546`
+                  }
+
+              }
+            }
+          }),
           alchemyProvider({
             // https://dashboard.alchemyapi.io
             apiKey: "8kMhSrpLGyIlRYBtAtT9IAVWeVK8hiOZ",

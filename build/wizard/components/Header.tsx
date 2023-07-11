@@ -7,6 +7,7 @@ import { useStaderStatus } from "../lib/status"
 import { useBeaconChainClientAndValidator, useExecutionClient, useNetwork } from '../hooks/useServerInfo';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import Link from 'next/link';
+import { useEffect } from 'react';
 
 const Header = () => {
 
@@ -14,6 +15,13 @@ const Header = () => {
     const { network } = useNetwork()
     const { bcClient } = useBeaconChainClientAndValidator()
     const { ecClient } = useExecutionClient()
+
+    useEffect(()=>{
+        console.dir(nodeSyncProgressStatus);
+    },[nodeSyncProgressStatus])
+
+
+ 
 
     const title = "Avado Stader"
 

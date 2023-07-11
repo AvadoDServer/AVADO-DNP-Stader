@@ -29,19 +29,37 @@ RUN ls -lr /go/bin
 
 ####### Main image
 
-FROM --platform=linux/amd64 node:18.15.0
+FROM --platform=linux/amd64 debian:bullseye-slim
 ARG STADER_VERSION
 
 RUN mkdir -p /stader
 
-RUN apt-get -y clean && apt-get -y update && apt-get -y upgrade && apt-get -y install \
+
+RUN apt update && apt install -y  \
+    ca-certificates  \
     gettext\
     jq \
     nginx \
-    sudo \
     supervisor \
-    vim-tiny \
+    curl \
+    gnupg \
     && rm -rf /var/lib/apt/lists/*
+
+RUN curl -fsSL https://deb.nodesource.com/gpgkey/nodesource.gpg.key | gpg --dearmor -o /usr/share/keyrings/nodesource.gpg
+RUN echo 'deb [signed-by=/usr/share/keyrings/nodesource.gpg] https://deb.nodesource.com/node_18.x bullseye main' | tee /etc/apt/sources.list.d/nodesource.list
+RUN apt update && apt install -y  \
+    nodejs \
+    && rm -rf /var/lib/apt/lists/*
+
+
+# RUN apt-get -y clean && apt-get -y update && apt-get -y upgrade && apt-get -y install \
+#     gettext\
+#     jq \
+#     nginx \
+#     sudo \
+#     supervisor \
+#     vim-tiny \
+#     && rm -rf /var/lib/apt/lists/*
 RUN useradd -s /bin/false nginx
 
 # COPY --from=stader-cli /stader-cli /go/bin/stader

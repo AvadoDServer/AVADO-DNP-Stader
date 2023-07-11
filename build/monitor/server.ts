@@ -155,8 +155,12 @@ server.get("/bc-clients", async (req: restify.Request, res: restify.Response, ne
 server.get("/ec-clients", async (req: restify.Request, res: restify.Response, next: restify.Next) => {
     const dappManagerHelper = new DappManagerHelper(server_config.packageName, wampSession);
     const packages = await dappManagerHelper.getPackages();
-
-    const installed_clients = supported_execution_clients.filter(client => packages.includes(getAvadoExecutionClientPackageName(client)));
+    console.log("/ec-clients packages", JSON.stringify(packages, null, 2))
+    const installed_clients = supported_execution_clients.filter(client => {
+        const name = getAvadoExecutionClientPackageName(client);
+        const isin = packages.includes(name);
+        return isin;
+    });
 
     res.send(200, installed_clients.map(client => ({
         name: client,
@@ -331,9 +335,10 @@ server.get("/runningValidatorInfos", async (req: restify.Request, res: restify.R
         return next()
     }
 
-    const keymanagerUrl = `http://teku-prater.my.ava.do:9999/keymanager`
+    const keymanagerUrl = clients[0].validatorAPI;
+    const restApiUrl = clients[0].validatorAPI.replace("keymanager", "rest");
     const fetchFromKeyManager = async (path: string): Promise<any[]> => JSON.parse(await (await fetch(`${keymanagerUrl}${path}`)).text()).data
-    const restApiUrl = `http://teku-prater.my.ava.do:9999/rest`
+    // const restApiUrl = `http://teku-prater.my.ava.do:9999/rest`
     const fetchFromRestAPi = async (path: string): Promise<any[]> => JSON.parse(await (await fetch(`${restApiUrl}${path}`)).text()).data
 
     const validators = (await fetchFromKeyManager("/eth/v1/keystores")).map((v: any) => v.validating_pubkey)
@@ -382,7 +387,7 @@ server.post("/importValidator", (req: restify.Request, res: restify.Response, ne
             passwords: [getValidatorPassword(pubkey)]
         }
 
-        const keymanagerUrl = `http://teku-prater.my.ava.do:9999/keymanager/eth/v1/keystores`
+        const keymanagerUrl = `http://teku.my.ava.do:9999/keymanager/eth/v1/keystores`
         postToKeyManager(keymanagerUrl, JSON.stringify(message), res, next);
     }
 });
@@ -449,7 +454,7 @@ server.post("/setFeeRecipient", (req: restify.Request, res: restify.Response, ne
             "ethaddress": feeRecipientAddress
         }
 
-        const keymanagerUrl = `http://teku-prater.my.ava.do:9999/keymanager/eth/v1/validator/${pubKey}/feerecipient`;
+        const keymanagerUrl = `http://teku.my.ava.do:9999/keymanager/eth/v1/validator/${pubKey}/feerecipient`;
         postToKeyManager(keymanagerUrl, JSON.stringify(message), res, next);
     }
 });
