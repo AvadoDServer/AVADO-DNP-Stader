@@ -91,6 +91,18 @@ export class DappManagerHelper {
         return fetchData();
     }
 
+    public getParams(): Promise<{ key: string }> {
+        const fetchData = async () => {
+            if (!this.wampSession)
+                return {}
+            const res = JSON.parse(await this.wampSession.call("getParams.dappmanager.dnp.dappnode.eth"));
+            if (res.success !== true) return {};
+            return res.result
+        }
+        return fetchData();
+    }
+
+
     public writeEnv(key: string, value: string, restart: boolean = false) {
         if (!this.wampSession)
             return

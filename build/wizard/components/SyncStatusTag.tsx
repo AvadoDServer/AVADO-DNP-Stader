@@ -7,12 +7,12 @@ interface Props {
 }
 
 const SyncStatusTag = ({ clientStatus, label }: Props) => {
-    const progress = clientStatus.syncProgress
+    const progress = clientStatus?.syncProgress || 0
 
     var message = ""
     var className = "";
 
-    if (clientStatus.isWorking == false) {
+    if (clientStatus?.isWorking == false) {
         className = "bg-red-200 text-red-700"
         message = `${(label ? `${label} ` : "")}not connected`
     } else {

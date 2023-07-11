@@ -1,14 +1,10 @@
 import Spinner from "./Spinner";
 import web3 from "web3";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import { useStaderStatus } from "../lib/status";
 import { displayAsETH, etherscanTransactionUrl, wsProvider } from "../utils/utils"
 import { useNetwork } from "../hooks/useServerInfo";
-import { utils } from 'ethers'
 import { useEffect, useState } from "react";
 import { staderCommand } from "../lib/staderDaemon";
-import SendSD from "./SendSd";
 
 interface Props {
     amount: bigint
@@ -52,7 +48,6 @@ const StakeSD = ({ amount }: Props) => {
 
     const stakeSD = (amount: bigint) => {
         staderCommand(`node deposit-sd ${amount}`).then((data: any) => {
-            //{"status":"success","error":"","stakeTxHash":"0x41a93be5b4fb06e819975acc0cdb91c1084e4c1943d625a3a5f96d823842d0e8"}
             if (data.status === "error") {
                 setFeedback(data.error);
             } else {
@@ -81,14 +76,9 @@ const StakeSD = ({ amount }: Props) => {
                 className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                 onClick={() => stakeSD(amount)}
                 disabled={sdStakeButtonDisabled}>
-                Stake {displayAsETH(amount)} SD {waitingForTx ? <Spinner /> : ""}
+                Deposit {displayAsETH(amount)} SD {waitingForTx ? <Spinner /> : ""}
             </button>
             <br />
-            {/* {feedback && (
-                <>
-                    <p className="help is-danger">{feedback}</p>
-                </>
-            )} */}
             {txHash && (
                 <>
                     <p>{etherscanTransactionUrl(network, txHash, "Transaction details on Etherscan")}</p>

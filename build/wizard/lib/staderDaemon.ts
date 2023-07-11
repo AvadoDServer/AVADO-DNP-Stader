@@ -1,7 +1,7 @@
 import { server_config } from "../server_config";
 
 export const staderCommandRaw = async (command: string) => {
-    const response = await window.fetch(`${server_config.monitor_url}/stader-api`, {
+    const response = await window.fetch(`${server_config.monitor_url}/stader-any`, {
         method: 'POST',
         headers: { 'content-type': 'application/json;charset=UTF-8' },
         body: JSON.stringify({ command }),
@@ -9,9 +9,11 @@ export const staderCommandRaw = async (command: string) => {
     const result = await response.json()
 
     const json = enquoteBigNumbers(result)
-
-    console.log(command, json)
-
+    // try {
+    //     console.log(command, JSON.stringify(JSON.parse(json), null, 2));
+    // } catch {
+    //     console.log(command, json);
+    // }
     return json
 }
 // function that implements desired criteria to separate *big numbers* from *small* ones
@@ -28,7 +30,7 @@ const enquoteBigNumbers = (jsonString: string) =>
         )
 
 export const staderCommand = async (command: string) => {
-    const json = await staderCommandRaw(command)
+    const json = await staderCommandRaw(` api ${command}`)
     try {
         return JSON.parse(json);
     } catch (e) {

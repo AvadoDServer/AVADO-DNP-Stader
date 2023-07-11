@@ -72,3 +72,6 @@ NETWORK="${NETWORK}" \
 
 # Start stader node daemon
 exec /go/bin/stader node
+
+echo "Stader daemon exited. Waiting to restart"
+sleep 60

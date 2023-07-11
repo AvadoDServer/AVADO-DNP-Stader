@@ -1,13 +1,5 @@
-import { Fragment, useEffect, useState } from 'react'
-import type { NextPage } from 'next';
 import {
     MapIcon,
-    AdjustmentsHorizontalIcon,
-    ServerIcon,
-    PencilIcon,
-    LinkIcon,
-    CheckIcon,
-    ChevronDownIcon
 } from '@heroicons/react/20/solid'
 import NetworkBanner from '../components/NetworkBanner';
 import SyncStatusTag from '../components/SyncStatusTag';
@@ -15,6 +7,7 @@ import { useStaderStatus } from "../lib/status"
 import { useBeaconChainClientAndValidator, useExecutionClient, useNetwork } from '../hooks/useServerInfo';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import Link from 'next/link';
+import { useEffect } from 'react';
 
 const Header = () => {
 
@@ -22,6 +15,13 @@ const Header = () => {
     const { network } = useNetwork()
     const { bcClient } = useBeaconChainClientAndValidator()
     const { ecClient } = useExecutionClient()
+
+    useEffect(()=>{
+        console.dir(nodeSyncProgressStatus);
+    },[nodeSyncProgressStatus])
+
+
+ 
 
     const title = "Avado Stader"
 
@@ -53,21 +53,11 @@ const Header = () => {
                             <Link href="/"><h1>{title}</h1></Link>
                         </h1>
                         <div className="mt-1 flex flex-col sm:mt-0 sm:flex-row sm:flex-wrap sm:space-x-6">
-                            {/* <div className="mt-2 flex items-center text-sm text-gray-500">
-                                <ServerIcon className="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
-                                {ecClientLink()},{bcClientLink()}
-                            </div> */}
-                            {/* <div className="mt-2 flex items-center text-sm text-gray-500">
-                                <AdjustmentsHorizontalIcon className="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
-                                <a href="http://my.ava.do/#/Packages/stader.avado.dnp.dappnode.eth/detail" className="text-sm leading-6 text-gray-600 hover:text-gray-900">
-                                    Logs
-                                </a>
-                            </div> */}
                             <div className="mt-2 flex items-center text-sm text-gray-500">
                                 <MapIcon className="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
                                 <Link
                                     className="text-sm leading-6 text-gray-600 hover:text-gray-900"
-                                    href="/admin">API
+                                    href="/admin">Advanced mode
                                 </Link>
                             </div>
                             <div className="mt-2 flex items-center text-sm text-gray-500">
@@ -77,19 +67,19 @@ const Header = () => {
                     </div>
                     <div className="mt-5 flex justify-items-end">
                         <div className="min-w-0 flex-1">
-                            {/* <span className="hidden sm:block">
+                            <span className="flex justify-end items-center pb-4">
                                 <ConnectButton />
-                            </span> */}
+                            </span>
                             <div className="mt-1 flex flex-col sm:mt-0 sm:flex-row sm:flex-wrap sm:space-x-6">
                                 <span className="hidden sm:block">
                                     <EcClientLink>
-                                        <SyncStatusTag clientStatus={nodeSyncProgressStatus.ecStatus.primaryEcStatus} label={ecClient?.name ?? "execution client"} />
+                                        <SyncStatusTag clientStatus={nodeSyncProgressStatus?.ecStatus?.primaryEcStatus} label={ecClient?.name ?? "execution client"} />
                                     </EcClientLink>
                                 </span>
 
                                 <span className="ml-3 hidden sm:block">
                                     <BcClientLink>
-                                        <SyncStatusTag clientStatus={nodeSyncProgressStatus.bcStatus.primaryEcStatus} label={bcClient?.name ?? "beacon client"} />
+                                        <SyncStatusTag clientStatus={nodeSyncProgressStatus?.bcStatus?.primaryEcStatus} label={bcClient?.name ?? "beacon client"} />
                                     </BcClientLink>
                                 </span>
                             </div>

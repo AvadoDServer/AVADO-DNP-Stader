@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { walletStatusType } from "../types";
 import { useStaderStatus } from "../lib/status";
-import { staderCommandRaw, staderCommand } from "../lib/staderDaemon"
+import { staderCommand } from "../lib/staderDaemon"
 import DownloadBackup from "./DownloadBackup";
 
 interface Props {
@@ -56,6 +56,7 @@ const InitWallet = ({ onFinished }: Props) => {
 
     // Future improvement: allow recovery (`wallet recover mnemonic`)
     const initWallet = async () => {
+        debugger;
         if (!walletStatus.passwordSet) {
             const data1 = await staderCommand("wallet set-password \"" + password + "\"")
             if (data1.status === "error") {

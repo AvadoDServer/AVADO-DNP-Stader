@@ -3,7 +3,7 @@ import { readFileSync } from "fs";
 const localdev = process.env.LOCALDEV || false;
 
 const network = () => {
-    var env_network = process.env.NETWORK ?? "goerli" // use goerli by default
+    var env_network = process.env.NETWORK ?? "mainnet" // use goerli by default
     if (env_network === "prater") env_network = "goerli" // use goerli if env variable is set to prater
     return env_network
 }

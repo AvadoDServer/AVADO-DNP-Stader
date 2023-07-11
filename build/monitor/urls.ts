@@ -14,7 +14,7 @@ export const client_url = (client: string) => {
         }
         case "geth": switch (network) {
             case "goerli": return "goerli-geth.my.ava.do"
-            case "mainnet": return "geth.my.ava.do"
+            case "mainnet": return "ethchain-geth.my.ava.do"
         }
         default/*"geth"*/: switch (network) {
             case "goerli": return "teku-prater.my.ava.do"
@@ -50,9 +50,11 @@ export const getAvadoPackageName = (client: string, type: "beaconchain" | "valid
 }
 
 export const getAvadoExecutionClientPackageName = (client: string) => {
+    console.log("client",client);
+    console.log("network",network);
     switch (client) {
         case "nethermind": return (network === "goerli") ? "nethermind-goerli.avado.dnp.dappnode.eth" : "avado-dnp-nethermind.avado.dnp.dappnode.eth"
-        default /*"geth"*/: return (network === "goerli") ? "goerli-geth.avado.dnp.dappnode.eth" : "geth.avado.dnp.dappnode.eth"
+        default /*"geth"*/: return (network === "goerli") ? "goerli-geth.avado.dnp.dappnode.eth" : "ethchain-geth.public.dappnode.eth"
     }
 }
 

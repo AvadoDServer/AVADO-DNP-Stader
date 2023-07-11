@@ -9,6 +9,7 @@ import Spinner from "./Spinner";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import ButtonSpinner from "./ButtonSpinner";
+import { useStaderStatus } from '../lib/status';
 
 interface Props {
 }
@@ -18,11 +19,22 @@ const ApproveSD = ({ }: Props) => {
     const [txHash, setTxHash] = useState();
     const [waitingForTx, setWaitingForTx] = useState(false);
     const [feedback, setFeedback] = useState("");
-    const [sdlAllowanceOK, setSdAllowanceOK] = useState(false);
+    const [sdAllowanceOK, setSdAllowanceOK] = useState(false);
+
+    const maxApproval = ((BigInt(2) ** BigInt(256)) - BigInt(1));
+
+
+    const { allowanceStatus, fetchAllowance } = useStaderStatus()
+
+    useEffect(() => {
+        fetchAllowance();
+    }, []);
 
     useEffect(() => {
         checkAllowance();
-    }, []);
+    }, [allowanceStatus]);
+
+
 
     const { network } = useNetwork()
 
@@ -30,26 +42,21 @@ const ApproveSD = ({ }: Props) => {
     const checkAllowance = () => {
         setSdApproveButtonDisabled(false);
 
-        staderCommand(`node deposit-sd-allowance`).then((data: any) => {
-            if (data.status === "error") {
-                setFeedback(data.error);
-            } else {
-                const allowance: bigint = BigInt(data.allowance)
-                if (allowance > 0) {
-                    setSdApproveButtonDisabled(true);
-                    setSdAllowanceOK(true);
-                } else {
-                    setSdApproveButtonDisabled(false);
-                    setSdAllowanceOK(false);
-                }
-            }
-        });
+        const allowance: bigint = BigInt(allowanceStatus?.allowance || 0n)
+        if (allowance === maxApproval) {
+            setSdApproveButtonDisabled(true);
+            setSdAllowanceOK(true);
+        } else {
+            console.log(`Allowance should be ${maxApproval.toString()} but is ${allowance.toString()}`)
+            setSdApproveButtonDisabled(false);
+            setSdAllowanceOK(false);
+        }
     }
 
-    const approveSD = () => {
-        const maxApproval = ((BigInt(2) ** BigInt(256)) - BigInt(1)).toString()
 
-        staderCommand(`node deposit-sd-approve-sd ${maxApproval}`).then((data: any) => {
+    const approveSD = () => {
+
+        staderCommand(`node deposit-sd-approve-sd ${maxApproval.toString()}`).then((data: any) => {
             if (data.status === "error") {
                 setFeedback(data.error);
             }
@@ -66,7 +73,7 @@ const ApproveSD = ({ }: Props) => {
                 w3.eth.getTransactionReceipt(txHash).then((receipt) => {
                     console.log(receipt);
                     setWaitingForTx(false);
-                    checkAllowance();
+                    fetchAllowance();
                 });
             });
         }
@@ -74,8 +81,7 @@ const ApproveSD = ({ }: Props) => {
 
     return (
         <div className="">
-            <h4 className="title is-4 has-text-white">1. Approve SD</h4>
-            {!sdlAllowanceOK && (
+            {!sdAllowanceOK && (
                 <>
                     <p>Approve the staking contract to use the SD in your hot-wallet.</p>
                     <br />
@@ -92,9 +98,9 @@ const ApproveSD = ({ }: Props) => {
             {feedback && (
                 <p className="help is-danger">{feedback}</p>
             )}
-            {sdlAllowanceOK && (
-                <span className="tag is-success">Approved <span><FontAwesomeIcon className="icon" icon={faCheck} /></span></span>
-            )}
+            {/* {sdAllowanceOK && (
+                <span className="text-sm">SD approval OK</span>
+            )} */}
             {txHash && (
                 <p>{etherscanTransactionUrl(network, txHash, "Transaction details on Etherscan")}</p>
             )}

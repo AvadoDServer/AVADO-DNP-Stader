@@ -1,6 +1,4 @@
 import web3 from "web3";
-
-import Spinner from "./Spinner";
 import { useEffect, useState } from "react";
 import { useStaderStatus } from "../lib/status";
 import { staderCommand } from "../lib/staderDaemon"
@@ -14,7 +12,7 @@ interface Props {
 }
 
 const RegisterNode = ({ onFinished }: Props) => {
-    const { nodeStatus, walletStatus, fetchWalletStatus, fetchNodeStatus } = useStaderStatus()
+    const { nodeStatus, fetchWalletStatus, fetchNodeStatus } = useStaderStatus()
     const { network } = useNetwork()
     const { address: accountAddress } = useAccount();
 
@@ -120,7 +118,7 @@ const RegisterNode = ({ onFinished }: Props) => {
                                 onClick={registerNode}
                                 disabled={name == "" || buttonDisabled}>
                                 {waitingForTx ? (                                
-                                <ButtonSpinner text={`Registring node`} />
+                                <ButtonSpinner text={`Registering node`} />
                                 ) : "Register Node"}
                             </button>
                         </div>
