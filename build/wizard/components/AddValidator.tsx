@@ -37,6 +37,8 @@ const AddValidator = ({ }: Props) => {
 
     const validatorsICanAdd = Math.min(ethWorthValidators, nodeStatus.sdCollateralWorthValidators);
 
+    // console.log(`I can add ${validatorsICanAdd} vali's`);
+
     const onFinish = () => {
         debugger;
         setReady(true)
@@ -54,7 +56,7 @@ const AddValidator = ({ }: Props) => {
             <select
                 className="border border-gray-300 px-2 py-1 rounded-md"
                 value={amountOfValidatorsToAdd} onChange={handleChange}>
-                {Array.from({ length: validatorsICanAdd - 1 }, (_, index) => index + 1).map((number) => (
+                {Array.from({ length: validatorsICanAdd }, (_, index) => index + 1).map((number) => (
                     <option key={number} value={number}>{number}</option>
                 ))}
             </select>
@@ -74,6 +76,7 @@ const AddValidator = ({ }: Props) => {
                     <div className="px-4 py-5 sm:p-6">
                         {!ready &&
                             <>
+                                <p>You can add up to {validatorsICanAdd} validators</p>
                                 <div className="pb-5">
                                     <p>
                                         ✅ Deposited SD balance: {`${displayAsETH(stakedSDBalance)} SD`}
@@ -138,6 +141,8 @@ const AddValidator = ({ }: Props) => {
         errors.push(<li>You still need to give approval to spend your SD tokens</li>);
     }
 
+    const canAddValidators = !(errors.length > 0 || validatorsICanAdd < 1);
+
     return <>
         {!showAddValidator && (
             <>
@@ -145,10 +150,10 @@ const AddValidator = ({ }: Props) => {
                     <ul>{errors}</ul>
                 )}
                 <button
-                    disabled={errors.length > 0}
-                    className={`${errors.length > 0 ? "disabled:opacity-50" : ""} rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600`}
+                    disabled={!canAddValidators}
+                    className={`${!canAddValidators ? "disabled:opacity-50" : ""} rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600`}
                     onClick={() => setShowAddValidator(!showAddValidator)}
-                >Add validator</button>
+                >Add validators</button>
             </>
         )}
         {showAddValidator && (
