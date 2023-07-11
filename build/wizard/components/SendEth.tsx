@@ -28,18 +28,21 @@ const SendEth = ({ onSuccess }: Props) => {
         address: address,
     })
     const [showModal, setShowModal] = useState<boolean>(false);
-
+    const [debouncer, setDebouncer] = useState<any>();
+    
     const { config, error: prepareError, isError: isPrepareError } = usePrepareSendTransaction({
         to: walletStatus.accountAddress,
         value: BigInt(amount) * 1000000000000000000n
     })
     const { data, sendTransaction, error, isError } = useSendTransaction(config)
 
-    useEffect(() => {
-        if (amount > 0) {
-            sendTransaction?.();
-        }
-    }, [amount]);
+    // useEffect(() => {
+    //     setTimeout(() => {
+    //         if (amount > 0) {
+    //             sendTransaction?.();
+    //         }
+    //     }, 200)
+    // }, [amount]);
 
     const { isLoading, isSuccess } = useWaitForTransaction({
         hash: data?.hash,
@@ -87,10 +90,19 @@ const SendEth = ({ onSuccess }: Props) => {
         )
     }
 
+
     const handleSliderChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSliderAmount(parseFloat(event.target.value));
+        if (debouncer){
+            clearTimeout(debouncer);
+        }
+        const t = setTimeout(()=>{
+            console.log("amount set");
+            setAmount(parseFloat(event.target.value))
+            setDebouncer(null);
+        },100);
+        setDebouncer(t);
     };
-
     return (
         <>
             <Transition.Root show={showModal} as={Fragment}>
@@ -156,8 +168,7 @@ const SendEth = ({ onSuccess }: Props) => {
                                             <div className="px-4 py-5 sm:p-6">
                                                 <button
                                                     onClick={() => {
-                                                        debugger;
-                                                        setAmount(sliderAmount);
+                                                        sendTransaction?.();
                                                     }}
                                                     className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                                                     disabled={sliderAmount === 0 || !walletStatus.accountAddress}>

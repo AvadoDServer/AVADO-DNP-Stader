@@ -26,6 +26,7 @@ const SendSd = ({ onSuccess }: Props) => {
 
     const [amount, setAmount] = useState<number>(0);
     const [sliderAmount, setSliderAmount] = useState<number>(0);
+    const [debouncer, setDebouncer] = useState<any>();
 
     const SD_TOKEN_CONTRACT = contractInfo.sdToken;
 
@@ -52,24 +53,18 @@ const SendSd = ({ onSuccess }: Props) => {
     })
     const { data, error, isError, write: sendTransaction } = useContractWrite(config)
 
-    useEffect(() => {
-        if (isError || isPrepareError) {
-            debugger;
-        }
-    }, [isError, isPrepareError]);
+    // useEffect(() => {
+    //     console.log(sendTransaction);
 
-    useEffect(() => {
-        console.log(sendTransaction);
-
-    }, [config, data]);
+    // }, [config, data]);
 
 
 
-    useEffect(() => {
-        if (amount > 0 && sendTransaction) {
-            sendTransaction();
-        }
-    }, [amount, sendTransaction]);
+    // useEffect(() => {
+    //     if (amount > 0 && sendTransaction) {
+    //         sendTransaction();
+    //     }
+    // }, [amount, sendTransaction]);
 
     const { isLoading, isSuccess } = useWaitForTransaction({
         hash: data?.hash,
@@ -119,6 +114,15 @@ const SendSd = ({ onSuccess }: Props) => {
 
     const handleSliderChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSliderAmount(parseFloat(event.target.value));
+        if (debouncer){
+            clearTimeout(debouncer);
+        }
+        const t = setTimeout(()=>{
+            console.log("amount set");
+            setAmount(parseFloat(event.target.value))
+            setDebouncer(null);
+        },100);
+        setDebouncer(t);
     };
 
     return (
@@ -186,7 +190,8 @@ const SendSd = ({ onSuccess }: Props) => {
                                             <div className="px-4 py-5 sm:p-6">
                                                 <button
                                                     onClick={() => {
-                                                        setAmount(sliderAmount);
+                                                        // setAmount(sliderAmount);
+                                                        sendTransaction?.();
                                                     }}
                                                     className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                                                     disabled={sliderAmount === 0}>
