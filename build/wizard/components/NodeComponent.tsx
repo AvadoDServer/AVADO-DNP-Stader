@@ -48,6 +48,8 @@ const NodeComponent = () => {
 
     const { nodeStatus, contractInfo, allowanceStatus } = useStaderStatus()
 
+    const currentNumberOfValidators = nodeStatus?.validatorInfos?.length || 0;
+
     // Get amount of SD tokens in user wallletl
     const { address } = useAccount()
     const { data: sdBalance } = useBalance({
@@ -162,11 +164,10 @@ const NodeComponent = () => {
                                                 <dd className="w-full flex-none text-3xl font-medium leading-10 tracking-tight text-gray-900">
                                                     {displayAsETH(nodeStatus.accountBalances.eth.toString(), 4)} ETH <br />
                                                     {showButtons && <SendEth />}
-                                                    <div className="pb-3"/>
-                                                    <div className="text-sm">(good for {`${BigInt(nodeStatus.accountBalances.eth || 0)/4000000000000000000n}`} validators)</div>
-
-                                                    {/* {showButtons && <SendEth amount={100000000000000000n} />} */}
-
+                                                    <div className="pb-3" />
+                                                    {((BigInt(nodeStatus.accountBalances.eth || 0) / 4000000000000000000n) > 1) && (
+                                                        <div className="text-sm">(good for {`${BigInt(nodeStatus.accountBalances.eth || 0) / 4000000000000000000n}`} additional validator{(BigInt(nodeStatus.accountBalances.eth || 0) / 4000000000000000000n) > 1 && (<>s</>)})</div>
+                                                    )}
                                                 </dd>
                                             </div>
                                         </div>
@@ -186,7 +187,9 @@ const NodeComponent = () => {
                                                 <dt className="text-sm font-medium leading-6 text-gray-500">SD balance (deposited)</dt>
                                                 <dd className="w-full flex-none text-3xl font-medium leading-10 tracking-tight text-gray-900">
                                                     <div>{`${displayAsETH(nodeStatus.depositedSdCollateral)} SD`}</div>
-                                                    <div className="text-sm">(good for {nodeStatus.sdCollateralWorthValidators} validators)</div>
+                                                    {(nodeStatus.sdCollateralWorthValidators - currentNumberOfValidators) > 0 && (
+                                                        <div className="text-sm">(good for {nodeStatus.sdCollateralWorthValidators - currentNumberOfValidators} additional validator{(nodeStatus.sdCollateralWorthValidators - currentNumberOfValidators) > 1 && (<>s</>)})</div>
+                                                    )}
                                                     <ApproveSD />
                                                 </dd>
 
