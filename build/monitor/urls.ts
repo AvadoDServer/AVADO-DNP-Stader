@@ -10,7 +10,7 @@ export const client_url = (client: string) => {
         }
         case "nethermind": switch (network) {
             case "goerli": return "nethermind-goerli.my.ava.do"
-            case "mainnet": return "nethermind.my.ava.do"
+            case "mainnet": return "avado-dnp-nethermind.my.ava.do"
         }
         case "geth": switch (network) {
             case "goerli": return "goerli-geth.my.ava.do"
