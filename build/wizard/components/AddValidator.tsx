@@ -148,7 +148,7 @@ const AddValidator = ({ }: Props) => {
             <>
                 {(errors.length > 0) && (
                     <ul>{errors.map((err,i)=>(
-                        <li id={`err-${i}`}>{err}</li>
+                        <li key={`err-${i}`}>{err}</li>
                     ))}</ul>
                 )}
                 <button

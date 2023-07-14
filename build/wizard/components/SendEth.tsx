@@ -33,7 +33,7 @@ const SendEth = ({ onSuccess }: Props) => {
     const [debouncer, setDebouncer] = useState<any>();
     
     const { config, error: prepareError, isError: isPrepareError } = usePrepareSendTransaction({
-        to: walletStatus.accountAddress === "0x0000000000000000000000000000000000000000" ? null : walletStatus.accountAddress ,
+        to: walletStatus.accountAddress ,
         value: BigInt(Math.floor(amount*SLIDER_DENOMINATOR)) * 10000000000000000n
     })
     const { data, sendTransaction, error, isError } = useSendTransaction(config)
