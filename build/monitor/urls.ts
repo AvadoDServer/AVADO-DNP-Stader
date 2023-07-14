@@ -32,6 +32,13 @@ export const rest_url = (client: string) => {
     }
 }
 
+export const ws_url = (client: string) => {
+    switch (client) {
+        case "geth":
+        case "nethermind": return `ws://${client_url(client)}:8546`
+    }
+}
+
 export const validatorAPI = (client: string) => {
     switch (client) {
         case "prysm": return "http://" + client_url(client) + ":7500"
@@ -53,7 +60,7 @@ export const getAvadoExecutionClientPackageName = (client: string) => {
     console.log("client",client);
     console.log("network",network);
     switch (client) {
-        case "nethermind": return (network === "goerli") ? "nethermind-goerli.avado.dnp.dappnode.eth" : "avado-dnp-nethermind.avado.dnp.dappnode.eth"
+        case "nethermind": return (network === "goerli") ? "nethermind-goerli.avado.dnp.dappnode.eth" : "avado-dnp-nethermind.public.dappnode.eth"
         default /*"geth"*/: return (network === "goerli") ? "goerli-geth.avado.dnp.dappnode.eth" : "ethchain-geth.public.dappnode.eth"
     }
 }

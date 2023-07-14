@@ -4,6 +4,7 @@
   "version": "0.1.0",
   "scripts": {
     "dev": "LOCALDEV=true next dev",
+    "dev-geth-mainnet": "NETWORK=mainnet EXECUTIONCLIENT=geth LOCALDEV=true next dev",
     "build": "next build && next export",
     "start": "next start",
     "lint": "next lint"

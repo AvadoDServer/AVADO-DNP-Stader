@@ -1,0 +1,35 @@
+{
+  "name": "goerli.stader.avado.dnp.dappnode.eth",
+  "version": "0.0.12",
+  "upstream": "v1.1.0",
+  "title": "Stader",
+  "description": "Stader is a decentralised Ethereum staking protocol",
+  "avatar": "/ipfs/QmNZHveMWjkVBrpFctVipvnu9tPFSczhQvCkYNt2WLHvzo",
+  "type": "service",
+  "autoupdate": true,
+  "image": {
+    "volumes": [
+      "data:/.stader"
+    ],
+    "environment": [
+      "NETWORK=prater",
+      "EXECUTIONCLIENT=geth",
+      "CONSENSUSCLIENT=teku"
+    ],
+    "restart": "always"
+  },
+  "author": "heeckhau",
+  "license": "Apache(c)",
+  "dependencies": {},
+  "ui": {
+    "OnboardingWizard": {
+      "url": "http://goerli.stader.my.ava.do",
+      "external": true
+    }
+  },
+  "links": {
+    "OnboardingWizard": "http://goerli.stader.my.ava.do",
+    "Wiki": "https://docs.ava.do/packages/stader",
+    "HomePage": "https://www.staderlabs.com/"
+  }
+}

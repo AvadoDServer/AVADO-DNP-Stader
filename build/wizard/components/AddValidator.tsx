@@ -130,15 +130,15 @@ const AddValidator = ({ }: Props) => {
 
     let errors = [];
     if (nodeStatus?.sdCollateralWorthValidators <= currentNumberOfValidators) {
-        errors.push(<li>You don&apos;t have enough SD deposited to add a validator</li>);
+        errors.push("You don't have enough SD deposited to add a validator");
     }
     if (ethBalanceInWallet < ETHDepositAmount) {
-        errors.push(<li>You don&apos;t have enough ETH in your hot wallet to add a validator</li>);
+        errors.push("You don't have enough ETH in your hot wallet to add a validator");
     }
     const maxApproval = ((BigInt(2) ** BigInt(256)) - BigInt(1));
 
     if (allowanceStatus?.allowance != maxApproval.toString()) {
-        errors.push(<li>You still need to give approval to spend your SD tokens</li>);
+        errors.push("You still need to give approval to spend your SD tokens");
     }
 
     const canAddValidators = !(errors.length > 0 || validatorsICanAdd < 1);
@@ -147,7 +147,9 @@ const AddValidator = ({ }: Props) => {
         {!showAddValidator && (
             <>
                 {(errors.length > 0) && (
-                    <ul>{errors}</ul>
+                    <ul>{errors.map((err,i)=>{
+                        <li id={`err-${i}`}>{err}</li>
+                    })}</ul>
                 )}
                 <button
                     disabled={!canAddValidators}

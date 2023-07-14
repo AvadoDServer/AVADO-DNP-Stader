@@ -2,8 +2,6 @@
 
 ## Installation & Documentation
 
-https://wiki.ava.do/en/tutorials/stader
-
 Corresponding CLI tool: https://github.com/stader-labs/ethcli-ui/blob/main/ethcli-ui.go
 
 

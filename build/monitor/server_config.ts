@@ -8,6 +8,15 @@ const network = () => {
     return env_network
 }
 
+const packageName = () => {
+    switch (network()) {
+        case "mainnet":
+            return "stader.avado.dappnode.eth"
+        default:
+            return "stader-goerli.avado.dappnode.eth"
+    }
+}
+
 export const server_config = {
     network: network(),
     name: "stader",
@@ -15,5 +24,5 @@ export const server_config = {
         key: readFileSync('/etc/nginx/my.ava.do.key'),
         certificate: readFileSync('/etc/nginx/my.ava.do.crt')
     },
-    packageName: "stader.avado.dappnode.eth"
+    packageName: packageName()
 }
