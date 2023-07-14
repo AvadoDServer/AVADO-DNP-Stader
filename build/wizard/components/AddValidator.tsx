@@ -147,9 +147,9 @@ const AddValidator = ({ }: Props) => {
         {!showAddValidator && (
             <>
                 {(errors.length > 0) && (
-                    <ul>{errors.map((err,i)=>{
+                    <ul>{errors.map((err,i)=>(
                         <li id={`err-${i}`}>{err}</li>
-                    })}</ul>
+                    ))}</ul>
                 )}
                 <button
                     disabled={!canAddValidators}
