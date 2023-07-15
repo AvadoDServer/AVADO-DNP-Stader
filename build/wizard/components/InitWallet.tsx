@@ -58,7 +58,7 @@ const InitWallet = ({ onFinished }: Props) => {
     const initWallet = async () => {
         debugger;
         if (!walletStatus.passwordSet) {
-            const data1 = await staderCommand("wallet set-password \"" + password + "\"")
+            const data1 = await staderCommand(`wallet set-password ${JSON.stringify(password)}`)
             if (data1.status === "error") {
                 setPasswordFeedback(data1.error);
                 return;

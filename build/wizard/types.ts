@@ -111,7 +111,7 @@ export interface contractsInfoType {
   sdCollateralContract: Address
 }
 
-export type ecClientType = { name: string, url: string }
+export type ecClientType = { name: string, url: string, api: string }
 export type bcClientType = { name: string, url: string, api: string }
 
 export interface serverStatusType {

@@ -13,31 +13,26 @@ import { server_config } from '../server_config'
 import { useEffect, useState } from 'react';
 import Layout from '../components/Layout';
 import { useStaderStatus } from '../lib/status';
+import { useExecutionClient } from '../hooks/useServerInfo';
 
 function MyApp({ Component, pageProps }: AppProps) {
   const [wagmiConfig, setWagmiConfig] = useState<any>();
   const [chains, setChains] = useState<any>();
+  const { ecClient } = useExecutionClient();
 
   useEffect(() => {
     const setupClient = async () => {
+
 
       const { chains, publicClient } = configureChains(
         [goerli, mainnet],
         [
           jsonRpcProvider({
             rpc: (chain) => {
-              switch (chain.name) {
-                case "goerli":
-                  return {
-                    http: `http://goerli-geth.my.ava.do:8545`,
-                    webSocket: `ws://goerli-geth.my.ava.do:8546`
-                  }
-                default:
-                  return {
-                    http: `http://ethchain-geth.my.ava.do:8545`,
-                    webSocket: `ws://ethchain-geth.my.ava.do:8546`
-                  }
-
+              console.log(`api is ${ecClient.api}`)
+              return {
+                http: ecClient.api,
+                //webSocket: `ws://goerli-geth.my.ava.do:8546`
               }
             }
           }),
@@ -64,9 +59,10 @@ function MyApp({ Component, pageProps }: AppProps) {
       setWagmiConfig(wagmiConfig)
       setChains(chains)
     }
-
-    setupClient()
-  }, []);
+    if (ecClient?.api) {
+      setupClient()
+    }
+  }, [ecClient]);
 
 
   // Trigger initial fetch of all stader info + refresh sync info very 60 seconds

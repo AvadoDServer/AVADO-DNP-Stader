@@ -10,7 +10,7 @@ export const client_url = (client: string) => {
         }
         case "nethermind": switch (network) {
             case "goerli": return "nethermind-goerli.my.ava.do"
-            case "mainnet": return "nethermind.my.ava.do"
+            case "mainnet": return "avado-dnp-nethermind.my.ava.do"
         }
         case "geth": switch (network) {
             case "goerli": return "goerli-geth.my.ava.do"
@@ -29,6 +29,13 @@ export const rest_url = (client: string) => {
         case "geth":
         case "nethermind": return `http://${client_url(client)}:8545`
         default: return `http://${client_url(client)}:5051`
+    }
+}
+
+export const ws_url = (client: string) => {
+    switch (client) {
+        case "geth":
+        case "nethermind": return `ws://${client_url(client)}:8546`
     }
 }
 
@@ -53,7 +60,7 @@ export const getAvadoExecutionClientPackageName = (client: string) => {
     console.log("client",client);
     console.log("network",network);
     switch (client) {
-        case "nethermind": return (network === "goerli") ? "nethermind-goerli.avado.dnp.dappnode.eth" : "avado-dnp-nethermind.avado.dnp.dappnode.eth"
+        case "nethermind": return (network === "goerli") ? "nethermind-goerli.avado.dnp.dappnode.eth" : "avado-dnp-nethermind.public.dappnode.eth"
         default /*"geth"*/: return (network === "goerli") ? "goerli-geth.avado.dnp.dappnode.eth" : "ethchain-geth.public.dappnode.eth"
     }
 }

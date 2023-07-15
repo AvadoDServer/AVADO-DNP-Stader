@@ -38,7 +38,7 @@ else
         ECWSURL="ws://goerli-geth.my.ava.do:8546"
     else
         ECHTTPURL="http://ethchain-geth.my.ava.do:8545"
-        ECWSURL="http://ethchain-geth.my.ava.do:8546"
+        ECWSURL="ws://ethchain-geth.my.ava.do:8546"
     fi
 fi
 

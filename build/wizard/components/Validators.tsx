@@ -129,7 +129,7 @@ const Validators = () => {
                                 </thead>
                                 <tbody className="divide-y divide-gray-200 bg-white">
                                     {nodeStatus.validatorInfos.map((validator,i) => (
-                                        <tr key={validator.Pubkey}>
+                                        <tr key={i}>
                                             <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-0">
                                                 {i+1} {beaconchainUrl(network, decodeKey(validator.Pubkey), <><FontAwesomeIcon className="icon" icon={faSatelliteDish} /> {abbreviatePublicKey(decodeKey(validator.Pubkey))}</>)}
                                             </td>

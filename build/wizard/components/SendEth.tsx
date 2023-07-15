@@ -12,6 +12,8 @@ import { Dialog, Transition } from '@headlessui/react'
 import React, { Fragment, useEffect, useState } from "react";
 import { XMarkIcon } from '@heroicons/react/24/outline'
 
+const SLIDER_DENOMINATOR = 100;
+
 interface Props {
     onSuccess?: Function
 }
@@ -31,8 +33,8 @@ const SendEth = ({ onSuccess }: Props) => {
     const [debouncer, setDebouncer] = useState<any>();
     
     const { config, error: prepareError, isError: isPrepareError } = usePrepareSendTransaction({
-        to: walletStatus.accountAddress,
-        value: BigInt(amount) * 1000000000000000000n
+        to: walletStatus.accountAddress ,
+        value: BigInt(Math.floor(amount*SLIDER_DENOMINATOR)) * 10000000000000000n
     })
     const { data, sendTransaction, error, isError } = useSendTransaction(config)
 
@@ -50,7 +52,7 @@ const SendEth = ({ onSuccess }: Props) => {
 
     useEffect(() => {
         if (ETHBalance?.value) {
-            setAvailableBalanceInEth(Number.parseFloat((ETHBalance.value / 1000000000000000000n).toString()))
+            setAvailableBalanceInEth(Number.parseFloat((ETHBalance.value / 10000000000000000n).toString())/SLIDER_DENOMINATOR)
         }
     }, [ETHBalance]);
 
@@ -92,13 +94,13 @@ const SendEth = ({ onSuccess }: Props) => {
 
 
     const handleSliderChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setSliderAmount(parseFloat(event.target.value));
+        setSliderAmount(parseFloat(event.target.value)/SLIDER_DENOMINATOR);
         if (debouncer){
             clearTimeout(debouncer);
         }
         const t = setTimeout(()=>{
             console.log("amount set");
-            setAmount(parseFloat(event.target.value))
+            setAmount(parseFloat(event.target.value)/SLIDER_DENOMINATOR)
             setDebouncer(null);
         },100);
         setDebouncer(t);
@@ -157,8 +159,8 @@ const SendEth = ({ onSuccess }: Props) => {
                                                 <input
                                                     type="range"
                                                     min="0"
-                                                    max={availableBalanceInEth}
-                                                    value={sliderAmount}
+                                                    max={availableBalanceInEth*10}
+                                                    value={sliderAmount*SLIDER_DENOMINATOR}
                                                     onChange={handleSliderChange}
                                                     className="w-full h-2 bg-gray-200 rounded-md appearance-none focus:outline-none focus:bg-gray-300"
                                                 />

@@ -2,7 +2,7 @@ import * as restify from "restify";
 import corsMiddleware from "restify-cors-middleware2"
 import { SupervisorCtl } from "./SupervisorCtl";
 import { server_config } from "./server_config";
-import { rest_url, validatorAPI, getAvadoPackageName, getTokenPathInContainer, getAvadoExecutionClientPackageName, client_url } from "./urls";
+import { rest_url, validatorAPI, getAvadoPackageName, getTokenPathInContainer, getAvadoExecutionClientPackageName, client_url, ws_url } from "./urls";
 import { DappManagerHelper } from "./DappManagerHelper";
 import { readFileSync } from "fs";
 import AdmZip from 'adm-zip';
@@ -159,12 +159,14 @@ server.get("/ec-clients", async (req: restify.Request, res: restify.Response, ne
     const installed_clients = supported_execution_clients.filter(client => {
         const name = getAvadoExecutionClientPackageName(client);
         const isin = packages.includes(name);
+        console.log(`${name} is installed: ${isin}`);
         return isin;
     });
 
     res.send(200, installed_clients.map(client => ({
         name: client,
         api: rest_url(client),
+        ws: ws_url(client),
         url: `http://${client_url(client)}`
     })))
     next();
