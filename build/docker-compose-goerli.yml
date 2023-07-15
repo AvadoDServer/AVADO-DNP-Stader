@@ -1,7 +1,7 @@
 version: '3.4'
 services:
   goerli.stader.avado.dnp.dappnode.eth:
-    image: 'goerli.stader.avado.dnp.dappnode.eth:0.0.12'
+    image: 'goerli.stader.avado.dnp.dappnode.eth:0.0.13'
     build:
       context: ./build
       args:
