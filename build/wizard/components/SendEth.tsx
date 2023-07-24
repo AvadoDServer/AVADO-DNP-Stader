@@ -11,6 +11,8 @@ import {
 import { Dialog, Transition } from '@headlessui/react'
 import React, { Fragment, useEffect, useState } from "react";
 import { XMarkIcon } from '@heroicons/react/24/outline'
+import { etherscanTransactionUrl } from "../utils/utils"
+import { useNetwork } from "../hooks/useServerInfo";
 
 const SLIDER_DENOMINATOR = 100;
 
@@ -23,7 +25,7 @@ const SendEth = ({ onSuccess }: Props) => {
     const { walletStatus, fetchNodeStatus } = useStaderStatus()
     const { address, isConnected } = useAccount();
     const [availableBalanceInEth, setAvailableBalanceInEth] = useState<number>(0);
-
+    const { network } = useNetwork();
     const [amount, setAmount] = useState<number>(0);
     const [sliderAmount, setSliderAmount] = useState<number>(0);
     const { data: ETHBalance } = useBalance({
@@ -31,10 +33,10 @@ const SendEth = ({ onSuccess }: Props) => {
     })
     const [showModal, setShowModal] = useState<boolean>(false);
     const [debouncer, setDebouncer] = useState<any>();
-    
+
     const { config, error: prepareError, isError: isPrepareError } = usePrepareSendTransaction({
-        to: walletStatus.accountAddress ,
-        value: BigInt(Math.floor(amount*SLIDER_DENOMINATOR)) * 10000000000000000n
+        to: walletStatus.accountAddress,
+        value: BigInt(Math.floor(amount * SLIDER_DENOMINATOR)) * 10000000000000000n
     })
     const { data, sendTransaction, error, isError } = useSendTransaction(config)
 
@@ -52,7 +54,7 @@ const SendEth = ({ onSuccess }: Props) => {
 
     useEffect(() => {
         if (ETHBalance?.value) {
-            setAvailableBalanceInEth(Number.parseFloat((ETHBalance.value / 10000000000000000n).toString())/SLIDER_DENOMINATOR)
+            setAvailableBalanceInEth(Number.parseFloat((ETHBalance.value / 10000000000000000n).toString()) / SLIDER_DENOMINATOR)
         }
     }, [ETHBalance]);
 
@@ -94,15 +96,15 @@ const SendEth = ({ onSuccess }: Props) => {
 
 
     const handleSliderChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setSliderAmount(parseFloat(event.target.value)/SLIDER_DENOMINATOR);
-        if (debouncer){
+        setSliderAmount(parseFloat(event.target.value) / SLIDER_DENOMINATOR);
+        if (debouncer) {
             clearTimeout(debouncer);
         }
-        const t = setTimeout(()=>{
+        const t = setTimeout(() => {
             console.log("amount set");
-            setAmount(parseFloat(event.target.value)/SLIDER_DENOMINATOR)
+            setAmount(parseFloat(event.target.value) / SLIDER_DENOMINATOR)
             setDebouncer(null);
-        },100);
+        }, 100);
         setDebouncer(t);
     };
     return (
@@ -159,8 +161,8 @@ const SendEth = ({ onSuccess }: Props) => {
                                                 <input
                                                     type="range"
                                                     min="0"
-                                                    max={availableBalanceInEth*10}
-                                                    value={sliderAmount*SLIDER_DENOMINATOR}
+                                                    max={availableBalanceInEth * SLIDER_DENOMINATOR}
+                                                    value={sliderAmount * SLIDER_DENOMINATOR}
                                                     onChange={handleSliderChange}
                                                     className="w-full h-2 bg-gray-200 rounded-md appearance-none focus:outline-none focus:bg-gray-300"
                                                 />
@@ -176,13 +178,18 @@ const SendEth = ({ onSuccess }: Props) => {
                                                     disabled={sliderAmount === 0 || !walletStatus.accountAddress}>
 
                                                     {isLoading ? (
-                                                        <ButtonSpinner text={`Sending...`} />
+                                                        <>
+                                                            <ButtonSpinner text={`Sending...`} />
+                                                        </>
                                                     ) : (<>
                                                         {`Add ${sliderAmount} ETH to hot wallet`}
                                                     </>)}
 
 
                                                 </button>
+                                                {data && data.hash && (
+                                                    <p>{etherscanTransactionUrl(network, data.hash, "Transaction details on Etherscan")}</p>
+                                                )}
 
                                             </div>
                                         </div>

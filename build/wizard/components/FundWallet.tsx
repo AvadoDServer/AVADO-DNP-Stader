@@ -42,7 +42,7 @@ const FundWallet = ({ onFinished }: Props) => {
 
     // recalculate SD needed to fund
     useEffect(() => {
-        if (sdPrice) {
+        if (sdPrice && sdPrice > 0) {
             const sdPrice_b = BigInt(Math.ceil(1 / sdPrice * 0.4));
             console.log(`You need ${sdPrice_b} SD tokens`);
             setSdStake(sdPrice_b * 1000000000000000000n);

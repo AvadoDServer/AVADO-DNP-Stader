@@ -135,9 +135,10 @@ const AddValidator = ({ }: Props) => {
     if (ethBalanceInWallet < ETHDepositAmount) {
         errors.push("You don't have enough ETH in your hot wallet to add a validator");
     }
-    const maxApproval = ((BigInt(2) ** BigInt(256)) - BigInt(1));
 
-    if (allowanceStatus?.allowance != maxApproval.toString()) {
+    // const maxApproval = ((BigInt(2) ** BigInt(256)) - BigInt(1));
+
+    if (allowanceStatus?.allowance < BigInt("115792089237316195423570985008687907853200000000000000000000000000000000000000").toString()) {
         errors.push("You still need to give approval to spend your SD tokens");
     }
 

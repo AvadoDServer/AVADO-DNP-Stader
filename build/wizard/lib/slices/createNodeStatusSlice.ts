@@ -20,6 +20,7 @@ export const createNodeStatusSlice: StateCreator<NodeStatusSlice> = (set) => ({
         "operatorRewardInETH": "0",
         "depositedSdCollateral": "0",
         "sdCollateralWorthValidators": 0,
+        "optedInForSocializingPool": false,
         "registered": false,
         "accountBalances": {
             "eth": "0",

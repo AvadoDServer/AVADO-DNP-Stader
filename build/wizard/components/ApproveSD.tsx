@@ -21,10 +21,9 @@ const ApproveSD = ({ }: Props) => {
     const [feedback, setFeedback] = useState("");
     const [sdAllowanceOK, setSdAllowanceOK] = useState(false);
 
-    const maxApproval = ((BigInt(2) ** BigInt(256)) - BigInt(1));
+    const maxApproval = BigInt("115792089237316195423570985008687907853200000000000000000000000000000000000000");
 
-
-    const { allowanceStatus, fetchAllowance } = useStaderStatus()
+    const { allowanceStatus, fetchAllowance,fetchNodeStatus } = useStaderStatus()
 
     useEffect(() => {
         fetchAllowance();
@@ -43,7 +42,7 @@ const ApproveSD = ({ }: Props) => {
         setSdApproveButtonDisabled(false);
 
         const allowance: bigint = BigInt(allowanceStatus?.allowance || 0n)
-        if (allowance === maxApproval) {
+        if (allowance >= maxApproval) {
             setSdApproveButtonDisabled(true);
             setSdAllowanceOK(true);
         } else {
@@ -63,6 +62,7 @@ const ApproveSD = ({ }: Props) => {
             setTxHash(data.approveTxHash);
             setWaitingForTx(true);
             setSdApproveButtonDisabled(true);
+            fetchNodeStatus();
         })
     }
 

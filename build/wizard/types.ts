@@ -17,6 +17,7 @@ export type nodeStatusType = {
   "operatorRewardInETH": string, //bigint
   "depositedSdCollateral": string, //bigint
   "sdCollateralWorthValidators": number,
+  "optedInForSocializingPool": boolean,
   "registered": boolean,
   "accountBalances": {
     "eth": string, //bigint
