@@ -2,6 +2,7 @@ import { useStaderStatus } from "../lib/status";
 import { displayAsETH, etherscanBaseUrl } from "../utils/utils"
 import { useNetwork } from "../hooks/useServerInfo";
 import ButtonSpinner from "./ButtonSpinner";
+import { etherscanTransactionUrl } from "../utils/utils"
 import {
     usePrepareContractWrite,
     useContractWrite,
@@ -38,6 +39,7 @@ const SendSd = ({ onSuccess }: Props) => {
 
     const [showModal, setShowModal] = useState<boolean>(false);
 
+    const { network } = useNetwork()
 
     const {
         config,
@@ -114,14 +116,14 @@ const SendSd = ({ onSuccess }: Props) => {
 
     const handleSliderChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSliderAmount(parseFloat(event.target.value));
-        if (debouncer){
+        if (debouncer) {
             clearTimeout(debouncer);
         }
-        const t = setTimeout(()=>{
+        const t = setTimeout(() => {
             console.log("amount set");
             setAmount(parseFloat(event.target.value))
             setDebouncer(null);
-        },100);
+        }, 100);
         setDebouncer(t);
     };
 
@@ -202,8 +204,10 @@ const SendSd = ({ onSuccess }: Props) => {
                                                         {`Add ${sliderAmount} SD to hot wallet`}
                                                     </>)}
 
-
                                                 </button>
+                                                {data && data.hash && (
+                                                    <p>{etherscanTransactionUrl(network, data.hash, "Transaction details on Etherscan")}</p>
+                                                )}
 
                                             </div>
                                         </div>

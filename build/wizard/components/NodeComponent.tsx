@@ -16,6 +16,7 @@ import ClickToCopy from "./ClickToCopy";
 import { useNetwork } from "../hooks/useServerInfo";
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import ApproveSD from './ApproveSD';
+import SocializingPool from './SocializingPool';
 // Show onboarding or hot wallet info + funding buttons + add validator button
 const NodeComponent = () => {
 
@@ -168,6 +169,10 @@ const NodeComponent = () => {
                                                     {((BigInt(nodeStatus.accountBalances.eth || 0) / 4000000000000000000n) > 1) && (
                                                         <div className="text-sm">(good for {`${BigInt(nodeStatus.accountBalances.eth || 0) / 4000000000000000000n}`} additional validator{(BigInt(nodeStatus.accountBalances.eth || 0) / 4000000000000000000n) > 1 && (<>s</>)})</div>
                                                     )}
+
+<hr className="pb-4" />
+
+<SocializingPool/>                                                    
                                                 </dd>
                                             </div>
                                         </div>

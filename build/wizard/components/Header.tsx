@@ -16,12 +16,9 @@ const Header = () => {
     const { bcClient } = useBeaconChainClientAndValidator()
     const { ecClient } = useExecutionClient()
 
-    useEffect(()=>{
-        console.dir(nodeSyncProgressStatus);
-    },[nodeSyncProgressStatus])
-
-
- 
+    // useEffect(()=>{
+    //     console.dir(nodeSyncProgressStatus);
+    // },[nodeSyncProgressStatus])
 
     const title = "Avado Stader"
 
