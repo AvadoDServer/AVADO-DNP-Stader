@@ -1,7 +1,7 @@
 {
   "name": "goerli.stader.avado.dnp.dappnode.eth",
-  "version": "0.0.12",
-  "upstream": "v1.1.0",
+  "version": "0.0.14",
+  "upstream": "v1.2.1",
   "title": "Stader",
   "description": "Stader is a decentralised Ethereum staking protocol",
   "avatar": "/ipfs/QmNZHveMWjkVBrpFctVipvnu9tPFSczhQvCkYNt2WLHvzo",

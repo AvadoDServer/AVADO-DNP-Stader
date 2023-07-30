@@ -1,11 +1,11 @@
 version: '3.4'
 services:
   goerli.stader.avado.dnp.dappnode.eth:
-    image: 'goerli.stader.avado.dnp.dappnode.eth:0.0.12'
+    image: 'goerli.stader.avado.dnp.dappnode.eth:0.0.14'
     build:
       context: ./build
       args:
-        STADER_VERSION: v1.1.0
+        STADER_VERSION: v1.2.1
     volumes:
       - 'data:/.stader/'
     environment:
