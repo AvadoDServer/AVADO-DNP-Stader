@@ -21,6 +21,8 @@ export const createNodeStatusSlice: StateCreator<NodeStatusSlice> = (set) => ({
         "depositedSdCollateral": "0",
         "sdCollateralWorthValidators": 0,
         "optedInForSocializingPool": false,
+        "operatorELRewardsAddress": "",
+        "socializingPoolAddress": "",
         "registered": false,
         "accountBalances": {
             "eth": "0",

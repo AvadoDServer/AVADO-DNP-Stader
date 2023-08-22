@@ -57,7 +57,7 @@ debugger;
 
     return (
         <>
-        <div className="text-sm font-medium leading-6 text-gray-500">Socializing pool</div>
+        <div className="text-sm font-medium leading-6 text-gray-500">Socializing pool <u><a href="https://staderlabs.gitbook.io/ethereum/node-operator/permissionless-node-operator/ethx-rewards-for-permissionless-node-operators/socializing-pool" target="_blank">(more info)</a></u></div>
             {nodeStatus.optedInForSocializingPool ? (
                 <>
                     <div>Opted in</div>

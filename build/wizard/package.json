@@ -17,6 +17,7 @@
     "@headlessui/react": "^1.7.14",
     "@heroicons/react": "^2.0.17",
     "@rainbow-me/rainbowkit": "^1.0.5",
+    "ethereumjs-util": "^7.1.5",
     "next": "^13.3.0",
     "react": "^18.2.0",
     "react-copy-to-clipboard": "^5.1.0",
