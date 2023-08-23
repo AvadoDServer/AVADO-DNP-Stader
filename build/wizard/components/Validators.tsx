@@ -21,13 +21,22 @@ const Validators = () => {
     const { network } = useNetwork()
     const { bcClient } = useBeaconChainClientAndValidator()
     const { validatorInfos, refetch } = useRunningValidatorInfos()
-    const expectedRecipient = "0x6DA4c7aF13ECB85C5283B0b78fbd3C204eFB2c0c" // FIXME: where to get this?
 
     const decodeKey = (encodedString: string) => "0x" + Buffer.from(encodedString, 'base64').toString('hex')
 
     const isRunningValidator = (pubkey: string) => validatorInfos.some(i => i.pubkey == pubkey)
 
-    const isFeeRecipientAddressCorrect = (pubkey: string) => (validatorInfos.find(i => i.pubkey === pubkey)?.recipient.ethaddress == expectedRecipient)
+    const getExpectedFeeRecipient = () => {
+        return (nodeStatus.optedInForSocializingPool ? nodeStatus.socializingPoolAddress : nodeStatus.operatorELRewardsAddress).toLowerCase()
+    }
+
+    const getFeeRecipientFromValidatorClient = (pubkey: string) => (
+        validatorInfos.find(i => i.pubkey === pubkey)?.recipient.ethaddress.toLowerCase()
+    );
+    const isFeeRecipientAddressCorrect = (pubkey: string) => (
+        getFeeRecipientFromValidatorClient(pubkey) == getExpectedFeeRecipient()
+    )
+
 
     const statusRunningValidator = (pubkey: string) => validatorInfos.find(i => i.pubkey === pubkey)?.data?.status ?? "pending_initialized"
 
@@ -54,7 +63,7 @@ const Validators = () => {
 
         const data = {
             pubkey: pubkey,
-            feeRecipientAddress: expectedRecipient
+            feeRecipientAddress: getExpectedFeeRecipient()
         }
 
         fetch(api_url, {
@@ -120,7 +129,8 @@ const Validators = () => {
                                             Validator Status
                                         </th>
                                         <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                                            Fee recipient
+                                            Fee recipient<br />
+                                            <span>(should be {getExpectedFeeRecipient()})</span>
                                         </th>
                                         {/* <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                                             Claim reward
@@ -128,10 +138,10 @@ const Validators = () => {
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-gray-200 bg-white">
-                                    {nodeStatus.validatorInfos.map((validator,i) => (
+                                    {nodeStatus.validatorInfos.map((validator, i) => (
                                         <tr key={i}>
                                             <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-0">
-                                                {i+1} {beaconchainUrl(network, decodeKey(validator.Pubkey), <><FontAwesomeIcon className="icon" icon={faSatelliteDish} /> {abbreviatePublicKey(decodeKey(validator.Pubkey))}</>)}
+                                                {i + 1} {beaconchainUrl(network, decodeKey(validator.Pubkey), <><FontAwesomeIcon className="icon" icon={faSatelliteDish} /> {abbreviatePublicKey(decodeKey(validator.Pubkey))}</>)}
                                             </td>
                                             <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{ValidatorStates[validator.Status]}</td>
                                             <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
@@ -150,7 +160,13 @@ const Validators = () => {
                                                 )}
                                             </td>
                                             <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                                {isFeeRecipientAddressCorrect(decodeKey(validator.Pubkey)) ? "✅" : "⚠️"}
+                                                {getFeeRecipientFromValidatorClient(decodeKey(validator.Pubkey))}
+                                                {isFeeRecipientAddressCorrect(decodeKey(validator.Pubkey)) ? "✅" : <>
+                                                    <button
+                                                        className="rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
+
+                                                        onClick={() => { setFeeRecipient(decodeKey(validator.Pubkey).replace("0x","")) }}>Set correct recipient</button>
+                                                </>}
                                             </td>
                                             {/* <td>
                                                 <ClaimReward pubKey={decodeKey(validator.Pubkey)}/>
@@ -166,6 +182,10 @@ const Validators = () => {
         )
     }
 
+
+    if (nodeStatus) {
+        console.log(JSON.stringify(nodeStatus, null, 2));
+    }
 
     return (
         <>

@@ -14,35 +14,43 @@ import { useEffect, useState } from 'react';
 import Layout from '../components/Layout';
 import { useStaderStatus } from '../lib/status';
 import { useExecutionClient } from '../hooks/useServerInfo';
+import { useNetwork } from "../hooks/useServerInfo";
 
 function MyApp({ Component, pageProps }: AppProps) {
   const [wagmiConfig, setWagmiConfig] = useState<any>();
   const [chains, setChains] = useState<any>();
   const { ecClient } = useExecutionClient();
-
+  const { network } = useNetwork()
   useEffect(() => {
     const setupClient = async () => {
 
+      const { chains, publicClient } =
+        (network === "prater") ?
+          configureChains(
+            [goerli],
+            [
+              jsonRpcProvider({
+                rpc: () => {
+                  return {
+                    http: ecClient.api,
+                  }
+                }
+              })
+            ]
+          ) :
+          configureChains(
+            [mainnet],
+            [
+              jsonRpcProvider({
+                rpc: () => {
+                  return {
+                    http: ecClient.api,
+                  }
+                }
+              })
+            ]
+          );
 
-      const { chains, publicClient } = configureChains(
-        [goerli, mainnet],
-        [
-          jsonRpcProvider({
-            rpc: (chain) => {
-              console.log(`api is ${ecClient.api}`)
-              return {
-                http: ecClient.api,
-                //webSocket: `ws://goerli-geth.my.ava.do:8546`
-              }
-            }
-          }),
-          alchemyProvider({
-            // https://dashboard.alchemyapi.io
-            apiKey: "8kMhSrpLGyIlRYBtAtT9IAVWeVK8hiOZ",
-          }),
-          publicProvider(),
-        ]
-      )
 
       const { connectors } = getDefaultWallets({
         appName: 'Avado Stader',
@@ -62,7 +70,7 @@ function MyApp({ Component, pageProps }: AppProps) {
     if (ecClient?.api) {
       setupClient()
     }
-  }, [ecClient]);
+  }, [ecClient, network]);
 
 
   // Trigger initial fetch of all stader info + refresh sync info very 60 seconds

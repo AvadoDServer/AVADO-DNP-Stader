@@ -339,8 +339,10 @@ server.get("/runningValidatorInfos", async (req: restify.Request, res: restify.R
 
     const keymanagerUrl = clients[0].validatorAPI;
     const restApiUrl = clients[0].validatorAPI.replace("keymanager", "rest");
+    console.log(`fetching ${keymanagerUrl}`);
     const fetchFromKeyManager = async (path: string): Promise<any[]> => JSON.parse(await (await fetch(`${keymanagerUrl}${path}`)).text()).data
     // const restApiUrl = `http://teku-prater.my.ava.do:9999/rest`
+    console.log(`fetching ${restApiUrl}`);
     const fetchFromRestAPi = async (path: string): Promise<any[]> => JSON.parse(await (await fetch(`${restApiUrl}${path}`)).text()).data
 
     const validators = (await fetchFromKeyManager("/eth/v1/keystores")).map((v: any) => v.validating_pubkey)
@@ -374,7 +376,7 @@ const getValidatorPassword = (pubkey: string) => {
     }
 }
 
-server.post("/importValidator", (req: restify.Request, res: restify.Response, next: restify.Next) => {
+server.post("/importValidator", async (req: restify.Request, res: restify.Response, next: restify.Next) => {
     if (!req.body) {
         res.send(400, "not enough parameters");
         return next();
@@ -389,8 +391,15 @@ server.post("/importValidator", (req: restify.Request, res: restify.Response, ne
             passwords: [getValidatorPassword(pubkey)]
         }
 
-        const keymanagerUrl = `http://teku.my.ava.do:9999/keymanager/eth/v1/keystores`
+        const clients = (await getInstalledClients())
+        if (clients.length == 0 || clients[0].name !== "teku") {
+            res.send(500, "Missing or unsupported Beacon chain client");
+            return next()
+        }
+
+        const keymanagerUrl = `${clients[0].validatorAPI}/eth/v1/keystores`;
         postToKeyManager(keymanagerUrl, JSON.stringify(message), res, next);
+
     }
 });
 
@@ -442,7 +451,7 @@ server.get("/sdprice", (req: restify.Request, res: restify.Response, next: resti
 });
 
 
-server.post("/setFeeRecipient", (req: restify.Request, res: restify.Response, next: restify.Next) => {
+server.post("/setFeeRecipient", async (req: restify.Request, res: restify.Response, next: restify.Next) => {
     if (!req.body) {
         res.send(400, "not enough parameters");
         return next();
@@ -456,23 +465,31 @@ server.post("/setFeeRecipient", (req: restify.Request, res: restify.Response, ne
             "ethaddress": feeRecipientAddress
         }
 
-        const keymanagerUrl = `http://teku.my.ava.do:9999/keymanager/eth/v1/validator/${pubKey}/feerecipient`;
+        const clients = (await getInstalledClients())
+        if (clients.length == 0 || clients[0].name !== "teku") {
+            res.send(500, "Missing or unsupported Beacon chain client");
+            return next()
+        }
+
+        const keymanagerUrl = `${clients[0].validatorAPI}/eth/v1/validator/${pubKey}/feerecipient`;
         postToKeyManager(keymanagerUrl, JSON.stringify(message), res, next);
     }
 });
 
 function postToKeyManager(keymanagerUrl: string, body: string, res: restify.Response, next: restify.Next) {
+    console.log(`postToKeyManager: posting to ${keymanagerUrl}`);
+    console.log(`body: ${JSON.stringify(JSON.parse(body),null,2)}`)
     fetch(keymanagerUrl, {
         method: 'POST',
         headers: { 'content-type': 'application/json;charset=UTF-8' },
         body: body,
     }).then(async (r) => {
         const result = await r.text();
-        console.log(result);
+        console.log("postToKeyManager result: ", result);
         res.send(200, result);
         return next();
     }).catch(e => {
-        console.log(e);
+        console.log("postToKeyManager error: ", e);
         res.send(500, e);
         return next();
     });
