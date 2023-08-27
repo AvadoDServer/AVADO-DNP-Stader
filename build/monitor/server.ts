@@ -12,6 +12,7 @@ import cache from "memory-cache";
 const autobahn = require('autobahn');
 const exec = require("child_process").exec;
 const fs = require('fs');
+const path = require("path");
 const jsonfile = require('jsonfile')
 
 const supported_beacon_chain_clients = ["prysm", "teku"];
@@ -272,8 +273,153 @@ server.get("/" + backupFileName, (req: restify.Request, res: restify.Response, n
             next();
         }
     )
-
 });
+
+
+function copyDir(sourceDir: string, targetDir: string) {
+    // Create the target directory if it doesn't exist
+    if (!fs.existsSync(targetDir)) {
+        fs.mkdirSync(targetDir);
+    }
+
+    // Get all files and subdirectories in the source directory
+    const files = fs.readdirSync(sourceDir);
+
+    files.forEach((file: File) => {
+        const sourcePath = path.join(sourceDir, file);
+        const targetPath = path.join(targetDir, file);
+
+        // Get the stats of the current file or directory
+        const stats = fs.statSync(sourcePath);
+
+        if (stats.isFile()) {
+            // If it's a file, copy it to the target directory
+            fs.copyFileSync(sourcePath, targetPath);
+        } else if (stats.isDirectory()) {
+            // If it's a directory, recursively copy it to the target directory
+            copyDir(sourcePath, targetPath);
+        }
+    });
+}
+
+
+
+function listFilesRecursive(directory: string): string[] {
+    const files: string[] = [];
+
+    function traverseDirectory(currentDir: string) {
+        const items = fs.readdirSync(currentDir);
+
+        items.forEach((item: File) => {
+            const itemPath = path.join(currentDir, item);
+            const stats = fs.statSync(itemPath);
+
+            if (stats.isFile()) {
+                const filePath = path.join(currentDir, item);
+                files.push(filePath);
+            } else if (stats.isDirectory()) {
+                traverseDirectory(itemPath);
+            }
+        });
+    }
+
+    traverseDirectory(directory);
+
+    return files;
+}
+
+
+
+const DATADIR = "/.stader"
+const TMPDIR = "/tmp/restore"
+
+server.post('/restore-backup', async (req: restify.Request, res: restify.Response, next: restify.Next) => {
+    console.log("======================");
+    console.log("upload backup zip file");
+    const backupFile = req?.files?.backupFile;
+    if (!backupFile) {
+        res.send(400, 'Backup file is missing');
+        next();
+        return
+    }
+
+    const zipfilePath = "/tmp/backup.zip";
+    fs.renameSync(backupFile.path, zipfilePath, (err: any) => { if (err) console.log('ERROR: ' + err) });
+    console.log("received backup file " + backupFile.name);
+    try {
+
+        function getRootFolderName(zipPath: string): string | null {
+            const zip = new AdmZip(zipPath);
+            const zipEntries = zip.getEntries();
+
+            let dirName = null;
+            for (const entry of zipEntries) {
+                if (entry.entryName.split('/').length > 1) {
+                    dirName = entry.entryName.split('/')[0];
+                }
+            }
+            return dirName;
+        }
+
+        const rootFolder = getRootFolderName(zipfilePath);
+        if (rootFolder) {
+            console.log('ZIP contains single root folder:', rootFolder);
+            // delete existing data folder (if it exists)
+            // console.log(`clearing DATA dir: ${DATADIR}`);
+            // fs.rmSync(DATADIR, { recursive: true, force: true /* ignore if not exists */ });
+            console.log(`clearing TMP dir : ${TMPDIR}`);
+            fs.rmSync(TMPDIR, { recursive: true, force: true /* ignore if not exists */ });
+            console.log(`opening ZIPfile "${zipfilePath}"`);
+            const zip = new AdmZip(zipfilePath);
+            console.log(`exctract ZIPfile to ${TMPDIR}`);
+            await zip.extractAllTo(/*target path*/ TMPDIR, /*overwrite*/ true);
+
+            const sourceFolder = `${TMPDIR}/${rootFolder}`;
+            console.log(`copy ${sourceFolder} to ${DATADIR}`);
+            copyDir(sourceFolder, DATADIR);
+            console.log(`clearing TMP dir : ${TMPDIR}`);
+            fs.rmSync(TMPDIR, { recursive: true, force: true /* ignore if not exists */ });
+            console.log(`remove ZIP file: ${zipfilePath}`);
+            fs.rmSync(zipfilePath);
+
+            console.log(`list of files in ${DATADIR} after restore`)
+            const files = listFilesRecursive(DATADIR);
+            console.log(files);
+
+            console.log("======================");
+
+            console.log(`restart Stader`);
+            restart();
+
+            res.send({
+                code: 200,
+                message: `Successfully restored backup. Please wait 1 minute and reload this page.`,
+            });
+            return next();
+
+        } else {
+            // invalid ZIP file
+            // zipfile does not have a single root folder..
+
+            res.send({
+                code: 500,
+                message: `Invalid ZIP file (file should contain exactly 1 folder).`,
+            });
+            return next();
+        }
+
+
+    } catch (e) {
+        console.dir(e);
+        console.log(e);
+        res.send({
+            code: 500,
+            message: e,
+        });
+        return next();
+    }
+});
+
 
 // //restore
 // server.post('/restore-backup', (req, res, next) => {

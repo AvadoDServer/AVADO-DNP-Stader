@@ -26,6 +26,7 @@ const ClaimReward = ({ pubKey }: { pubKey: string}) => {
         const co = {
             pubkey: pubKey,
             nodeId: avadoParams.nodeid
+            // add hot-wallet address here !
         };
         const claimStr = JSON.stringify(co);
         const res: any = await staderCommandRaw(`api node sign-message '${claimStr}'`);
