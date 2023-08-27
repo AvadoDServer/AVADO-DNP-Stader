@@ -2,6 +2,7 @@ import type { NextPage } from 'next';
 
 import StaderCommandField from '../components/StaderCommandField'
 import DownloadBackup from '../components/DownloadBackup';
+import RestoreBackup from '../components/RestoreBackup';
 import { server_config } from "../server_config"
 import { useEffect, useState } from 'react';
 import { etherscanAddressUrl, etherscanTransactionUrl } from '../utils/utils';
@@ -35,6 +36,9 @@ const AdminPage: NextPage = () => {
             <DownloadBackup />
             <br />
             <br />
+            <p>Restore backup</p>
+            <RestoreBackup />
+
             {transactions.length > 0 && (
                 <div>
                     <p>Transactions:</p>
