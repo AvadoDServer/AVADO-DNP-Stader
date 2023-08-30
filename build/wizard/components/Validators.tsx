@@ -182,11 +182,6 @@ const Validators = () => {
         )
     }
 
-
-    if (nodeStatus) {
-        console.log(JSON.stringify(nodeStatus, null, 2));
-    }
-
     return (
         <>
             {nodeStatus.registered ? (
