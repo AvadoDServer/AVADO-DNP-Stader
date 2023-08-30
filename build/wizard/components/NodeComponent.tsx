@@ -59,12 +59,16 @@ const NodeComponent = () => {
     })
 
     useEffect(() => {
-        debugger;
+        // debugger;
         if (nodeStatus && nodeStatus.registered){
-            debugger;
+            // debugger;
             setCurrentStep(FINISHED)
         }
     }, [nodeStatus]);
+
+    if (nodeStatus && nodeStatus.status === "error"){
+        return <pre>{nodeStatus.error}</pre>
+    }
 
     const showButtons = true
 
