@@ -20,13 +20,13 @@ export type nodeStatusType = {
   "optedInForSocializingPool": boolean,
   "socializingPoolAddress": string,
   "operatorELRewardsAddress": string,
-  "unclaimedSocializingPoolMerkles": [{
+  "unclaimedSocializingPoolMerkles": [] | {
     "cycle":number,
     "eth": string,
     "proof": string[],
     "root": string,
     "sd": string
-  }],
+  }[],
   "registered": boolean,
   "accountBalances": {
     "eth": string, //bigint

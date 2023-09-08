@@ -13,6 +13,7 @@ import { faSatelliteDish } from "@fortawesome/free-solid-svg-icons";
 import { staderCommand } from "../lib/staderDaemon"
 
 import { staderCommandRaw } from "../lib/staderDaemon"
+
 const ClaimSpReward = () => {
     const [feedback, setFeedback] = useState<string>("");
     const [commandRunning, setCommandRunning] = useState<boolean>(false);
@@ -43,12 +44,12 @@ const ClaimSpReward = () => {
             if (data.status === "error") {
                 setFeedback(data.error);
                 setCommandRunning(false);
-                return;
+            } else {
+                setCommandRunning(false);
+                setFeedback('rewards claimed');
+                fetchNodeStatus();
+                fetchCanClaimSpRewards();
             }
-            setCommandRunning(false);
-            setFeedback('rewards claimed');
-            fetchNodeStatus();
-            fetchCanClaimSpRewards();
         })
     }
 
@@ -57,9 +58,9 @@ const ClaimSpReward = () => {
             <>
                 <h2>SD Rewards</h2>
                 <ul>
-                    {nodeStatus.unclaimedSocializingPoolMerkles.map((m) => {
+                    {nodeStatus.unclaimedSocializingPoolMerkles.map((m, i) => {
                         return (
-                            <li>
+                            <li key={i}>
                                 Cycle {m.cycle} - {displayAsETH(m.eth)} ETH , {displayAsETH(m.sd)} SD
                                 <button
                                     disabled={commandRunning}
@@ -87,7 +88,7 @@ const ClaimSpReward = () => {
             </>
         )
     } else {
-        <>
+        return <>
             <h2>SD Rewards</h2>
             <div>You have no rewards that can be claimed at this moment.</div>
         </>

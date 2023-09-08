@@ -24,6 +24,7 @@ export const createNodeStatusSlice: StateCreator<NodeStatusSlice> = (set) => ({
         "operatorELRewardsAddress": "",
         "socializingPoolAddress": "",
         "registered": false,
+        "unclaimedSocializingPoolMerkles": [],
         "accountBalances": {
             "eth": "0",
             "sd": "0",
