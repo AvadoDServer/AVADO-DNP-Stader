@@ -20,6 +20,13 @@ export type nodeStatusType = {
   "optedInForSocializingPool": boolean,
   "socializingPoolAddress": string,
   "operatorELRewardsAddress": string,
+  "unclaimedSocializingPoolMerkles": [] | {
+    "cycle":number,
+    "eth": string,
+    "proof": string[],
+    "root": string,
+    "sd": string
+  }[],
   "registered": boolean,
   "accountBalances": {
     "eth": string, //bigint
@@ -86,10 +93,29 @@ export type nodeFeeType = {
   "maxNodeFee": number
 }
 
-// https://github.com/stader-labs/stader-node-v1.1/blob/beta/shared/types/api/wallet.go
-export interface walletStatusType {
+export interface canClaimRewardsType {
   status: "success" | "error",
   error: string,
+  noRewards: boolean, // true if nothing to be claimed
+  gasInfo: {
+    estGasLimit: number,
+    safeGasLimit: number
+  }
+}
+
+export interface canClaimSpRewardsType {
+  status: "success" | "error",
+  error: string,
+  socializingPoolContractPaused: boolean,
+  claimedCycles: number[],
+  unclaimedCycles: number[],
+  cyclesToDownload: number[]
+}
+
+
+// https://github.com/stader-labs/stader-node-v1.1/blob/beta/shared/types/api/wallet.go
+export interface walletStatusType {
+
   passwordSet: boolean,
   walletInitialized: boolean,
   accountAddress: string

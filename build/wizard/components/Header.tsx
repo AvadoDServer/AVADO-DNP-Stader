@@ -1,5 +1,7 @@
 import {
     MapIcon,
+    HomeIcon,
+    ArrowDownIcon
 } from '@heroicons/react/20/solid'
 import NetworkBanner from '../components/NetworkBanner';
 import SyncStatusTag from '../components/SyncStatusTag';
@@ -51,6 +53,16 @@ const Header = () => {
                         </h1>
                         <div className="mt-1 flex flex-col sm:mt-0 sm:flex-row sm:flex-wrap sm:space-x-6">
                             <div className="mt-2 flex items-center text-sm text-gray-500">
+                                <HomeIcon className="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
+                                <Link
+                                    className="text-sm leading-6 text-gray-600 hover:text-gray-900"
+                                    href="/">Home
+                                </Link>&nbsp;
+                                <ArrowDownIcon className="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
+                                <Link
+                                    className="text-sm leading-6 text-gray-600 hover:text-gray-900"
+                                    href="/claim-rewards">Claim rewards
+                                </Link>&nbsp;
                                 <MapIcon className="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
                                 <Link
                                     className="text-sm leading-6 text-gray-600 hover:text-gray-900"
