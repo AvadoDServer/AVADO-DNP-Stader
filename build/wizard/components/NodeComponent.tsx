@@ -66,9 +66,9 @@ const NodeComponent = () => {
         }
     }, [nodeStatus]);
 
-    if (nodeStatus && nodeStatus.status === "error"){
-        return <pre>{nodeStatus.error}</pre>
-    }
+    // if (nodeStatus && nodeStatus.status === "error"){
+    //     return <pre>{nodeStatus.error}</pre>
+    // }
 
     const showButtons = true
 
