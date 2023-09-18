@@ -10,6 +10,7 @@ import { useNetwork } from '../hooks/useServerInfo';
 import Link from 'next/link';
 import ClaimSpRewards from "../components/ClaimSpRewards"
 import ClaimElRewards from "../components/ClaimElRewards"
+import ClaimCashback from "../components/ClaimCashback"
 import { useStaderStatus } from "../lib/status"
 
 const AdminPage: NextPage = () => {
@@ -22,8 +23,8 @@ const AdminPage: NextPage = () => {
         fetchNodeStatus();
     }, []);
 
-    console.log("---");
-    console.log(nodeStatus);
+    // console.log("---");
+    // console.log(nodeStatus);
 
     return (
         <>
@@ -34,7 +35,9 @@ const AdminPage: NextPage = () => {
             <br />
             <br />
             <ClaimElRewards />
-
+            {/* <br />
+            <br />
+            <ClaimCashback/> */}
 
         </>
     )
