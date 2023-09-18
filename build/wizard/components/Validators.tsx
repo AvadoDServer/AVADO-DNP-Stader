@@ -31,8 +31,9 @@ const Validators = () => {
     }
 
     const getFeeRecipientFromValidatorClient = (pubkey: string) => (
-        validatorInfos.find(i => i.pubkey === pubkey)?.recipient.ethaddress.toLowerCase()
+        validatorInfos.find(i => i.pubkey === pubkey)?.recipient?.ethaddress?.toLowerCase()
     );
+
     const isFeeRecipientAddressCorrect = (pubkey: string) => (
         getFeeRecipientFromValidatorClient(pubkey) == getExpectedFeeRecipient()
     )
