@@ -19,7 +19,7 @@ import { staderCommandRaw } from "../lib/staderDaemon"
 // TODO replace with settings variable
 const callJsonRpc = async (method: string, params: any) => {
     console.log(`calling ${method}`)
-    const response = await axios.post('http://localhost:5001/', {
+    const response = await axios.post('https://rpc.ava.do/', {
         jsonrpc: '2.0',
         id: 1,  // usually a unique ID per call
         method: method,
@@ -35,6 +35,8 @@ type Claim = {
 };
 
 const Validators = () => {
+
+    const [isCheckedAgreeTC, setIsCheckedAgreeTC] = useState<boolean>(false);
 
     const { nodeStatus } = useStaderStatus();
     const { avadoParams } = useParams();
@@ -64,6 +66,11 @@ const Validators = () => {
         loadClaims();
     }, [avadoParams])
 
+
+    const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setIsCheckedAgreeTC(event.target.checked);
+    };
+
     // const getExpectedFeeRecipient = () => {
     //     return (nodeStatus.optedInForSocializingPool ? nodeStatus.socializingPoolAddress : nodeStatus.operatorELRewardsAddress).toLowerCase()
     // }
@@ -79,26 +86,31 @@ const Validators = () => {
     // const statusRunningValidator = (pubkey: string) => validatorInfos.find(i => i.pubkey === pubkey)?.data?.status ?? "pending_initialized"
 
     const mkClaim = async (pubKey: string) => {
-        const co = {
-            pubkey: pubKey,
-            hotwallet: nodeStatus.accountAddress,
-            nodeId: avadoParams.nodeid
-        };
-        const claimStr = JSON.stringify(co);
-        const res: any = await staderCommandRaw(`api node sign-message '${claimStr}'`);
-        const resJSON = JSON.parse(res);
-        const c = {
-            claimdata: co,
-            signature: resJSON?.signedData
+        try {
+            const co = {
+                pubkey: pubKey,
+                hotwallet: nodeStatus.accountAddress,
+                nodeId: avadoParams.nodeid,
+                network,
+            };
+            const claimStr = JSON.stringify(co);
+            const res: any = await staderCommandRaw(`api node sign-message '${claimStr}'`);
+            const resJSON = JSON.parse(res);
+            const c = {
+                claimdata: co,
+                signature: resJSON?.signedData
+            }
+            console.log(c);
+
+
+            await callJsonRpc('stader.postClaim', c);
+
+            console.log(`reload claims`);
+            // reload data to refresh UI
+            loadClaims();
+        } catch (e) {
+            alert(`can't reach the server. Please try again later`);
         }
-        console.log(c);
-
-
-        await callJsonRpc('stader.postClaim', c);
-
-        console.log(`reload claims`);
-        // reload data to refresh UI
-        loadClaims();
     }
 
     const isClaimed = (pubkey: string) => {
@@ -115,16 +127,27 @@ const Validators = () => {
             <div className="">
                 <div className="sm:flex sm:items-center">
                     <div className="sm:flex-auto">
-                        <h2>Validators</h2>
-                        <p className="mt-2 text-sm text-gray-700">
+                        <h2>Stader Reward Program</h2>
+                        <p className="mt-2 text-gray-700">
                             You can claim a one-time SD reward per running Stader validator.
-                            Click <u><a href="#">here</a></u> for more info.
+                            Click <u><a target="_blank" href="https://ava.do/get-a-free-avado-with-stader">here</a></u> for more info.
+                        </p>
+                        <p className="mt-2 text-gray-700">
+                            Payouts will be done in batches and we will use your stader hot wallet address as payout address.
                         </p>
                     </div>
-                    {/* <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
-                        <AddValidator />
-                    </div> */}
                 </div>
+
+                <p className="mt-2 text-gray-700">
+                    You must agree to the <u><a target="_blank" href="https://ava.do/free-avado-with-stader-terms-and-conditions">Terms and Conditions</a></u> before you can participate in the cashback action.
+                </p>
+                <br />
+                <input
+                    type="checkbox"
+                    checked={isCheckedAgreeTC}
+                    onChange={handleCheckboxChange}
+                />&nbsp;I agree to the <u><a target="_blank" href="https://ava.do/free-avado-with-stader-terms-and-conditions">Terms and Conditions</a></u> of the Stader Cashback Program.
+
                 <div className="mt-8 flow-root">
                     <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                         <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
@@ -152,17 +175,20 @@ const Validators = () => {
                                             </td>
                                             <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                                                 {isClaimed(decodeKey(validator.Pubkey)) ? (
-                                                    <><div>Request sent</div></>
+                                                    <><div>Cashback claim submitted.</div></>
                                                 ) : (
                                                     <>
                                                         {isRunningValidator(decodeKey(validator.Pubkey)) ? (
                                                             <>
-                                                                {/* {statusRunningValidator(decodeKey(validator.Pubkey))} */}
-                                                                <button
-                                                                    className="rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
-                                                                    onClick={() => mkClaim(decodeKey(validator.Pubkey))}>
-                                                                    Request SD reward
-                                                                </button>
+                                                                {isCheckedAgreeTC ? (
+                                                                    <button
+                                                                        className="rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
+                                                                        onClick={() => mkClaim(decodeKey(validator.Pubkey))}>
+                                                                        Request SD reward
+                                                                    </button>
+                                                                ) : (
+                                                                    <span>You must agree to the T&C before you can claim its reward.</span>
+                                                                )}
                                                             </>
                                                         ) : (
                                                             <>
