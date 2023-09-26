@@ -25,7 +25,7 @@ const ClaimSpReward = () => {
         fetchNodeStatus();
     }, []);
 
-    if (!canClaimSpRewards || nodeStatus.unclaimedSocializingPoolMerkles.length < 1) {
+    if (!canClaimSpRewards || nodeStatus.unclaimedSocializingPoolMerkles?.length < 1) {
         return <>
             <h2>SD Rewards</h2>
             <div>You have no rewards that can be claimed at this moment.</div>
@@ -53,7 +53,7 @@ const ClaimSpReward = () => {
         })
     }
 
-    if (nodeStatus.unclaimedSocializingPoolMerkles.length > 0) {
+    if (nodeStatus.unclaimedSocializingPoolMerkles?.length > 0) {
         return (
             <>
                 <h2>SD Rewards</h2>
