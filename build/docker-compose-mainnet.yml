@@ -1,15 +1,15 @@
 version: '3.4'
 services:
   stader.avado.dnp.dappnode.eth:
-    image: 'stader.avado.dnp.dappnode.eth:0.0.26'
+    image: 'stader.avado.dnp.dappnode.eth:0.0.27'
     build:
       context: ./build
       args:
-        STADER_VERSION: v1.3.0
+        STADER_VERSION: v1.4.0
     volumes:
       - 'data:/.stader/'
     environment:
-      - NETWORK=prater
+      - NETWORK=mainnet
       - EXECUTIONCLIENT=geth
       - CONSENSUSCLIENT=teku
       - EXTRA_OPTS=
