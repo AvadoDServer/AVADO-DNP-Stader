@@ -1,7 +1,6 @@
 import React from 'react';
 import web3 from "web3";
 import { networkType } from '../types';
-import { useServerInfo} from "../hooks/useServerInfo";
 
 export function etherscanTransactionUrl(network: networkType, txHash: string, text?: string) {
     return <a target="_blank" rel="noopener noreferrer" href={etherscanBaseUrl(network) + "/tx/" + txHash}>{text ? text : txHash}</a>;

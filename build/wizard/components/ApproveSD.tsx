@@ -1,4 +1,4 @@
-import { wsProvider, etherscanTransactionUrl } from "../utils/utils"
+import { etherscanTransactionUrl } from "../utils/utils"
 import { useNetwork } from "../hooks/useServerInfo";
 
 import { useEffect, useState } from "react";
