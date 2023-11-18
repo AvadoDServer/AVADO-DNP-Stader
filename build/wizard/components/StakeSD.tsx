@@ -1,7 +1,7 @@
 import Spinner from "./Spinner";
 import web3 from "web3";
 import { useStaderStatus } from "../lib/status";
-import { displayAsETH, etherscanTransactionUrl, wsProvider } from "../utils/utils"
+import { displayAsETH, etherscanTransactionUrl } from "../utils/utils"
 import { useNetwork } from "../hooks/useServerInfo";
 import { useEffect, useState } from "react";
 import { staderCommand } from "../lib/staderDaemon";
