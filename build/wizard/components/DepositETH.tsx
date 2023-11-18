@@ -50,13 +50,13 @@ const DepositETH = ({ currentNumberOfValidators, numValidators,  onFinish }: Pro
     useEffect(() => {
         if (waitingForTx && txHash) {
             staderCommand(`wait ${txHash}`).then((data: any) => {
-                const w3 = new web3(wsProvider(network));
-                w3.eth.getTransactionReceipt(txHash).then((receipt) => {
-                    console.log(receipt);
+                // const w3 = new web3(wsProvider(network));
+                // w3.eth.getTransactionReceipt(txHash).then((receipt) => {
+                //     console.log(receipt);
                     setWaitingForTx(false);
                     fetchNodeStatus();
                     onFinish?.()
-                });
+                // });
             });
         }
     }, [waitingForTx, txHash, fetchNodeStatus, network, onFinish]);

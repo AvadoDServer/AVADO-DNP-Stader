@@ -4,10 +4,6 @@ import { useNetwork } from "../hooks/useServerInfo";
 import { useEffect, useState } from "react";
 import { staderCommand } from "../lib/staderDaemon"
 import web3 from "web3";
-import { } from "../utils/utils"
-import Spinner from "./Spinner";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import ButtonSpinner from "./ButtonSpinner";
 import { useStaderStatus } from '../lib/status';
 
@@ -69,12 +65,12 @@ const ApproveSD = ({ }: Props) => {
     useEffect(() => {
         if (waitingForTx && txHash) {
             staderCommand(`wait ${txHash}`).then((data: any) => {
-                const w3 = new web3(wsProvider(network));
-                w3.eth.getTransactionReceipt(txHash).then((receipt) => {
-                    console.log(receipt);
+                // const w3 = new web3(wsProvider(network));
+                // w3.eth.getTransactionReceipt(txHash).then((receipt) => {
+                //     console.log(receipt);
                     setWaitingForTx(false);
                     fetchAllowance();
-                });
+                // });
             });
         }
     }, [waitingForTx, txHash, network]);

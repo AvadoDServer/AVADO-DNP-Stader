@@ -1,6 +1,7 @@
 import React from 'react';
 import web3 from "web3";
 import { networkType } from '../types';
+import { useServerInfo} from "../hooks/useServerInfo";
 
 export function etherscanTransactionUrl(network: networkType, txHash: string, text?: string) {
     return <a target="_blank" rel="noopener noreferrer" href={etherscanBaseUrl(network) + "/tx/" + txHash}>{text ? text : txHash}</a>;
@@ -39,12 +40,14 @@ const beaconChainBaseUrl = (network: networkType) => ({
     "mainnet": "https://beaconcha.in",
 })[network];
 
-export function wsProvider(network: networkType) {
-    return ({
-        "prater": 'ws://goerli-geth.my.ava.do:8546',
-        "mainnet": 'ws://ethchain-geth.my.ava.do:8546',
-    })[network]
-}
+// export function wsProvider(network: networkType) {
+//     // TODO : this does not take into account which EC was installed !
+//     console.log("EC is ",process.env.EXECUTIONCLIENT);
+//     return ({
+//         "prater": 'ws://goerli-geth.my.ava.do:8546',
+//         "mainnet": 'ws://ethchain-geth.my.ava.do:8546',
+//     })[network]
+// }
 
 export function etherscanAddressUrl(network: networkType, address: string, text?: string) {
     return <a target="_blank" rel="noopener noreferrer" href={etherscanBaseUrl(network) + "/address/" + address}>{text ? text : address}</a>;
