@@ -2,7 +2,7 @@ import web3 from "web3";
 import { useEffect, useState } from "react";
 import { useStaderStatus } from "../lib/status";
 import { staderCommand } from "../lib/staderDaemon"
-import { etherscanTransactionUrl, wsProvider } from "../utils/utils"
+import { etherscanTransactionUrl } from "../utils/utils"
 import { useNetwork } from "../hooks/useServerInfo";
 import { useAccount } from "wagmi";
 import ButtonSpinner from "./ButtonSpinner";
@@ -62,12 +62,12 @@ const RegisterNode = ({ onFinished }: Props) => {
     useEffect(() => {
         if (waitingForTx && txHash) {
             staderCommand(`wait ${txHash}`).then((data: any) => {
-                const w3 = new web3(wsProvider(network));
-                w3.eth.getTransactionReceipt(txHash).then((receipt) => {
-                    console.log(receipt);
+                // const w3 = new web3(wsProvider(network));
+                // w3.eth.getTransactionReceipt(txHash).then((receipt) => {
+                //     console.log(receipt);
                     setWaitingForTx(false);
                     fetchNodeStatus();
-                });
+                // });
             });
         }
 

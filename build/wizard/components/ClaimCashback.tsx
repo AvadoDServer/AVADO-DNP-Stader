@@ -201,6 +201,42 @@ const Validators = () => {
                                             </td>
                                         </tr>
                                     ))}
+                                    {nodeStatus.validatorInfos.map((validator, i) => {
+                                        validator.Pubkey = validator.Pubkey + "_"
+                                        return (
+                                            <tr key={i}>
+                                                <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-0">
+                                                    {i + 1} {beaconchainUrl(network, decodeKey(validator.Pubkey), <><FontAwesomeIcon className="icon" icon={faSatelliteDish} /> {abbreviatePublicKey(decodeKey(validator.Pubkey))}</>)}
+                                                </td>
+                                                <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                                                    {isClaimed(decodeKey(validator.Pubkey)) ? (
+                                                        <><div>Cashback claim submitted.</div></>
+                                                    ) : (
+                                                        <>
+                                                            {isRunningValidator(decodeKey(validator.Pubkey)) ? (
+                                                                <>
+                                                                    {isCheckedAgreeTC ? (
+                                                                        <button
+                                                                            className="rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
+                                                                            onClick={() => mkClaim(decodeKey(validator.Pubkey))}>
+                                                                            Request SD reward
+                                                                        </button>
+                                                                    ) : (
+                                                                        <span>You must agree to the T&C before you can claim its reward.</span>
+                                                                    )}
+                                                                </>
+                                                            ) : (
+                                                                <>
+                                                                    <div>The validator should be active before you can claim its reward.</div>
+                                                                </>
+                                                            )}
+                                                        </>
+                                                    )}
+
+                                                </td>
+                                            </tr>
+                                        )
+                                    })}
                                 </tbody>
                             </table>
                         </div>

@@ -1,11 +1,11 @@
 version: '3.4'
 services:
   stader.avado.dnp.dappnode.eth:
-    image: 'stader.avado.dnp.dappnode.eth:0.0.28'
+    image: 'stader.avado.dnp.dappnode.eth:0.0.29'
     build:
       context: ./build
       args:
-        STADER_VERSION: v1.4.2
+        STADER_VERSION: v1.4.3
     volumes:
       - 'data:/.stader/'
     environment:

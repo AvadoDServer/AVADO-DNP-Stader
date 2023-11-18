@@ -12,7 +12,7 @@ import { Dialog, Transition } from '@headlessui/react'
 import { CheckIcon } from '@heroicons/react/24/outline'
 import { ExclamationTriangleIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
-import { displayAsETH, etherscanTransactionUrl, wsProvider } from "../utils/utils"
+import { displayAsETH, etherscanTransactionUrl } from "../utils/utils"
 import { useNetwork, useSDPrice } from "../hooks/useServerInfo";
 import SendSD from "./SendSd";
 import SendEth from "./SendEth";

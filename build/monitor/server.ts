@@ -156,6 +156,7 @@ server.get("/bc-clients", async (req: restify.Request, res: restify.Response, ne
 server.get("/ec-clients", async (req: restify.Request, res: restify.Response, next: restify.Next) => {
     const dappManagerHelper = new DappManagerHelper(server_config.packageName, wampSession);
     const packages = await dappManagerHelper.getPackages();
+    console.log(`Packages`,packages);
     console.log("/ec-clients packages", JSON.stringify(packages, null, 2))
     const installed_clients = supported_execution_clients.filter(client => {
         const name = getAvadoExecutionClientPackageName(client);

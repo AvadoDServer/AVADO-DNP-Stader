@@ -4,8 +4,10 @@ This is a [RainbowKit](https://rainbowkit.com) + [wagmi](https://wagmi.sh) + [Ne
 
 First, run the development server:
 
+using mainnet + netherminf
+
 ```bash
-npm run dev
+NETWORK=mainnet EXECUTIONCLIENT=nethermind npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
