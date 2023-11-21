@@ -201,7 +201,7 @@ const Validators = () => {
                                             </td>
                                         </tr>
                                     ))}
-                                    {nodeStatus.validatorInfos.map((validator, i) => {
+                                    {/* {nodeStatus.validatorInfos.map((validator, i) => {
                                         validator.Pubkey = validator.Pubkey + "_"
                                         return (
                                             <tr key={i}>
@@ -236,7 +236,7 @@ const Validators = () => {
                                                 </td>
                                             </tr>
                                         )
-                                    })}
+                                    })} */}
                                 </tbody>
                             </table>
                         </div>
