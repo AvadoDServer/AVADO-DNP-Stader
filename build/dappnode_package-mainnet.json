@@ -1,6 +1,6 @@
 {
   "name": "stader.avado.dnp.dappnode.eth",
-  "version": "0.0.29",
+  "version": "0.0.30",
   "upstream": "v1.4.3",
   "title": "Stader",
   "description": "Stader is a decentralised Ethereum staking protocol",
