@@ -54,8 +54,14 @@ else
     BCJSONRPCURL="http://prysm-beacon-chain-${NETWORK}.my.ava.do:4000"
 fi
 
-# Make sure the data folder exists
+# Make sure the data folders exists
 mkdir -p /.stader
+mkdir -p /.stader/data
+mkdir -p /.stader/data/sp-rewards-merkle-proofs
+
+echo "------START stader folder config------"
+ls -lR /.stader/
+echo "------END stader folder config------"
 
 NETWORK="${NETWORK}" \
     CONSENSUSCLIENT="${CONSENSUSCLIENT}" \
@@ -66,12 +72,12 @@ NETWORK="${NETWORK}" \
     BCJSONRPCURL="${BCJSONRPCURL}" \
     envsubst < /stader/user-settings.template > /.stader/user-settings.yml
 
-
 # Create folder for rewards trees
 # mkdir -p /.stader/rewards-trees/
 
 # Start stader node daemon
 exec /go/bin/stader node
+
 
 echo "Stader daemon exited. Waiting to restart"
 sleep 60
