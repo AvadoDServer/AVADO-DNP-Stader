@@ -13,7 +13,7 @@ import SendEth from './SendEth';
 import { useAccount, useBalance } from 'wagmi';
 import truncateEthAddress from 'truncate-eth-address'
 import ClickToCopy from "./ClickToCopy";
-import { useNetwork } from "../hooks/useServerInfo";
+import { useNetwork, useSDPrice } from "../hooks/useServerInfo";
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import ApproveSD from './ApproveSD';
 import SocializingPool from './SocializingPool';
@@ -48,8 +48,18 @@ const NodeComponent = () => {
     }
 
     const { nodeStatus, contractInfo, allowanceStatus } = useStaderStatus()
+    const { sdPrice } = useSDPrice();
+
+    const SDPerValidator = Math.ceil(1 / (sdPrice || 0) * 0.4);
 
     const currentNumberOfValidators = nodeStatus?.validatorInfos?.length || 0;
+
+    const minTotalBond = SDPerValidator * currentNumberOfValidators;
+
+    const bondedSD = parseFloat(`${displayAsETH(nodeStatus?.depositedSdCollateral || "0")}`);
+
+    const enoughSDBonded = bondedSD >= minTotalBond;
+
 
     // Get amount of SD tokens in user wallletl
     const { address } = useAccount()
@@ -60,7 +70,7 @@ const NodeComponent = () => {
 
     useEffect(() => {
         // debugger;
-        if (nodeStatus && nodeStatus.registered){
+        if (nodeStatus && nodeStatus.registered) {
             // debugger;
             setCurrentStep(FINISHED)
         }
@@ -173,13 +183,13 @@ const NodeComponent = () => {
                                                     {displayAsETH(nodeStatus.accountBalances.eth.toString(), 4)} ETH <br />
                                                     {showButtons && <SendEth />}
                                                     <div className="pb-3" />
-                                                    {((BigInt(nodeStatus.accountBalances.eth || 0) / 4000000000000000000n) > 1) && (
+                                                    {/* {((BigInt(nodeStatus.accountBalances.eth || 0) / 4000000000000000000n) > 1) && (
                                                         <div className="text-sm">(good for {`${BigInt(nodeStatus.accountBalances.eth || 0) / 4000000000000000000n}`} additional validator{(BigInt(nodeStatus.accountBalances.eth || 0) / 4000000000000000000n) > 1 && (<>s</>)})</div>
-                                                    )}
+                                                    )} */}
 
-<hr className="pb-4" />
+                                                    <hr className="pb-4" />
 
-<SocializingPool/>                                                    
+                                                    <SocializingPool />
                                                 </dd>
                                             </div>
                                         </div>
@@ -198,10 +208,22 @@ const NodeComponent = () => {
 
                                                 <dt className="text-sm font-medium leading-6 text-gray-500">SD balance (deposited)</dt>
                                                 <dd className="w-full flex-none text-3xl font-medium leading-10 tracking-tight text-gray-900">
-                                                    <div>{`${displayAsETH(nodeStatus.depositedSdCollateral)} SD`}</div>
-                                                    {(nodeStatus.sdCollateralWorthValidators - currentNumberOfValidators) > 0 && (
-                                                        <div className="text-sm">(good for {nodeStatus.sdCollateralWorthValidators - currentNumberOfValidators} additional validator{(nodeStatus.sdCollateralWorthValidators - currentNumberOfValidators) > 1 && (<>s</>)})</div>
+                                                    {SDPerValidator && (<div className="text-sm">(Stader requires a minimum deposit of <b>{`${SDPerValidator}`} SD</b> per validator)</div>)}
+
+                                                    <div className={`${enoughSDBonded ? "" : "text-red-700"}`}>{`${displayAsETH(nodeStatus.depositedSdCollateral)} SD`}</div>
+                                                    {!enoughSDBonded && currentNumberOfValidators > 0 && (
+                                                        <div className="bg-orange-100 border-l-4 border-orange-500 text-orange-700 p-4" role="alert">
+                                                            <p>Your SD bond is too low for {currentNumberOfValidators} validator(s)</p>
+                                                            <p>Please add at least {Math.ceil(minTotalBond - bondedSD)} SD to your bond.</p>
+                                                            <p>If you do not bond enough SD, you will not receive any SD rewards.</p>
+                                                        </div>
                                                     )}
+                                                    {/* {(nodeStatus.sdCollateralWorthValidators - currentNumberOfValidators) > 0 ? (
+                                                        <div className="text-sm">(good for {nodeStatus.sdCollateralWorthValidators - currentNumberOfValidators} additional validator{(nodeStatus.sdCollateralWorthValidators - currentNumberOfValidators) > 1 && (<>s</>)})</div>
+                                                    ) : (
+                                                        <>
+                                                        </>
+                                                    )} */}
                                                     <ApproveSD />
                                                 </dd>
 
