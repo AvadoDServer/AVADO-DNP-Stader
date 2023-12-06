@@ -152,7 +152,8 @@ const FundWallet = ({ onFinished }: Props) => {
                                 {(!enableContinue) ? (
                                     <div className="text-sm leading-6">
                                         <label className="font-medium">
-                                            You can go to the next step once you have funded your wallet sufficiently.
+                                            You can go to the next step once you have funded your wallet sufficiently.<br/>
+                                            Funds sent to this hot wallet are not locked until you set up a validator.
                                         </label>
                                     </div>
                                 ) : (
