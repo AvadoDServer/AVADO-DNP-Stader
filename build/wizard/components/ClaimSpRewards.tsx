@@ -61,7 +61,7 @@ const ClaimSpReward = () => {
                     {nodeStatus.unclaimedSocializingPoolMerkles.map((m, i) => {
                         return (
                             <li key={i}>
-                                Cycle {m.cycle} - {displayAsETH(m.eth)} ETH , {displayAsETH(m.sd)} SD
+                                Cycle {m.cycle} - {displayAsETH(m.eth,5)} ETH , {displayAsETH(m.sd,5)} SD
                                 <button
                                     disabled={commandRunning}
                                     className={`${commandRunning && "opacity-50 cursor-not-allowed"} button-small ml-4 rounded-md bg-indigo-600 px-3 py-2 mb-3 text-xs font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600`}
