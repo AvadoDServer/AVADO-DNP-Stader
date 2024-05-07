@@ -32,9 +32,9 @@ const ClaimSpReward = () => {
         </>
     }
 
-    const claimCycles = async (cycles: number[]) => {
+    const claimCycles = async (cycles: number[],depositSD: string) => {
 
-        const command = `node claim-sp-rewards ${cycles.join(",")}`;
+        const command = `node claim-sp-rewards ${cycles.join(",")} ${depositSD}`;
 
         console.log(command);
         setFeedback('claiming rewards');
@@ -66,8 +66,14 @@ const ClaimSpReward = () => {
                                     disabled={commandRunning}
                                     className={`${commandRunning && "opacity-50 cursor-not-allowed"} button-small ml-4 rounded-md bg-indigo-600 px-3 py-2 mb-3 text-xs font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600`}
                                     onClick={async () => {
-                                        await claimCycles([m.cycle])
-                                    }}>Claim rewards for cycle {m.cycle}</button>
+                                        await claimCycles([m.cycle],"true")
+                                    }}>Claim rewards for cycle {m.cycle} and send to my wallet</button>
+                                                                    <button
+                                    disabled={commandRunning}
+                                    className={`${commandRunning && "opacity-50 cursor-not-allowed"} button-small ml-4 rounded-md bg-indigo-600 px-3 py-2 mb-3 text-xs font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600`}
+                                    onClick={async () => {
+                                        await claimCycles([m.cycle],"true")
+                                    }}>Claim rewards for cycle {m.cycle} and deposit SD to your node</button>
                             </li>
                         )
                     })}
@@ -76,8 +82,14 @@ const ClaimSpReward = () => {
                 <button
                     disabled={commandRunning}
                     className={`${commandRunning && "opacity-50 cursor-not-allowed"} rounded-md bg-indigo-600 px-3 py-2 mb-3 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600`}
-                    onClick={async () => { claimCycles(nodeStatus.unclaimedSocializingPoolMerkles.map(m => m.cycle)) }}
-                >Claim rewards for all cycles</button>
+                    onClick={async () => { claimCycles(nodeStatus.unclaimedSocializingPoolMerkles.map(m => m.cycle),"false") }}
+                >Claim rewards for all cycles and send to hot wallet</button>
+                                <button
+                    disabled={commandRunning}
+                    className={`${commandRunning && "opacity-50 cursor-not-allowed"} rounded-md bg-indigo-600 px-3 py-2 mb-3 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600`}
+                    onClick={async () => { claimCycles(nodeStatus.unclaimedSocializingPoolMerkles.map(m => m.cycle),"true") }}
+                >Claim rewards for all cycles and deposit SD to your node</button>
+
                 {nodeStatus.optedInForSocializingPool && (
                     <>
                         <br />

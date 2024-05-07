@@ -35,9 +35,9 @@ const AdminPage: NextPage = () => {
             <br />
             <br />
             <ClaimElRewards />
+            {/* <br />
             <br />
-            <br />
-            <ClaimCashback/>
+            <ClaimCashback/> */}
 
         </>
     )
