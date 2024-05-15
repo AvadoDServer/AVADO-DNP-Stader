@@ -63,7 +63,7 @@ const ClaimRewards = () => {
 
     // debugger;
 
-    console.log(JSON.stringify(canClaimRewards));
+    // console.log(JSON.stringify(canClaimRewards));
     return (
         <>
             <h2>Execution + Consensus Layer Rewards</h2>
