@@ -12,5 +12,6 @@ export const createAllowanceSlice: StateCreator<AllowanceSlice> = (set) => ({
         error: "",
         allowance: "0"
     },
-    fetchAllowance: async () => set({ allowanceStatus: await staderCommand("node deposit-sd-allowance") })
+    // fetchAllowance: async () => set({ allowanceStatus: await staderCommand("node deposit-sd-allowance") })
+    fetchAllowance: async () => set({ allowanceStatus: { error: "", allowance: "0"} })
 })

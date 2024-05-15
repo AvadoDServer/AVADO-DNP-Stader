@@ -17,6 +17,7 @@ import { useNetwork, useSDPrice } from "../hooks/useServerInfo";
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import ApproveSD from './ApproveSD';
 import SocializingPool from './SocializingPool';
+import WithdrawSD from "../components/WithdrawSD";
 // Show onboarding or hot wallet info + funding buttons + add validator button
 const NodeComponent = () => {
 
@@ -202,6 +203,7 @@ const NodeComponent = () => {
                                                     {displayAsETH(nodeStatus.accountBalances.sd.toString())} SD <br />
                                                     {showButtons && <SendSD />}
                                                     {showButtons && (BigInt(nodeStatus.accountBalances.sd || 0n) > 0n) && <StakeSD amount={BigInt(nodeStatus.accountBalances.sd)} />}
+                                                 
                                                     {/* {showButtons && (sdBalance?.value ?? 0n) > 0 && <SendSD amount={(sdBalance?.value ?? 0n)} />} */}
                                                 </dd>
                                                 <hr className="pb-4" />
@@ -218,6 +220,7 @@ const NodeComponent = () => {
                                                             <p>If you do not bond enough SD, you will not receive any SD rewards.</p>
                                                         </div>
                                                     )}
+                                                       <WithdrawSD/>
                                                     {/* {(nodeStatus.sdCollateralWorthValidators - currentNumberOfValidators) > 0 ? (
                                                         <div className="text-sm">(good for {nodeStatus.sdCollateralWorthValidators - currentNumberOfValidators} additional validator{(nodeStatus.sdCollateralWorthValidators - currentNumberOfValidators) > 1 && (<>s</>)})</div>
                                                     ) : (
