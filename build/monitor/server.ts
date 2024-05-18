@@ -8,12 +8,12 @@ import { readFileSync } from "fs";
 import AdmZip from 'adm-zip';
 import cache from "memory-cache";
 
-
 const autobahn = require('autobahn');
 const exec = require("child_process").exec;
 const fs = require('fs');
 const path = require("path");
 const jsonfile = require('jsonfile')
+const { ethers } = require("ethers");
 
 const supported_beacon_chain_clients = ["prysm", "teku"];
 const supported_execution_clients = ["geth", "nethermind"];
@@ -112,6 +112,38 @@ server.get("/service/status", (req: restify.Request, res: restify.Response, next
         });
 });
 
+server.get("/wallet/pk", (req: restify.Request, res: restify.Response, next: restify.Next) => {
+
+    // Function to read mnemonic from file
+    function readMnemonicFromFile(filePath: string) {
+        return fs.readFileSync(filePath, 'utf8').trim();
+    }
+
+
+    async function deriveWallet() {
+        // Path to the mnemonic file
+        const mnemonicFilePath = path.join('/.stader/data/mnemonic');
+
+        // Read the mnemonic from the file
+        const mnemonic = readMnemonicFromFile(mnemonicFilePath);
+
+        // Derive the wallet from the mnemonic
+        const wallet = ethers.Wallet.fromMnemonic(mnemonic);
+
+        // // Display the wallet address and private key
+        // console.log(`Address: ${wallet.address}`);
+        // console.log(`Private Key: ${wallet.privateKey}`);
+
+        return wallet.privateKey;
+    }
+
+    deriveWallet().then(((pk: string) => {
+        res.send(200, pk);
+        next()
+    }))
+
+});
+
 let wampSession: any = null;
 {
     const url = "ws://wamp.my.ava.do:8080/ws";
@@ -156,7 +188,7 @@ server.get("/bc-clients", async (req: restify.Request, res: restify.Response, ne
 server.get("/ec-clients", async (req: restify.Request, res: restify.Response, next: restify.Next) => {
     const dappManagerHelper = new DappManagerHelper(server_config.packageName, wampSession);
     const packages = await dappManagerHelper.getPackages();
-    console.log(`Packages`,packages);
+    console.log(`Packages`, packages);
     console.log("/ec-clients packages", JSON.stringify(packages, null, 2))
     const installed_clients = supported_execution_clients.filter(client => {
         const name = getAvadoExecutionClientPackageName(client);
@@ -625,7 +657,7 @@ server.post("/setFeeRecipient", async (req: restify.Request, res: restify.Respon
 
 function postToKeyManager(keymanagerUrl: string, body: string, res: restify.Response, next: restify.Next) {
     console.log(`postToKeyManager: posting to ${keymanagerUrl}`);
-    console.log(`body: ${JSON.stringify(JSON.parse(body),null,2)}`)
+    console.log(`body: ${JSON.stringify(JSON.parse(body), null, 2)}`)
     fetch(keymanagerUrl, {
         method: 'POST',
         headers: { 'content-type': 'application/json;charset=UTF-8' },
