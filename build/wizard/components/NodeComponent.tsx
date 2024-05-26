@@ -149,7 +149,20 @@ const NodeComponent = () => {
                             {currentStep.id !== FINISHED.id && (
                                 <div>
                                     {currentStep.id === INIT.id && (
-                                        <InitWallet onFinished={() => setCurrentStep(FUND)} />
+
+                                        <>
+                                            <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+                                                <div className="sm:col-span-4">
+                                                    <label className="text-5xl">
+                                                        Stader is being sunset from the AVADO stack.
+                                                    </label>
+                                                    <p className="mt-3 text-sm leading-6 text-gray-600">Therefore it is not possible to initialize new nodes any more.</p>
+                                                </div>
+                                            </div>
+
+                                        </>
+
+                                       
                                     )}
                                     {currentStep.id === FUND.id && (
                                         <FundWallet onFinished={() => setCurrentStep(REGISTER)} />
@@ -203,7 +216,7 @@ const NodeComponent = () => {
                                                     {displayAsETH(nodeStatus.accountBalances.sd.toString())} SD <br />
                                                     {showButtons && <SendSD />}
                                                     {showButtons && (BigInt(nodeStatus.accountBalances.sd || 0n) > 0n) && <StakeSD amount={BigInt(nodeStatus.accountBalances.sd)} />}
-                                                 
+
                                                     {/* {showButtons && (sdBalance?.value ?? 0n) > 0 && <SendSD amount={(sdBalance?.value ?? 0n)} />} */}
                                                 </dd>
                                                 <hr className="pb-4" />
@@ -220,7 +233,7 @@ const NodeComponent = () => {
                                                             <p>If you do not bond enough SD, you will not receive any SD rewards.</p>
                                                         </div>
                                                     )}
-                                                       <WithdrawSD/>
+                                                    <WithdrawSD />
                                                     {/* {(nodeStatus.sdCollateralWorthValidators - currentNumberOfValidators) > 0 ? (
                                                         <div className="text-sm">(good for {nodeStatus.sdCollateralWorthValidators - currentNumberOfValidators} additional validator{(nodeStatus.sdCollateralWorthValidators - currentNumberOfValidators) > 1 && (<>s</>)})</div>
                                                     ) : (
