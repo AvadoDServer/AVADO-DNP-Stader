@@ -36,13 +36,13 @@ const RestoreBackup = ({ onFinish }: Props) => {
 
     const onDrop = useCallback((acceptedFiles: any) => {
         acceptedFiles.forEach((file: any) => {
-            if (file.type == "application/zip") {
+            // if (file.type == "application/zip") {
                 setShowDropzone(false);
                 setBackupFile(file)
                 setFeedback(undefined)
-            } else {
-                setFeedback("Please upload a valid backup (zip) file")
-            }
+            // } else {
+            //     setFeedback("Please upload a valid backup (zip) file")
+            // }
         });
     }, []);
 
